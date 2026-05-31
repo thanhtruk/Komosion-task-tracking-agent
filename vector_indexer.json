@@ -1,0 +1,310 @@
+{
+  "name": "Komosion Vector Indexer",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Vector Indexer\nWebhook POST /vector-index → validate → load system_config → upsert embedding into Supabase `embeddings` table via Voyage 3 Large (1024 dims).\n\nUpsert semantics: delete existing row keyed on (source_type, source_id) then insert via Supabase Vector Store. The DB unique index on (source_type, source_id) still enforces de-duplication if a race occurs (continueOnFail catches the rare double-fire).",
+        "height": 240,
+        "width": 480,
+        "color": 4
+      },
+      "id": "ed5d8a5b-3d36-4f7e-8a4e-94c8a5e7c001",
+      "name": "Overview Sticky",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-1600, -320]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vector-index",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1111111-1111-4111-8111-111111111111",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1600, 0],
+      "webhookId": "vector-index-komosion"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate inbound vector-index request.\n// Required: source_type (enum), source_id (uuid), content (non-empty).\nconst ALLOWED = new Set(['ticket','wip_task','meeting_task','doc_guide','past_result','proposal','transcript']);\nconst UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\n\nconst body = $input.first().json.body ?? $input.first().json;\nconst source_type = body.source_type;\nconst source_id   = body.source_id;\nconst content     = body.content;\nconst metadata    = body.metadata ?? {};\n\nconst errors = [];\nif (!source_type || !ALLOWED.has(source_type)) errors.push(`invalid source_type: ${source_type}`);\nif (!source_id || !UUID_RE.test(String(source_id))) errors.push(`invalid source_id (must be uuid): ${source_id}`);\nif (!content || typeof content !== 'string' || content.trim().length === 0) errors.push('content is required and must be non-empty string');\nif (metadata && typeof metadata !== 'object') errors.push('metadata must be an object');\n\nif (errors.length) {\n  throw new Error(`Validation failed: ${errors.join('; ')}`);\n}\n\nreturn [{ json: { source_type, source_id, content: content.trim(), metadata } }];"
+      },
+      "id": "a2222222-2222-4222-8222-222222222222",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1392, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "system_config",
+        "returnAll": true,
+        "filters": { "conditions": [] }
+      },
+      "id": "a3333333-3333-4333-8333-333333333333",
+      "name": "Load System Config",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-1168, -64],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten system_config rows into a single object.\nconst rows = $input.all().map(i => i.json);\nconst cfg = {};\nfor (const r of rows) cfg[r.key] = r.value;\n\n// Carry forward the validated payload (from Validate Input) so downstream\n// nodes can reach it without referencing the original webhook input.\nconst payload = $('Validate Input').first().json;\n\nreturn [{ json: {\n  ...payload,\n  embedding_model:      cfg.embedding_model      ?? 'voyage-3-large',\n  embedding_dimension:  cfg.embedding_dimension  ?? 1024,\n  embedding_input_type: cfg.embedding_input_type ?? 'document',\n  embeddings_table:     'embeddings'\n} }];"
+      },
+      "id": "a4444444-4444-4444-8444-444444444444",
+      "name": "Merge System Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-944, -64]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "embeddings",
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "source_type",
+              "condition": "eq",
+              "keyValue": "={{ $json.source_type }}"
+            },
+            {
+              "keyName": "source_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.source_id }}"
+            }
+          ]
+        }
+      },
+      "id": "a5555555-5555-4555-8555-555555555555",
+      "name": "Delete Existing Embedding",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-720, -64],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true,
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Merge System Config').item.json.content }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              { "name": "source_type", "value": "={{ $('Merge System Config').item.json.source_type }}" },
+              { "name": "source_id",   "value": "={{ $('Merge System Config').item.json.source_id }}" },
+              { "name": "extra",       "value": "={{ JSON.stringify($('Merge System Config').item.json.metadata || {}) }}" }
+            ]
+          }
+        }
+      },
+      "id": "a6666666-6666-4666-8666-666666666666",
+      "name": "Embedding Document Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [-336, 192]
+    },
+    {
+      "parameters": {
+        "model": "={{ $('Merge System Config').item.json.embedding_model }}",
+        "inputType": "={{ $('Merge System Config').item.json.embedding_input_type }}"
+      },
+      "id": "a7777777-7777-4777-8777-777777777777",
+      "name": "Generate Embedding",
+      "type": "@seed-ship/n8n-nodes-voyage-embeddings.embeddingsVoyageAi",
+      "typeVersion": 1,
+      "position": [-560, 192],
+      "credentials": {
+        "voyageaiApi": {
+          "id": "hHCpxe3KdYtRhASi",
+          "name": "VoyageAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Merge System Config').item.json.embeddings_table }}"
+        },
+        "embeddingBatchSize": 1,
+        "options": {}
+      },
+      "id": "a8888888-8888-4888-8888-888888888888",
+      "name": "Store Embedding",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [-496, -64],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "embeddings",
+        "returnAll": false,
+        "limit": 1,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            { "keyName": "source_type", "condition": "eq", "keyValue": "={{ $('Merge System Config').item.json.source_type }}" },
+            { "keyName": "source_id",   "condition": "eq", "keyValue": "={{ $('Merge System Config').item.json.source_id }}" }
+          ]
+        }
+      },
+      "id": "a9999999-9999-4999-8999-999999999999",
+      "name": "Fetch Embedding ID",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-272, -64],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, embedding_id: $json.id, source_type: $('Merge System Config').item.json.source_type, source_id: $('Merge System Config').item.json.source_id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "b1111111-1111-4111-8111-111111111111",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-48, -64]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize error path. Pulls best-effort source info from whichever node raised.\nconst err = $input.first().json;\nconst body = ($('Webhook').first()?.json?.body) ?? {};\nconst validated = $('Validate Input').first()?.json ?? {};\n\nconst stage =\n  $input.first().json?.stage ||\n  ($('Validate Input').first()?.error ? 'validate' :\n   $('Store Embedding').first()?.error ? 'upsert' :\n   $('Generate Embedding').first()?.error ? 'embed' : 'unknown');\n\nreturn [{ json: {\n  source_type: validated.source_type ?? body.source_type ?? null,\n  source_id:   validated.source_id   ?? body.source_id   ?? null,\n  content:     (validated.content ?? body.content ?? '').toString().slice(0, 4000),\n  error:       (err?.error?.message || err?.message || JSON.stringify(err)).toString().slice(0, 2000),\n  stage,\n  payload:     body\n} }];"
+      },
+      "id": "b2222222-2222-4222-8222-222222222222",
+      "name": "Build Error Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-944, 384]
+    },
+    {
+      "parameters": {
+        "tableId": "embedding_errors",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "source_type", "fieldValue": "={{ $json.source_type }}" },
+            { "fieldId": "source_id",   "fieldValue": "={{ $json.source_id }}" },
+            { "fieldId": "content",     "fieldValue": "={{ $json.content }}" },
+            { "fieldId": "error",       "fieldValue": "={{ $json.error }}" },
+            { "fieldId": "stage",       "fieldValue": "={{ $json.stage }}" },
+            { "fieldId": "payload",     "fieldValue": "={{ JSON.stringify($json.payload) }}" }
+          ]
+        }
+      },
+      "id": "b3333333-3333-4333-8333-333333333333",
+      "name": "Log Embedding Error",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-720, 384],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: $json.error, stage: $json.stage } }}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "b4444444-4444-4444-8444-444444444444",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-496, 384]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Validate Input", "type": "main", "index": 0 }]]
+    },
+    "Validate Input": {
+      "main": [
+        [{ "node": "Load System Config", "type": "main", "index": 0 }],
+        [{ "node": "Build Error Row",    "type": "main", "index": 0 }]
+      ]
+    },
+    "Load System Config": {
+      "main": [[{ "node": "Merge System Config", "type": "main", "index": 0 }]]
+    },
+    "Merge System Config": {
+      "main": [[{ "node": "Delete Existing Embedding", "type": "main", "index": 0 }]]
+    },
+    "Delete Existing Embedding": {
+      "main": [
+        [{ "node": "Store Embedding", "type": "main", "index": 0 }],
+        [{ "node": "Build Error Row", "type": "main", "index": 0 }]
+      ]
+    },
+    "Generate Embedding": {
+      "ai_embedding": [[{ "node": "Store Embedding", "type": "ai_embedding", "index": 0 }]]
+    },
+    "Embedding Document Loader": {
+      "ai_document": [[{ "node": "Store Embedding", "type": "ai_document", "index": 0 }]]
+    },
+    "Store Embedding": {
+      "main": [
+        [{ "node": "Fetch Embedding ID", "type": "main", "index": 0 }],
+        [{ "node": "Build Error Row",    "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Embedding ID": {
+      "main": [[{ "node": "Respond Success", "type": "main", "index": 0 }]]
+    },
+    "Build Error Row": {
+      "main": [[{ "node": "Log Embedding Error", "type": "main", "index": 0 }]]
+    },
+    "Log Embedding Error": {
+      "main": [[{ "node": "Respond Error", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

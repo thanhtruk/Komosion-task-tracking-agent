@@ -46,6 +46,28 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 ---
 
+### Komosion Vector Indexer _(parked — not active)_
+
+**File:** `vector_indexer.json`
+
+Webhook-driven pipeline that upserts text embeddings into a Supabase `embeddings` table using Voyage 3 Large (1024 dims). Kept for future use; currently has known issues and is not activated.
+
+#### What it does
+
+| Stage | Description |
+|---|---|
+| **Receive** | Webhook POST `/vector-index` accepts `source_type`, `source_id` (UUID), `content`, and optional `metadata` |
+| **Validate** | Validates required fields and allowed `source_type` enum values |
+| **Config load** | Reads `embedding_model`, `embedding_dimension`, `embedding_input_type` from Supabase `system_config` |
+| **Upsert** | Deletes existing row keyed on `(source_type, source_id)`, then inserts new embedding via Supabase Vector Store |
+| **Error logging** | Failures written to `embedding_errors` table; error response returned with stage info |
+
+#### Additional credential required
+
+- **Voyage AI API** — text embedding generation (`voyage-3-large` model)
+
+---
+
 ## Credentials required
 
 Configure these credential types in your n8n instance (no secrets stored in this repo):
@@ -82,3 +104,4 @@ Configure these credential types in your n8n instance (no secrets stored in this
 - Initial commit: Komosion Helpdesk Intake Phase 1 Ver2
 - Ver2 adds WIP task linking via LLM matcher, unified reply path, and Supabase `system_config` integration for tunables
 - Sheet sync for `wip_tasks` tab; note history via `wip_notes` DB trigger
+- Added Vector Indexer workflow (parked — webhook-driven Voyage AI + Supabase embedding upsert pipeline, has known issues, not yet activated)
