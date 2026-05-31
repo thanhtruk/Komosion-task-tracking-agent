@@ -1,0 +1,8 @@
+infor/
+*.xlsx
+*.xls
+*.credentials.json
+client_secret*.json
+credential.txt
+.env
+*.env
