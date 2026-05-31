@@ -46,6 +46,47 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 ---
 
+### Komosion Daily WIP Sync — Phase 3.2 _(in progress / testing)_
+
+**File:** `Komosion_Daily_WIP_Sync___Phase_3_2.json`
+
+Daily standup transcript → structured WIP task updates in Supabase. Replaces the legacy Google Apps Script (`main.js`) with an n8n workflow backed by Supabase instead of Google Sheets.
+
+> **Status:** active development — manual trigger used temporarily; calendar/webhook trigger will be restored in Phase 3.4. Monthly rollover (1st-of-month) is out of scope here and will be a separate Phase 3.3 workflow.
+
+#### What it does
+
+| Stage | Description |
+|---|---|
+| **A — Trigger** | Manual trigger (temporary for testing); webhook `POST /daily-wip-sync` is the target trigger |
+| **B — Transcript fetch** | Looks up today's calendar event matching `daily_meeting_title_pattern` (from `system_config`), picks the latest attached Google Doc transcript, exports to plain text, and cleans it (`cleanTranscriptContent` logic ported from AppScript) |
+| **C — LLM classify + extract** | Two-stage LLM call: (1) classify which active projects are mentioned; (2) per-project extract WIP actions (`{action, task, lead, status, note, next_step, existing_task_id}`). Model and tunables read from Supabase `system_config` |
+| **D — Persist** | Applies actions to Supabase `wip_tasks` with `continueOnFail`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); meetings upserted by `calendar_event_id`; `meeting_tasks` junction populated |
+| **Cascade close** | Completed WIP tasks trigger `tickets SET status='resolved'` for all linked tickets |
+| **Sheet sync** | `wip_tasks` Google Sheet tab updated on create/update/complete (same pattern as Phase 1) |
+| **Email summary** | Gmail sends success email with C/U/D counts, auto-closed tickets, errors list, and double-run warning; separate emails for no-meeting, no-transcript, and no-actionable-items cases |
+| **Double-run guard** | Checks `meetings` + `meeting_tasks` tables; flags `doubleRunWarning` in summary if today's meeting was already processed |
+
+#### System config keys (from Supabase `system_config`)
+
+| Key | Description |
+|---|---|
+| `daily_meeting_title_pattern` | Substring to match standup calendar event title |
+| `transcript_title_pattern` | Prefix used to identify transcript Drive files |
+| `llm_model` | Model ID for the classify + extract LLM calls |
+| `wipConfidenceThreshold` | Confidence threshold for Match Layer A create→update flip |
+
+#### Parity with AppScript
+
+See `parity_report_3_2.md` for a full comparison. Key intentional drifts: storage is Supabase not Sheets; `merges` action dropped (was dead code); sort/highlight (UI concern) dropped; monthly rollover deferred to Phase 3.3.
+
+#### Analysis docs (committed alongside workflow)
+
+- `main_js_analysis.md` — function-level inventory of the source `main.js` AppScript used as the port reference
+- `parity_report_3_2.md` — behavioral parity report (n8n Phase 3.2 vs AppScript)
+
+---
+
 ### Komosion Vector Indexer _(parked — not active)_
 
 **File:** `vector_indexer.json`
@@ -99,6 +140,10 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-05-31 (2)
+- Added Komosion Daily WIP Sync Phase 3.2 workflow (in progress / testing) — calendar → transcript → LLM classify+extract → Supabase wip_tasks persist, cascade ticket close, sheet sync, summary email
+- Added `main_js_analysis.md` (AppScript function inventory) and `parity_report_3_2.md` (n8n vs AppScript parity report) as reference docs
 
 ### 2026-05-31
 - Initial commit: Komosion Helpdesk Intake Phase 1 Ver2

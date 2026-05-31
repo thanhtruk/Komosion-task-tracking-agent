@@ -1,0 +1,2360 @@
+{
+  "name": "Komosion Daily WIP Sync — Phase 3.2",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Stage A Trigger\nPhase 3.2 — Daily Standup Sync. Manual Trigger is temporary for testing; calendar/webhook triggering will be restored in step 3.4.",
+        "height": 180,
+        "width": 620,
+        "color": 3
+      },
+      "id": "d8d656be-bae5-465f-a576-08bbaed5b437",
+      "name": "Stage A Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -14640,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Stage B — Calendar lookup → match events by `daily_meeting_title_pattern` (system_config) → pick latest attached transcript per event (`transcript_title_pattern` + Drive modifiedTime) → fetch + clean text.",
+        "height": 180,
+        "width": 820,
+        "color": 4
+      },
+      "id": "382c7004-a665-4201-9532-80658977deaa",
+      "name": "Stage B Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -13504,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage C LLM\nBuilds the active project index, then classifies mentioned projects and extracts concrete WIP task actions in one model call.",
+        "height": 180,
+        "width": 900,
+        "color": 7
+      },
+      "id": "f3d8e127-9ed1-4ba8-a229-9fa0e221387e",
+      "name": "Stage C Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -11456,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage D Persist\nApplies WIP actions with continueOnFail enabled. Create actions pass through the WIP Match Layer A guard before insert. Meeting upsert uses a get/update/create pattern because Supabase create has no on-conflict.",
+        "height": 210,
+        "width": 980,
+        "color": 3
+      },
+      "id": "e1b6b3dc-5a7d-4620-b7cf-987ac9ca28b0",
+      "name": "Stage D Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -12560,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Sheet Sync\nwip_tasks Sheet tab mirrors Supabase wip_tasks for AppSheet. Updated on create, update, and complete — same pattern as Phase 1 Helpdesk.",
+        "height": 150,
+        "width": 400,
+        "color": 4
+      },
+      "id": "b256182f-86f9-49ab-9c89-c5055eb277da",
+      "name": "Sheet Sync Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -9280,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage E Cascade\nCompleted WIP tasks are looped into ticket updates. This avoids relying on a Supabase `in` filter shape that varies by node version.",
+        "height": 180,
+        "width": 700,
+        "color": 6
+      },
+      "id": "c661a751-0600-4bc3-851e-b0cba1b4a6e4",
+      "name": "Stage E Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8528,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage F Email\nAlways sends a terminal summary, including zero-action runs and the double-run warning. Workflow-level Error Workflow should be configured separately for uncaught failures.",
+        "height": 180,
+        "width": 700,
+        "color": 5
+      },
+      "id": "91bb27bd-0941-4cce-b6c3-866d5a24a65d",
+      "name": "Stage F Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6528,
+        928
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "355a98b2-e807-4603-93d5-cf0f3d69c6ae",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -14608,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-date",
+              "name": "date",
+              "value": "2026-05-29",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7c4fbbb3-5ecf-434d-af3b-999ca18da21b",
+      "name": "Temp Webhook Body",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -14384,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-supabaseUrl",
+              "name": "supabaseUrl",
+              "value": "https://pytstkikcnlfnlmgrjjd.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "assign-meetingsTable",
+              "name": "meetingsTable",
+              "value": "meetings",
+              "type": "string"
+            },
+            {
+              "id": "assign-wipTasksTable",
+              "name": "wipTasksTable",
+              "value": "wip_tasks",
+              "type": "string"
+            },
+            {
+              "id": "assign-meetingTasksTable",
+              "name": "meetingTasksTable",
+              "value": "meeting_tasks",
+              "type": "string"
+            },
+            {
+              "id": "assign-ticketsTable",
+              "name": "ticketsTable",
+              "value": "tickets",
+              "type": "string"
+            },
+            {
+              "id": "assign-calendarId",
+              "name": "calendarId",
+              "value": "truc.pham@komosion.com",
+              "type": "string"
+            },
+            {
+              "id": "assign-tz",
+              "name": "tz",
+              "value": "Asia/Ho_Chi_Minh",
+              "type": "string"
+            },
+            {
+              "id": "assign-helpdeskSheetId",
+              "name": "helpdeskSheetId",
+              "value": "1vWKczoQJqkx0dw3BceXd_jO1yXSJUH3JHdKMQZjk-LI",
+              "type": "string"
+            },
+            {
+              "id": "assign-wipTasksSheetTab",
+              "name": "wipTasksSheetTab",
+              "value": "wip_tasks",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "91d3e5d3-abf0-4f81-83fd-1465c5f778f0",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -14160,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "system_config",
+        "returnAll": true
+      },
+      "id": "250757d7-a99f-4972-aed2-9b6ee3a269c9",
+      "name": "Load System Config",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -13936,
+        1040
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const acc = {};\nfor (const item of items) {\n  const row = item.json || {};\n  if (!row.key) continue;\n  acc[row.key] = row.value;\n}\nreturn [{ json: acc }];"
+      },
+      "id": "1d7870f4-1a46-4d90-836e-45d405235b8a",
+      "name": "Merge System Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -13712,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config').item.json;\nconst body = $('Temp Webhook Body').item.json || {};\nconst tz = cfg.tz || 'Asia/Ho_Chi_Minh';\nconst rawDate = body.date || $now.setZone(tz).toISODate();\nconst dt = DateTime.fromISO(rawDate, { zone: tz });\nconst target = dt.isValid ? dt : $now.setZone(tz);\nreturn [{\n  json: {\n    ...cfg,\n    ...$json,\n    targetDate: target.toISODate(),\n    dayStart: target.startOf('day').toISO(),\n    dayEnd: target.endOf('day').toISO(),\n    errors: [],\n    tasks_created: 0,\n    tasks_updated: 0,\n    tasks_completed: 0,\n    tickets_auto_closed: 0,\n    doubleRunWarning: false\n  }\n}];"
+      },
+      "id": "f919b300-0d2a-4537-b5d4-453abd37727c",
+      "name": "Resolve Date",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -13488,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').item.json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $('Resolve Date').item.json.dayStart }}",
+        "timeMax": "={{ $('Resolve Date').item.json.dayEnd }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "20268048-19bc-4bb9-bb26-c88dbe3228b9",
+      "name": "Get Calendar Events",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -13264,
+        1040
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FP2ryXXcHt9as0Fl",
+          "name": "Truc - Komosion Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Resolve Date').item.json;\nconst sysCfg = $('Merge System Config').item.json;\nconst rawPattern = sysCfg.daily_meeting_title_pattern || cfg.dailyMeetingTitlePattern || 'Daily WIP';\nconst events = items.map(i => i.json);\nlet matcher;\ntry { matcher = new RegExp(rawPattern, 'i'); }\ncatch (e) { matcher = new RegExp(String(rawPattern).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'i'); }\nconst matched = events.filter(e => matcher.test(e.summary || e.title || ''));\nif (!matched.length) return [{ json: { ...cfg, meetingFound: false, summaryStatus: 'no_meeting' } }];\nreturn matched.map(event => ({ json: {\n  ...cfg, ...event, event,\n  meetingFound: true,\n  calendar_event_id: event.id,\n  title: event.summary || event.title || 'Daily WIP',\n  start_time: event.start?.dateTime || event.start?.date || null,\n  end_time: event.end?.dateTime || event.end?.date || null,\n  attendees: event.attendees || []\n} }));"
+      },
+      "id": "70d1fb44-01c1-49dc-94b9-626bf03868dd",
+      "name": "Filter Daily WIP Meeting",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -13040,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "meeting-found",
+              "leftValue": "={{ $json.meetingFound }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "197437d6-651e-4ff8-ab93-07ea3f84b6a9",
+      "name": "IF: meeting found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -12816,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge System Config').item.json.no_standup_email_to || $('Merge System Config').item.json.summary_email_to || \"truc.pham@komosion.com\" }} ",
+        "subject": "={{ '[Daily WIP Sync] ' + $('Resolve Date').item.json.targetDate + ' — No standup today' }}",
+        "emailType": "text",
+        "message": "={{ 'No Daily WIP calendar event was found for ' + $('Resolve Date').item.json.targetDate + '.' }}",
+        "options": {
+          "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
+        }
+      },
+      "id": "fccacf2f-da36-46e6-9cbd-10ea04762d7b",
+      "name": "Gmail Send No standup today",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -12592,
+        1136
+      ],
+      "webhookId": "fc8ff919-7464-4265-8a26-2e56b303169c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bNXKWDG0BBmbCj5C",
+          "name": "Komosion Real - Gmail account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const sysCfg = $('Merge System Config').item.json;\nconst rawPattern = sysCfg.transcript_title_pattern || 'Transcript';\nlet titleMatcher;\ntry { titleMatcher = new RegExp(rawPattern, 'i'); }\ncatch (e) { titleMatcher = new RegExp(String(rawPattern).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'i'); }\n\nconst out = [];\nfor (const it of items) {\n  const base = it.json;\n  if (base.meetingFound === false) { out.push({ json: base }); continue; }\n  const event = base.event || base;\n  const attachments = event.attachments || [];\n  const candidates = attachments.filter(a =>\n    /application\\/vnd\\.google-apps\\.document/i.test(a.mimeType || '')\n    && titleMatcher.test(a.title || a.name || '')\n  );\n  if (!candidates.length) {\n    out.push({ json: { ...base, hasTranscriptDoc: false, summaryStatus: 'no_transcript', docId: null } });\n    continue;\n  }\n  for (const att of candidates) {\n    out.push({ json: {\n      ...base,\n      hasTranscriptDoc: true,\n      docId: att.fileId || att.id,\n      attachmentTitle: att.title || att.name || '',\n      fileUrl: att.fileUrl || att.webViewLink || null,\n      transcript_url: att.fileUrl || att.webViewLink || null,\n      transcript_attachment_id: att.fileId || att.id\n    } });\n  }\n}\nreturn out;"
+      },
+      "id": "64f01623-9e87-4ba8-80cb-71f5227b9faf",
+      "name": "Extract Candidate Attachments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -12592,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-doc",
+              "leftValue": "={{ $json.hasTranscriptDoc }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4a0b84c5-47a5-4f80-bbe1-79e1831cea23",
+      "name": "IF: has any candidate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -12368,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge System Config').item.json.no_standup_email_to || $('Merge System Config').item.json.summary_email_to }}",
+        "subject": "={{ '[Daily WIP Sync] ' + $('Resolve Date').item.json.targetDate + ' — No transcript on meeting' }}",
+        "emailType": "text",
+        "message": "={{ 'Daily WIP meeting was found, but no Google Doc transcript attachment was present. Event: ' + ($('Filter Daily WIP Meeting').item.json.title || '') }}",
+        "options": {
+          "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
+        }
+      },
+      "id": "3e1d641e-179b-405d-b028-037f3f34514a",
+      "name": "Gmail Send No transcript on meeting",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -12144,
+        1216
+      ],
+      "webhookId": "d125d7c4-e023-46dc-b843-7e71011860f7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bNXKWDG0BBmbCj5C",
+          "name": "Komosion Real - Gmail account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $input.first().json.content\nlet text = String(source || '');\nlet startIndex = text.lastIndexOf('📖 Transcript');\nif (startIndex >= 0) text = text.slice(startIndex);\ntext = text\n  .replace(/^.*?📖 Transcript\\s*/s, '')\n  .replace(/Transcript may contain errors[\\s\\S]*$/i, '')\n  .replace(/This editable transcript was computer generated[\\s\\S]*$/i, '')\n  .replace(/\\b\\d{1,2}:\\d{2}(?::\\d{2})?\\b/g, '')\n  .replace(/^\\s*(Speaker \\d+|Unknown Speaker|[A-Z][A-Za-z .'-]{1,40})\\s*:\\s*/gm, '$1: ')\n  .replace(/\\n{3,}/g, '\\n\\n')\n  .trim();\nreturn [{ json: { ...$('Extract Candidate Attachments').item.json, transcript: text } }];"
+      },
+      "id": "30518200-4df9-474a-984c-c1701096f5c3",
+      "name": "Clean Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -11920,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "neq",
+              "keyValue": "complete"
+            },
+            {
+              "keyName": "status",
+              "condition": "neq",
+              "keyValue": "closed"
+            }
+          ]
+        }
+      },
+      "id": "c11e2d6d-a72b-4d74-99f5-8d063753f65c",
+      "name": "Load Active Projects",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -11696,
+        848
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Clean Transcript').item.json;\nconst cfg = $('Resolve Date').item.json;\nconst grouped = new Map();\nfor (const item of items) {\n  const r = item.json || {};\n  const pc = r.project_client || 'Internal';\n  if (!grouped.has(pc)) grouped.set(pc, []);\n  grouped.get(pc).push({\n    id: r.id, task: r.task, lead: r.lead, status: r.status,\n    latest_note: r.latest_note || r.note || '', next_step: r.next_step\n  });\n}\nconst projects = [...grouped.entries()].map(([project_client, tasks]) => ({ project_client, tasks }));\n\nconst dt = DateTime.fromISO(cfg.targetDate);\nconst todayTag = dt.toFormat('dd MMM');\n\nconst userPrompt = `TARGET_DATE: ${cfg.targetDate}\nNOTE_TAG: [${todayTag}]\n\nTRANSCRIPT:\n${base.transcript}\n\nACTIVE PROJECTS AND THEIR CURRENT TASKS:\n${JSON.stringify(projects, null, 2)}\n\nOUTPUT FORMAT (strict JSON):\n{\n  \"mentioned_projects\": [\n    {\n      \"project_client\": \"Exact project_client string from list above\",\n      \"actions\": [\n        {\n          \"action\": \"update\",\n          \"existing_task_id\": \"uuid-from-tasks-list\",\n          \"task\": \"exact task title from list\",\n          \"status\": \"in_progress\",\n          \"latest_note\": \"[${todayTag}] discussed progress on...\",\n          \"next_step\": \"deploy to staging by Friday\",\n          \"lead\": \"Truc\"\n        },\n        {\n          \"action\": \"create\",\n          \"task\": \"Set up monitoring for new API endpoint\",\n          \"status\": \"to_do\",\n          \"latest_note\": \"[${todayTag}] mentioned need for monitoring\",\n          \"next_step\": \"configure Datadog alerts\",\n          \"lead\": \"Sang\"\n        },\n        {\n          \"action\": \"complete\",\n          \"existing_task_id\": \"uuid-from-tasks-list\",\n          \"task\": \"exact task title from list\"\n        }\n      ]\n    }\n  ]\n}\n\nIf no active projects are mentioned, return: {\"mentioned_projects\": []}\nOmit fields not explicitly changed in the transcript.`;\n\nreturn [{ json: {\n  ...base, projects,\n  project_client_list: projects.map(p => p.project_client),\n  targetDate: cfg.targetDate, todayTag,\n  llmUserPrompt: userPrompt\n} }];"
+      },
+      "id": "861c7d98-464f-4f5e-9953-86a733339470",
+      "name": "Build Project Index",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -11472,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatModel": "={{ $('Merge System Config').item.json.llm_model }}",
+        "prompt": {
+          "messages": [
+            {
+              "content": "={{ $json.llmUserPrompt }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "id": "4b961d53-7232-41ab-abcc-1a7f57e0b17b",
+      "name": "LLM: Classify & Extract Actions",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        -11248,
+        848
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Nk9E6Mrrr1iNWcep",
+          "name": "Truc - Test OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Build Project Index').item.json;\nconst raw = $json.output ?? $json.message?.content ?? $json.text ?? $json;\nlet parsed = {};\ntry { parsed = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { parsed = {}; }\n\nconst mentioned = Array.isArray(parsed.mentioned_projects) ? parsed.mentioned_projects : [];\nif (!mentioned.length) {\n  return [{ json: { ...base, hasMentions: false, noActions: true } }];\n}\n\nconst allActions = [];\nfor (const m of mentioned) {\n  const actions = Array.isArray(m.actions) ? m.actions : [];\n  for (const a of actions) {\n    allActions.push({\n      json: {\n        ...base,\n        hasMentions: true,\n        project_client: m.project_client,\n        action: a.action || 'update',\n        existing_task_id: a.existing_task_id || null,\n        task: a.task || '',\n        status: a.status || null,\n        latest_note: a.latest_note || a.note || '',\n        next_step: a.next_step || '',\n        lead: a.lead || '',\n        meeting_id: null,\n        calendar_event_id: base.calendar_event_id,\n        errors: []\n      }\n    });\n  }\n}\n\nif (!allActions.length) {\n  return [{ json: { ...base, hasMentions: true, noActions: true } }];\n}\nreturn allActions;"
+      },
+      "id": "11db5627-e11d-4033-9f84-b673886da89f",
+      "name": "Parse Classified Actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -11024,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-actions",
+              "leftValue": "={{ $json.noActions }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1dcd411f-4fc3-4ed6-a4ad-bf04daef5325",
+      "name": "IF: has actions?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -10800,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge System Config').item.json.summary_email_to }}",
+        "subject": "={{ '[Daily WIP Sync] ' + $('Resolve Date').item.json.targetDate + ' — C:0 U:0 D:0' }}",
+        "emailType": "text",
+        "message": "={{ 'Daily WIP transcript was processed, but no actionable WIP updates were found.\\n\\nDate: ' + $('Resolve Date').item.json.targetDate }}",
+        "options": {
+          "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
+        }
+      },
+      "id": "41955549-acbe-4e28-a138-4644726caf04",
+      "name": "Gmail Send No actionable items",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -10576,
+        960
+      ],
+      "webhookId": "c59cb272-f1b2-4b62-8614-ec4d3ce802ed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bNXKWDG0BBmbCj5C",
+          "name": "Komosion Real - Gmail account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "output": "={{ $json.action === 'create' ? 0 : ($json.action === 'complete' ? 2 : 1) }}"
+      },
+      "id": "20319a9d-d7b9-441d-961c-2bb660291d1e",
+      "name": "Switch Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -10576,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "project_client",
+              "condition": "eq",
+              "keyValue": "={{ $json.project_client }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "neq",
+              "keyValue": "complete"
+            },
+            {
+              "keyName": "status",
+              "condition": "neq",
+              "keyValue": "closed"
+            }
+          ]
+        }
+      },
+      "id": "33fc5789-d988-4e05-a5a5-6efc23e0ec5a",
+      "name": "WIP Match Layer A (Lookup Candidates)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -10352,
+        688
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const action = $('Switch Action').item.json;\nconst candidates = items.map(i => ({ id: i.json.id, task: i.json.task, lead: i.json.lead, status: i.json.status, latest_note: i.json.latest_note || i.json.note, next_step: i.json.next_step }));\nreturn [{ json: { ...action, candidates } }];"
+      },
+      "id": "e80c5ec1-7844-4c59-b673-1113578895ea",
+      "name": "Build WIP Match Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -10128,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatModel": "={{ $('Merge System Config').item.json.llm_model_fast }}",
+        "prompt": {
+          "messages": [
+            {}
+          ]
+        },
+        "options": {
+          "temperature": 0.1
+        },
+        "requestOptions": {}
+      },
+      "id": "b89dd52d-62f3-48d5-a958-241882df4aa3",
+      "name": "OpenAI WIP Matcher",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        -9904,
+        704
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Nk9E6Mrrr1iNWcep",
+          "name": "Truc - Test OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const action = $('Build WIP Match Prompt').item.json;\nconst raw = $json.output ?? $json.message?.content ?? $json.text ?? $json;\nlet m = {};\ntry { m = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { m = {}; }\nconst threshold = Number($('Merge System Config').item.json.wipConfidenceThreshold ?? 0.82);\nconst matched = m.decision === 'match' && m.match_id && Number(m.confidence || 0) >= threshold;\nreturn [{ json: { ...action, matcher: m, action: matched ? 'update' : 'create', existing_task_id: matched ? m.match_id : action.existing_task_id, matcherMatched: matched } }];"
+      },
+      "id": "92f74371-43ac-4f69-978e-1ec38c966998",
+      "name": "Apply Match Decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9680,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "match-decision",
+              "leftValue": "={{ $json.matcherMatched }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2ee60353-a8c3-422e-aa26-2de30cf7c506",
+      "name": "IF: matcher chose update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -9456,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "project_client",
+              "fieldValue": "={{ $json.project_client }}"
+            },
+            {
+              "fieldId": "task",
+              "fieldValue": "={{ $json.task }}"
+            },
+            {
+              "fieldId": "lead",
+              "fieldValue": "={{ $json.lead || '' }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status || 'to_do' }}"
+            },
+            {
+              "fieldId": "note",
+              "fieldValue": "={{ $json.latest_note || $json.note || '' }}"
+            },
+            {
+              "fieldId": "next_step",
+              "fieldValue": "={{ $json.next_step || '' }}"
+            },
+            {
+              "fieldId": "origin_source",
+              "fieldValue": "standup"
+            }
+          ]
+        }
+      },
+      "id": "60286815-d62e-485a-992e-f9bd506488ad",
+      "name": "Supabase Create WIP",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -9232,
+        784
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.existing_task_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "lead",
+              "fieldValue": "={{ $json.lead || '' }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status || 'in_progress' }}"
+            },
+            {
+              "fieldId": "note",
+              "fieldValue": "={{ $json.latest_note || $json.note || '' }}"
+            },
+            {
+              "fieldId": "next_step",
+              "fieldValue": "={{ $json.next_step || '' }}"
+            },
+            {
+              "fieldId": "last_updated",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "b978a043-2568-49b8-86da-3a27ef2f1f94",
+      "name": "Supabase Update WIP",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -9232,
+        560
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.existing_task_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "complete"
+            },
+            {
+              "fieldId": "last_updated",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "617ffdab-ce86-4f24-85f5-83936e81dbf0",
+      "name": "Supabase Complete WIP",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -9232,
+        992
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Config').item.json.wipTasksSheetTab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "project_client": "={{ $json.project_client }}",
+            "task": "={{ $json.task }}",
+            "lead": "={{ $json.lead || '' }}",
+            "status": "={{ $json.status || 'to_do' }}",
+            "latest_note": "={{ $json.latest_note || $json.note || '' }}",
+            "latest_note_at": "={{ new Date().toISOString() }}",
+            "next_step": "={{ $json.next_step || '' }}",
+            "origin_source": "standup",
+            "ticket_id": "",
+            "created_at": "={{ $json.created_at || new Date().toISOString() }}",
+            "last_updated": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "project_client",
+              "displayName": "project_client",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "task",
+              "displayName": "task",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "lead",
+              "displayName": "lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "latest_note",
+              "displayName": "latest_note",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "latest_note_at",
+              "displayName": "latest_note_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "next_step",
+              "displayName": "next_step",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "origin_source",
+              "displayName": "origin_source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "last_updated",
+              "displayName": "last_updated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "2cb65c88-4120-42dd-b3f5-ffc7d2a398e7",
+      "name": "Sheet Sync Create WIP",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -9008,
+        784
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MFpjEhalqvHmf1ra",
+          "name": "Google Sheets account - truc.pham"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Config').item.json.wipTasksSheetTab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id || $('IF: matcher chose update?').item.json.existing_task_id }}",
+            "lead": "={{ $json.lead || '' }}",
+            "status": "={{ $json.status || 'in_progress' }}",
+            "latest_note": "={{ $('IF: matcher chose update?').item.json.latest_note || $('IF: matcher chose update?').item.json.note || '' }}",
+            "latest_note_at": "={{ new Date().toISOString() }}",
+            "next_step": "={{ $json.next_step || '' }}",
+            "last_updated": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "project_client",
+              "displayName": "project_client",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "task",
+              "displayName": "task",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "lead",
+              "displayName": "lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "latest_note",
+              "displayName": "latest_note",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "latest_note_at",
+              "displayName": "latest_note_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "next_step",
+              "displayName": "next_step",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "origin_source",
+              "displayName": "origin_source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "last_updated",
+              "displayName": "last_updated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "3f37612f-8a57-4233-bd9d-80bed977dd15",
+      "name": "Sheet Sync Update WIP",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -9008,
+        560
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MFpjEhalqvHmf1ra",
+          "name": "Google Sheets account - truc.pham"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Config').item.json.wipTasksSheetTab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id || $('Switch Action').item.json.existing_task_id }}",
+            "status": "complete",
+            "last_updated": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "project_client",
+              "displayName": "project_client",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "task",
+              "displayName": "task",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "lead",
+              "displayName": "lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "latest_note",
+              "displayName": "latest_note",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "latest_note_at",
+              "displayName": "latest_note_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "next_step",
+              "displayName": "next_step",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "origin_source",
+              "displayName": "origin_source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "last_updated",
+              "displayName": "last_updated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "2fdfcdfc-acb5-4ed4-b4b5-24e4b8f9da5e",
+      "name": "Sheet Sync Complete WIP",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -9008,
+        992
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MFpjEhalqvHmf1ra",
+          "name": "Google Sheets account - truc.pham"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Switch Action').item.json;\nconst out = $json || {};\nconst err = out.error ? [out.error.message || JSON.stringify(out.error)] : [];\nconst id = out.id || source.existing_task_id || out.wip_task_id || null;\nreturn [{ json: { ...source, wip_task_id: id, action_applied: source.action, errors: [...(source.errors || []), ...err] } }];"
+      },
+      "id": "1b53ee74-cace-44fd-a8d2-f0a46dfc521c",
+      "name": "Normalize WIP Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8784,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "={{ $('Config').item.json.meetingsTable }}",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "calendar_event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Filter Daily WIP Meeting').item.json.calendar_event_id }}"
+            }
+          ]
+        }
+      },
+      "id": "1b77e49e-d629-4f81-8b87-9105159995e7",
+      "name": "Lookup Existing Meeting",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -8560,
+        688
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "={{ $('Config').item.json.meetingTasksTable }}",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "meeting_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "id": "80dd07bf-496b-41ce-a229-96b16ddb80ee",
+      "name": "Lookup Existing Meeting Tasks",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -8336,
+        688
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const action = $('Normalize WIP Result').item.json;\nconst meetingRows = $('Lookup Existing Meeting').all().map(i => i.json).filter(r => r && r.id);\nconst meeting = meetingRows[0] || null;\nconst existingTasks = items.map(i => i.json).filter(r => r && r.wip_task_id);\nconst targetDate = $('Resolve Date').item.json.targetDate;\nconst createdToday = meeting?.created_at ? String(meeting.created_at).slice(0, 10) === targetDate : false;\nreturn [{ json: { ...action, existing_meeting: meeting, meeting_exists: !!meeting, doubleRunWarning: !!meeting && createdToday && existingTasks.length > 0 } }];"
+      },
+      "id": "10ca67a7-43ec-410c-9075-76a0281ec8a0",
+      "name": "Check Double Run Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8112,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "meeting-exists",
+              "leftValue": "={{ $json.meeting_exists }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "252c6642-5b37-47be-9282-08a4a68c5179",
+      "name": "IF: meeting exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -7888,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "={{ $('Config').item.json.meetingsTable }}",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.existing_meeting.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $('Filter Daily WIP Meeting').item.json.title }}"
+            },
+            {
+              "fieldId": "transcript_url",
+              "fieldValue": "={{ $('Extract Candidate Attachments').item.json.transcript_url }}"
+            },
+            {
+              "fieldId": "transcript_attachment_id",
+              "fieldValue": "={{ $('Extract Candidate Attachments').item.json.transcript_attachment_id }}"
+            },
+            {
+              "fieldId": "project_client",
+              "fieldValue": "={{ $json.project_client || null }}"
+            }
+          ]
+        }
+      },
+      "id": "edbeef9f-4e65-4f7d-b001-8825030625d8",
+      "name": "Update Meeting Row",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -7664,
+        672
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "tableId": "={{ $('Config').item.json.meetingsTable }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "calendar_event_id",
+              "fieldValue": "={{ $('Filter Daily WIP Meeting').item.json.calendar_event_id }}"
+            },
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $('Filter Daily WIP Meeting').item.json.title }}"
+            },
+            {
+              "fieldId": "start_time",
+              "fieldValue": "={{ $('Filter Daily WIP Meeting').item.json.start_time }}"
+            },
+            {
+              "fieldId": "end_time",
+              "fieldValue": "={{ $('Filter Daily WIP Meeting').item.json.end_time }}"
+            },
+            {
+              "fieldId": "attendees",
+              "fieldValue": "={{ JSON.stringify($('Filter Daily WIP Meeting').item.json.attendees || []) }}"
+            },
+            {
+              "fieldId": "transcript_url",
+              "fieldValue": "={{ $('Extract Candidate Attachments').item.json.transcript_url }}"
+            },
+            {
+              "fieldId": "transcript_attachment_id",
+              "fieldValue": "={{ $('Extract Candidate Attachments').item.json.transcript_attachment_id }}"
+            },
+            {
+              "fieldId": "project_client",
+              "fieldValue": "={{ $json.project_client || null }}"
+            }
+          ]
+        }
+      },
+      "id": "f60e16a1-c5a0-4ec2-8425-2822f955c9a4",
+      "name": "Create Meeting Row",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -7664,
+        864
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const action = $('Check Double Run Guard').item.json;\nconst meeting = $json.id ? $json : (action.existing_meeting || {});\nreturn [{ json: { ...action, meeting_id: meeting.id || action.existing_meeting?.id || null } }];"
+      },
+      "id": "87b5ad4b-2ec0-49cb-a31d-df4e7aee9dd9",
+      "name": "Attach Meeting ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7440,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "={{ $('Config').item.json.meetingTasksTable }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "meeting_id",
+              "fieldValue": "={{ $json.meeting_id }}"
+            },
+            {
+              "fieldId": "wip_task_id",
+              "fieldValue": "={{ $json.wip_task_id }}"
+            }
+          ]
+        }
+      },
+      "id": "c66f6586-76d4-46c9-81e3-29ac87d65e4e",
+      "name": "Insert meeting_tasks junction",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -7216,
+        688
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Attach Meeting ID').item.json;\nconst shouldCascade = base.action_applied === 'complete' && !!base.wip_task_id;\nreturn [{ json: { ...base, shouldCascade, close_wip_task_id: shouldCascade ? base.wip_task_id : null } }];"
+      },
+      "id": "ab5d1fdb-cc7c-4a44-8040-99481497d05f",
+      "name": "Collect Completed for Cascade",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6992,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "should-cascade",
+              "leftValue": "={{ $json.shouldCascade }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "55988e24-ff2e-4748-9616-58657dc7191b",
+      "name": "IF: cascade tickets?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6768,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "={{ $('Config').item.json.ticketsTable }}",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "wip_task_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.close_wip_task_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "closed"
+            },
+            {
+              "fieldId": "last_updated",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "76b988f1-8f9c-4101-8bf0-5c1bd3345fe7",
+      "name": "Cascade Close Tickets",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -6544,
+        672
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const applied = $('Normalize WIP Result').all().map(i => i.json);\nlet cascades = [];\ntry { cascades = $('Cascade Close Tickets').all().map(i => i.json); } catch (e) { cascades = []; }\nconst counts = { tasks_created: 0, tasks_updated: 0, tasks_completed: 0, tickets_auto_closed: 0, errors: [], doubleRunWarning: false };\nfor (const a of applied) {\n  if (a.action_applied === 'create') counts.tasks_created += 1;\n  if (a.action_applied === 'update') counts.tasks_updated += 1;\n  if (a.action_applied === 'complete') counts.tasks_completed += 1;\n  if (a.doubleRunWarning) counts.doubleRunWarning = true;\n  if (Array.isArray(a.errors)) counts.errors.push(...a.errors);\n}\ncounts.tickets_auto_closed = cascades.filter(c => c && !c.error).length;\nfor (const c of cascades) if (c?.error) counts.errors.push(c.error.message || JSON.stringify(c.error));\nreturn [{ json: { ...$('Resolve Date').item.json, ...counts } }];"
+      },
+      "id": "c2ec1481-3d62-4f4c-899d-d7da64e97be6",
+      "name": "Aggregate Summary Counts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6320,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge System Config').item.json.summary_email_to }}",
+        "subject": "={{ '[Daily WIP Sync] ' + $json.targetDate + ' — C:' + $json.tasks_created + ' U:' + $json.tasks_updated + ' D:' + $json.tasks_completed }}",
+        "emailType": "text",
+        "message": "={{ 'Daily WIP Sync summary for ' + $json.targetDate + '\\n\\nCreated: ' + $json.tasks_created + '\\nUpdated: ' + $json.tasks_updated + '\\nCompleted: ' + $json.tasks_completed + '\\nTickets auto-closed: ' + $json.tickets_auto_closed + ($json.doubleRunWarning ? '\\n\\nWarning: meeting already had meeting_tasks populated for this date before this run.' : '') + (($json.errors || []).length ? '\\n\\nErrors:\\n- ' + $json.errors.join('\\n- ') : '\\n\\nErrors: none') }}",
+        "options": {
+          "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
+        }
+      },
+      "id": "70c634eb-c641-4abd-a3e9-5cd0dcd75fa6",
+      "name": "Gmail Send Summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -6096,
+        688
+      ],
+      "webhookId": "8379d25e-ccc5-4383-aade-27d4aea0d088",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bNXKWDG0BBmbCj5C",
+          "name": "Komosion Real - Gmail account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{   (($json.attachments || [])     .find(a =>        a.mimeType === 'application/vnd.google-apps.document' &&       (a.fileUrl || '').includes('docs.google.com/document/d/')     ) || {}).fileUrl || '' }}"
+      },
+      "id": "85ee15c4-c825-489d-a690-af62e254f83c",
+      "name": "Get Meeting Notes Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -12144,
+        848
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "FpYpbczO0qLPyfiH",
+          "name": "Truc - Komosion Google Docs account"
+        }
+      },
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Temp Webhook Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Temp Webhook Body": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Load System Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load System Config": {
+      "main": [
+        [
+          {
+            "node": "Merge System Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge System Config": {
+      "main": [
+        [
+          {
+            "node": "Resolve Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Date": {
+      "main": [
+        [
+          {
+            "node": "Get Calendar Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Calendar Events": {
+      "main": [
+        [
+          {
+            "node": "Filter Daily WIP Meeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Daily WIP Meeting": {
+      "main": [
+        [
+          {
+            "node": "IF: meeting found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: meeting found?": {
+      "main": [
+        [
+          {
+            "node": "Extract Candidate Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail Send No standup today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Candidate Attachments": {
+      "main": [
+        [
+          {
+            "node": "IF: has any candidate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: has any candidate?": {
+      "main": [
+        [
+          {
+            "node": "Get Meeting Notes Doc",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail Send No transcript on meeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Transcript": {
+      "main": [
+        [
+          {
+            "node": "Load Active Projects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Active Projects": {
+      "main": [
+        [
+          {
+            "node": "Build Project Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Project Index": {
+      "main": [
+        [
+          {
+            "node": "LLM: Classify & Extract Actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: Classify & Extract Actions": {
+      "main": [
+        [
+          {
+            "node": "Parse Classified Actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Classified Actions": {
+      "main": [
+        [
+          {
+            "node": "IF: has actions?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: has actions?": {
+      "main": [
+        [
+          {
+            "node": "Switch Action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail Send No actionable items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Action": {
+      "main": [
+        [
+          {
+            "node": "WIP Match Layer A (Lookup Candidates)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase Update WIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase Complete WIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WIP Match Layer A (Lookup Candidates)": {
+      "main": [
+        [
+          {
+            "node": "Build WIP Match Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build WIP Match Prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenAI WIP Matcher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI WIP Matcher": {
+      "main": [
+        [
+          {
+            "node": "Apply Match Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Match Decision": {
+      "main": [
+        [
+          {
+            "node": "IF: matcher chose update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: matcher chose update?": {
+      "main": [
+        [
+          {
+            "node": "Supabase Update WIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase Create WIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Create WIP": {
+      "main": [
+        [
+          {
+            "node": "Sheet Sync Create WIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Update WIP": {
+      "main": [
+        [
+          {
+            "node": "Sheet Sync Update WIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Complete WIP": {
+      "main": [
+        [
+          {
+            "node": "Sheet Sync Complete WIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Sync Create WIP": {
+      "main": [
+        [
+          {
+            "node": "Normalize WIP Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Sync Update WIP": {
+      "main": [
+        [
+          {
+            "node": "Normalize WIP Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Sync Complete WIP": {
+      "main": [
+        [
+          {
+            "node": "Normalize WIP Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize WIP Result": {
+      "main": [
+        [
+          {
+            "node": "Lookup Existing Meeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Existing Meeting": {
+      "main": [
+        [
+          {
+            "node": "Lookup Existing Meeting Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Existing Meeting Tasks": {
+      "main": [
+        [
+          {
+            "node": "Check Double Run Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Double Run Guard": {
+      "main": [
+        [
+          {
+            "node": "IF: meeting exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: meeting exists?": {
+      "main": [
+        [
+          {
+            "node": "Update Meeting Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Meeting Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Meeting Row": {
+      "main": [
+        [
+          {
+            "node": "Attach Meeting ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Meeting Row": {
+      "main": [
+        [
+          {
+            "node": "Attach Meeting ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Meeting ID": {
+      "main": [
+        [
+          {
+            "node": "Insert meeting_tasks junction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert meeting_tasks junction": {
+      "main": [
+        [
+          {
+            "node": "Collect Completed for Cascade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Completed for Cascade": {
+      "main": [
+        [
+          {
+            "node": "IF: cascade tickets?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: cascade tickets?": {
+      "main": [
+        [
+          {
+            "node": "Cascade Close Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aggregate Summary Counts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cascade Close Tickets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Summary Counts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Summary Counts": {
+      "main": [
+        [
+          {
+            "node": "Gmail Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Meeting Notes Doc": {
+      "main": [
+        [
+          {
+            "node": "Clean Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2bf1c214-9196-4666-8b2e-f2441e390c27",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d255ac8dbc9698cc025b4836557a5f10650e4466ca76edffa27a27761bc6d416"
+  },
+  "id": "bOvp7UWGSl8iW42e",
+  "tags": []
+}
