@@ -8,7 +8,7 @@ Automated helpdesk intake and WIP tracking for Komosion, built on n8n.
 
 ### Komosion Helpdesk Intake — Phase 1 - Ver2
 
-**File:** `Komosion_Helpdesk_Intake___Phase_1___Ver2.json`
+**File:** `Komosion Helpdesk Intake — Phase 1 - Ver2.json`
 
 Polls the `support@` Gmail inbox every 2 minutes, triages incoming emails, creates structured tickets, and links them to WIP tasks.
 
@@ -60,8 +60,8 @@ Daily standup transcript → structured WIP task updates in Supabase. Replaces t
 |---|---|
 | **A — Trigger** | Manual trigger (temporary for testing); webhook `POST /daily-wip-sync` is the target trigger |
 | **B — Transcript fetch** | Looks up today's calendar event matching `daily_meeting_title_pattern` (from `system_config`), picks the latest attached Google Doc transcript, exports to plain text, and cleans it (`cleanTranscriptContent` logic ported from AppScript) |
-| **C — LLM classify + extract** | Two-stage LLM call: (1) classify which active projects are mentioned; (2) per-project extract WIP actions (`{action, task, lead, status, note, next_step, existing_task_id}`). Model and tunables read from Supabase `system_config` |
-| **D — Persist** | Applies actions to Supabase `wip_tasks` with `continueOnFail`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); meetings upserted by `calendar_event_id`; `meeting_tasks` junction populated |
+| **C — LLM classify + extract** | Two-stage LLM call using explicit Chain/Model/Parser nodes: (1) classify which active projects are mentioned; (2) per-project extract WIP actions (`{action, task, lead, status, note, next_step, existing_task_id}`). Model and tunables read from Supabase `system_config` |
+| **D — Persist** | Applies actions to Supabase `wip_tasks` with `continueOnFail`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); meeting upsert runs in a dedicated pre-loop step (lookup→create/update→attach) before the per-action loop; `meeting_tasks` junction populated |
 | **Cascade close** | Completed WIP tasks trigger `tickets SET status='resolved'` for all linked tickets |
 | **Sheet sync** | `wip_tasks` Google Sheet tab updated on create/update/complete (same pattern as Phase 1) |
 | **Email summary** | Gmail sends success email with C/U/D counts, auto-closed tickets, errors list, and double-run warning; separate emails for no-meeting, no-transcript, and no-actionable-items cases |
@@ -140,6 +140,10 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-10
+- Helpdesk Intake: workflow activated (`active: true`); JSON filename updated to match workflow name (spaces + em-dash)
+- Daily WIP Sync Phase 3.2: LLM nodes refactored to explicit Chain/Model/Parser pattern; meeting upsert moved to dedicated pre-loop step (Lookup/Create/Update/Attach Meeting nodes); canvas repositioned; node IDs regenerated on export
 
 ### 2026-05-31 (2)
 - Added Komosion Daily WIP Sync Phase 3.2 workflow (in progress / testing) — calendar → transcript → LLM classify+extract → Supabase wip_tasks persist, cascade ticket close, sheet sync, summary email
