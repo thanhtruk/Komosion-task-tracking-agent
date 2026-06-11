@@ -52,20 +52,20 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 Daily standup transcript → structured WIP task updates in Supabase. Replaces the legacy Google Apps Script (`main.js`) with an n8n workflow backed by Supabase instead of Google Sheets.
 
-> **Status:** active development — manual trigger used temporarily; calendar/webhook trigger will be restored in Phase 3.4. Monthly rollover (1st-of-month) is out of scope here and will be a separate Phase 3.3 workflow.
+> **Status:** active development — Schedule Trigger fires at 09:00 and 17:00 Asia/Ho_Chi_Minh. Workflow is inactive (`active: false`) until fully tested. Monthly rollover is out of scope and deferred to Phase 3.3.
 
 #### What it does
 
 | Stage | Description |
 |---|---|
-| **A — Trigger** | Manual trigger (temporary for testing); webhook `POST /daily-wip-sync` is the target trigger |
-| **B — Transcript fetch** | Looks up today's calendar event matching `daily_meeting_title_pattern` (from `system_config`), picks the latest attached Google Doc transcript, exports to plain text, and cleans it (`cleanTranscriptContent` logic ported from AppScript) |
+| **A — Trigger** | Schedule Trigger fires at 09:00 and 17:00 Asia/Ho_Chi_Minh (cron: `0 9 * * *`, `0 17 * * *`) |
+| **B — Transcript fetch** | Looks up today's calendar events matching `daily_meeting_title_pattern` (from `system_config`); supports multiple matched meetings. Picks the attached Google Doc transcript for each, exports to plain text, and cleans it (`cleanTranscriptContent` logic ported from AppScript) |
 | **C — LLM classify + extract** | Two-stage LLM call using explicit Chain/Model/Parser nodes: (1) classify which active projects are mentioned; (2) per-project extract WIP actions (`{action, task, lead, status, note, next_step, existing_task_id}`). Model and tunables read from Supabase `system_config` |
-| **D — Persist** | Applies actions to Supabase `wip_tasks` with `continueOnFail`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); meeting upsert runs in a dedicated pre-loop step (lookup→create/update→attach) before the per-action loop; `meeting_tasks` junction populated |
+| **D — Persist (per meeting)** | `Loop Per Meeting` (SplitInBatches) iterates over each matched meeting. Inside: applies actions to Supabase `wip_tasks`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); pre-loop meeting upsert (lookup→create/update→attach) runs before actions; `meeting_tasks` junction populated |
 | **Cascade close** | Completed WIP tasks trigger `tickets SET status='resolved'` for all linked tickets |
 | **Sheet sync** | `wip_tasks` Google Sheet tab updated on create/update/complete (same pattern as Phase 1) |
-| **Email summary** | Gmail sends success email with C/U/D counts, auto-closed tickets, errors list, and double-run warning; separate emails for no-meeting, no-transcript, and no-actionable-items cases |
-| **Double-run guard** | Checks `meetings` + `meeting_tasks` tables; flags `doubleRunWarning` in summary if today's meeting was already processed |
+| **Email summary** | Gmail sends per-meeting summary with meeting title, C/U/D counts, auto-closed tickets, errors list, and double-run warning; separate emails for no-meeting, no-transcript, and no-actionable-items cases |
+| **Double-run guard** | Checks `meetings` + `meeting_tasks` tables per meeting; flags `doubleRunWarning` in summary if a meeting was already processed today; `IF: already processed?` gate inside loop skips re-processing |
 
 #### System config keys (from Supabase `system_config`)
 
@@ -78,12 +78,7 @@ Daily standup transcript → structured WIP task updates in Supabase. Replaces t
 
 #### Parity with AppScript
 
-See `parity_report_3_2.md` for a full comparison. Key intentional drifts: storage is Supabase not Sheets; `merges` action dropped (was dead code); sort/highlight (UI concern) dropped; monthly rollover deferred to Phase 3.3.
-
-#### Analysis docs (committed alongside workflow)
-
-- `main_js_analysis.md` — function-level inventory of the source `main.js` AppScript used as the port reference
-- `parity_report_3_2.md` — behavioral parity report (n8n Phase 3.2 vs AppScript)
+Key intentional drifts from the original AppScript: storage is Supabase not Sheets; `merges` action dropped (was dead code); sort/highlight (UI concern) dropped; monthly rollover deferred to Phase 3.3. Analysis docs (`main_js_analysis.md`, `parity_report_3_2.md`) are in `infor/` (not committed to repo).
 
 ---
 
@@ -140,6 +135,9 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-11
+- Daily WIP Sync Phase 3.2: replaced Manual Trigger + Temp Webhook Body with Schedule Trigger (09:00 & 17:00 Asia/Ho_Chi_Minh); added multi-meeting loop (`Loop Per Meeting` SplitInBatches) with `Rejoin Meetings By Event`, `Merge Pre-Loop Branches`, and `IF: already processed?` guard; all code nodes updated to `.first()`/`.itemMatching()` for multi-item safety; email subjects now include meeting title; `Lookup Existing Meeting` switched from `eq` to `in` to support multiple calendar event IDs
 
 ### 2026-06-10
 - Helpdesk Intake: workflow activated (`active: true`); JSON filename updated to match workflow name (spaces + em-dash)
