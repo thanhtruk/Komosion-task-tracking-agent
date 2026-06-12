@@ -1423,7 +1423,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const source = $('Switch Action').itemMatching(0).json;\nconst out = $json || {};\nconst err = out.error ? [out.error.message || JSON.stringify(out.error)] : [];\nconst id = out.id || source.existing_task_id || out.wip_task_id || null;\nreturn [{ json: { ...source, wip_task_id: id, action_applied: source.action, errors: [...(source.errors || []), ...err] } }];"
+        "jsCode": "const source = $input.item.json;\nconst out = $json || {};\nconst err = out.error ? [out.error.message || JSON.stringify(out.error)] : [];\nconst id = out.id || source.existing_task_id || out.wip_task_id || null;\nreturn [{ json: { ...source, wip_task_id: id, action_applied: source.action, errors: [...(source.errors || []), ...err] } }];"
       },
       "id": "3bb773a3-0a7e-4d28-8aef-d898fb5fa7ea",
       "name": "Normalize WIP Result",
@@ -1880,7 +1880,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const applied = $('Normalize WIP Result').all().map(i => i.json);\nlet cascades = [];\ntry { cascades = $('Cascade Close Tickets').all().map(i => i.json); } catch (e) { cascades = []; }\nconst counts = { tasks_created: 0, tasks_updated: 0, tasks_completed: 0, tickets_auto_closed: 0, errors: [], doubleRunWarning: false };\nfor (const a of applied) {\n  if (a.action_applied === 'create') counts.tasks_created += 1;\n  if (a.action_applied === 'update') counts.tasks_updated += 1;\n  if (a.action_applied === 'complete') counts.tasks_completed += 1;\n  if (a.doubleRunWarning) counts.doubleRunWarning = true;\n  if (Array.isArray(a.errors)) counts.errors.push(...a.errors);\n}\ncounts.tickets_auto_closed = cascades.filter(c => c && !c.error).length;\nfor (const c of cascades) if (c && c.error) counts.errors.push(c.error.message || JSON.stringify(c.error));\nconst meeting = $('Loop Per Meeting').first().json;  // current iteration meeting context\nreturn [{ json: { ...$('Resolve Date').first().json, ...counts, meeting_title: meeting.title || 'Meeting', meeting_id: meeting.meeting_id } }];"
+        "jsCode": "const applied = $('Normalize WIP Result').all().map(i => i.json);\nlet cascades = [];\ntry { cascades = $('Cascade Close Tickets').all().map(i => i.json); } catch (e) { cascades = []; }\nconst counts = { tasks_created: 0, tasks_updated: 0, tasks_completed: 0, tickets_auto_closed: 0, errors: [], doubleRunWarning: false, created: [], updated: [], completed: [] };\nconst truncate = (value, max = 140) => {\n  const text = String(value || '').replace(/\\s+/g, ' ').trim();\n  return text.length > max ? text.slice(0, max - 1) + '…' : text;\n};\nconst itemize = (a) => {\n  const entry = {\n    title: String(a.task || a.title || a.name || 'Untitled task'),\n    status: String(a.status || a.action_applied || ''),\n    note: truncate(a.latest_note || a.note || a.description || '')\n  };\n  const project = a.project_client || a.project;\n  if (project) entry.project = String(project);\n  return entry;\n};\nfor (const a of applied) {\n  if (a.action_applied === 'create') { counts.tasks_created += 1; counts.created.push(itemize(a)); }\n  if (a.action_applied === 'update') { counts.tasks_updated += 1; counts.updated.push(itemize(a)); }\n  if (a.action_applied === 'complete') { counts.tasks_completed += 1; counts.completed.push(itemize(a)); }\n  if (a.doubleRunWarning) counts.doubleRunWarning = true;\n  if (Array.isArray(a.errors)) counts.errors.push(...a.errors);\n}\ncounts.tickets_auto_closed = cascades.filter(c => c && !c.error).length;\nfor (const c of cascades) if (c && c.error) counts.errors.push(c.error.message || JSON.stringify(c.error));\nconst meeting = $('Loop Per Meeting').first().json;  // current iteration meeting context\nreturn [{ json: { ...$('Resolve Date').first().json, ...counts, meeting_title: meeting.title || 'Meeting', meeting_id: meeting.meeting_id } }];"
       },
       "id": "2256c1db-08e2-45a0-8c84-f2e6cd8e68fd",
       "name": "Aggregate Summary Counts",
@@ -1896,7 +1896,7 @@
         "sendTo": "={{ $('Merge System Config').item.json.summary_email_to }}",
         "subject": "={{ '[Daily WIP Sync] ' + $json.targetDate + ' — ' + ($json.meeting_title || 'Meeting') + ' — C:' + $json.tasks_created + ' U:' + $json.tasks_updated + ' D:' + $json.tasks_completed }}",
         "emailType": "text",
-        "message": "={{ 'Daily WIP Sync summary for ' + $json.targetDate + '\\n\\nMeeting: ' + ($json.meeting_title || 'Meeting') + '\\nCreated: ' + $json.tasks_created + '\\nUpdated: ' + $json.tasks_updated + '\\nCompleted: ' + $json.tasks_completed + '\\nTickets auto-closed: ' + $json.tickets_auto_closed + ($json.doubleRunWarning ? '\\n\\nWarning: meeting already had meeting_tasks populated for this date before this run.' : '') + (($json.errors || []).length ? '\\n\\nErrors:\\n- ' + $json.errors.join('\\n- ') : '\\n\\nErrors: none') }}",
+        "message": "={{ (() => { const render = (label, entries) => label + ' (' + entries.length + '):\\n' + (entries.length ? entries.map(e => '  — ' + e.title + ' → ' + (e.status || '') + (e.project ? ' {' + e.project + '}' : '') + (e.note ? ' [' + e.note + ']' : '')).join('\\n') : '  — none'); return 'Daily WIP Sync summary for ' + $json.targetDate + '\\n\\nMeeting: ' + ($json.meeting_title || 'Meeting') + '\\n\\n' + render('Created', $json.created || []) + '\\n\\n' + render('Updated', $json.updated || []) + '\\n\\n' + render('Completed', $json.completed || []) + '\\n\\nTickets auto-closed: ' + $json.tickets_auto_closed + ($json.doubleRunWarning ? '\\n\\nWarning: meeting already had meeting_tasks populated for this date before this run.' : '') + (($json.errors || []).length ? '\\n\\nErrors:\\n- ' + $json.errors.join('\\n- ') : '\\n\\nErrors: none'); })() }}",
         "options": {
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
@@ -1975,6 +1975,34 @@
       ],
       "id": "3a8d30ce-fbf8-4c74-ab60-c53f4e06acfa",
       "name": "Loop Per Meeting"
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -28480,
+        10944
+      ],
+      "id": "c86f0b27-5018-4d03-9cf5-918aa1d8976f",
+      "name": "Merge Action Branches"
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -27136,
+        10640
+      ],
+      "id": "7cfbe1ce-6b58-49f7-99b0-d720ac8d46ce",
+      "name": "Merge Before Summary"
     },
     {
       "parameters": {},
@@ -2428,7 +2456,7 @@
       "main": [
         [
           {
-            "node": "Normalize WIP Result",
+            "node": "Merge Action Branches",
             "type": "main",
             "index": 0
           }
@@ -2439,14 +2467,25 @@
       "main": [
         [
           {
-            "node": "Normalize WIP Result",
+            "node": "Merge Action Branches",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
     },
     "Sheet Sync Complete WIP": {
+      "main": [
+        [
+          {
+            "node": "Merge Action Branches",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge Action Branches": {
       "main": [
         [
           {
@@ -2545,14 +2584,25 @@
         ],
         [
           {
-            "node": "Aggregate Summary Counts",
+            "node": "Merge Before Summary",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Cascade Close Tickets": {
+      "main": [
+        [
+          {
+            "node": "Merge Before Summary",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Cascade Close Tickets": {
+    "Merge Before Summary": {
       "main": [
         [
           {

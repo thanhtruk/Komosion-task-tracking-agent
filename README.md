@@ -136,6 +136,9 @@ Configure these credential types in your n8n instance (no secrets stored in this
 
 ## Changelog
 
+### 2026-06-12
+- Daily WIP Sync Phase 3.2: email summary now lists itemized created/updated/completed tasks (title → status, project tag, truncated note) instead of just C/U/D counts; `Aggregate Summary Counts` extended to emit `created`/`updated`/`completed` arrays; added `Merge Action Branches` (3-input append) before `Normalize WIP Result` and `Merge Before Summary` (2-input append) before `Aggregate Summary Counts` so all action branches and cascade-close converge cleanly; `Normalize WIP Result` switched from `$('Switch Action').itemMatching(0)` to `$input.item.json` to work correctly downstream of the merge
+
 ### 2026-06-11
 - Daily WIP Sync Phase 3.2: replaced Manual Trigger + Temp Webhook Body with Schedule Trigger (09:00 & 17:00 Asia/Ho_Chi_Minh); added multi-meeting loop (`Loop Per Meeting` SplitInBatches) with `Rejoin Meetings By Event`, `Merge Pre-Loop Branches`, and `IF: already processed?` guard; all code nodes updated to `.first()`/`.itemMatching()` for multi-item safety; email subjects now include meeting title; `Lookup Existing Meeting` switched from `eq` to `in` to support multiple calendar event IDs
 
