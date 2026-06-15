@@ -8,7 +8,7 @@ Automated helpdesk intake and WIP tracking for Komosion, built on n8n.
 
 ### Komosion Helpdesk Intake — Phase 1 - Ver2
 
-**File:** `Komosion Helpdesk Intake — Phase 1 - Ver2.json`
+**File:** `Komosion_Helpdesk_Intake___Phase_1___Ver2.json`
 
 Polls the `support@` Gmail inbox every 2 minutes, triages incoming emails, creates structured tickets, and links them to WIP tasks.
 
@@ -52,18 +52,17 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 Daily standup transcript → structured WIP task updates in Supabase. Replaces the legacy Google Apps Script (`main.js`) with an n8n workflow backed by Supabase instead of Google Sheets.
 
-> **Status:** active — Schedule Trigger fires at 09:00 and 17:00 Asia/Ho_Chi_Minh. Monthly rollover is out of scope and deferred to Phase 3.3.
+> **Status:** active — Schedule Trigger fires at 10:00 and 17:00 Asia/Ho_Chi_Minh. Monthly rollover is out of scope and deferred to Phase 3.3.
 
 #### What it does
 
 | Stage | Description |
 |---|---|
-| **A — Trigger** | Schedule Trigger fires at 09:00 and 17:00 Asia/Ho_Chi_Minh (cron: `0 9 * * *`, `0 17 * * *`) |
+| **A — Trigger** | Schedule Trigger fires at 10:00 and 17:00 Asia/Ho_Chi_Minh (cron: `0 10 * * *`, `0 17 * * *`) |
 | **B — Transcript fetch** | Looks up today's calendar events matching `daily_meeting_title_pattern` (from `system_config`); supports multiple matched meetings. Picks the attached Google Doc transcript for each, exports to plain text, and cleans it (`cleanTranscriptContent` logic ported from AppScript) |
 | **C — LLM classify + extract** | Two-stage LLM call using explicit Chain/Model/Parser nodes: (1) classify which active projects are mentioned; (2) per-project extract WIP actions (`{action, task, lead, status, note, next_step, existing_task_id}`). Model and tunables read from Supabase `system_config` |
 | **D — Persist (per meeting)** | `Loop Per Meeting` (SplitInBatches) iterates over each matched meeting. Inside: applies actions to Supabase `wip_tasks`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); pre-loop meeting upsert (lookup→create/update→attach) runs before actions; `meeting_tasks` junction populated |
 | **Cascade close** | Completed WIP tasks trigger `tickets SET status='resolved'` for all linked tickets |
-| **Sheet sync** | `wip_tasks` Google Sheet tab updated on create/update/complete (same pattern as Phase 1) |
 | **Email summary** | Gmail sends per-meeting summary with meeting title, C/U/D counts, auto-closed tickets, errors list, and double-run warning; separate emails for no-meeting, no-transcript, and no-actionable-items cases |
 | **Double-run guard** | Checks `meetings` + `meeting_tasks` tables per meeting; flags `doubleRunWarning` in summary if a meeting was already processed today; `IF: already processed?` gate inside loop skips re-processing |
 
@@ -135,6 +134,13 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-15 (2)
+- Daily WIP Sync Phase 3.2: **Sheet Sync nodes removed** — `Sheet Sync Create/Update/Complete WIP` nodes dropped; Supabase ops now connect directly to `Tag Result` nodes (Google Sheet WIP tab sync removed from this workflow)
+- **Schedule Trigger morning run moved to 10:00** Asia/Ho_Chi_Minh (was 09:00; cron: `0 9 * * *` → `0 10 * * *`)
+- **`Group Candidates Per Proposal` logic rewritten** — now loads all active tasks from `Load Active Projects` and filters by `project_client` instead of `pairedItem` index matching, making duplicate-detection more robust
+- Test pin data cleared from Schedule Trigger
+- Helpdesk Intake: file renamed to `Komosion_Helpdesk_Intake___Phase_1___Ver2.json` (em dash + spaces → underscores, consistent with WIP Sync filename convention); content unchanged
 
 ### 2026-06-15
 - Daily WIP Sync Phase 3.2: **multi-item fix** — added `Group Candidates Per Proposal` node between WIP Match Layer A and Build WIP Match Prompt to correctly correlate candidates per proposal; refactored `Build WIP Match Prompt` and `Apply Match Decision` from `itemMatching(0)` to `items.map()` + `pairedItem` pattern
