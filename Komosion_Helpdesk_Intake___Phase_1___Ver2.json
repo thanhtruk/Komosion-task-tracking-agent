@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## Sheet Sync\nwip_tasks Sheet tab mirrors Supabase wip_tasks for AppSheet. Updated on create, note append, and status change.",
+        "content": "## Sheet Sync (Removed)\nwip_tasks Sheet sync has been removed. WIP data now lives exclusively in Supabase wip_tasks. Spam/filtered emails continue to log to Google Sheets (filtered_emails tab).",
         "height": 150,
         "width": 360,
         "color": 4
@@ -32,796 +32,6 @@
         -6384,
         5408
       ]
-    },
-    {
-      "parameters": {
-        "operation": "appendOrUpdate",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.wipTasksSheetTab }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $('Set Backfill WIP Task ID').item.json.wip_task_id }}",
-            "project_client": "={{ (() => { const raw = $('Generate WIP Fields from Thread').item.json.output ?? $('Generate WIP Fields from Thread').item.json; const o = typeof raw === 'string' ? JSON.parse(raw) : (raw ?? {}); return o.project_client || 'Internal'; })() }}",
-            "task": "={{ (() => { const raw = $('Generate WIP Fields from Thread').item.json.output ?? $('Generate WIP Fields from Thread').item.json; const o = typeof raw === 'string' ? JSON.parse(raw) : (raw ?? {}); return (o.task || 'Review helpdesk ticket').slice(0, 80); })() }}",
-            "lead": "={{ $('Create WIP from Thread').item.json.lead || '' }}",
-            "status": "to_do",
-            "latest_note": "={{ $('Create WIP from Thread').item.json.latest_note || '' }}",
-            "latest_note_at": "={{ new Date().toISOString() }}",
-            "next_step": "={{ (() => { const raw = $('Generate WIP Fields from Thread').item.json.output ?? $('Generate WIP Fields from Thread').item.json; const o = typeof raw === 'string' ? JSON.parse(raw) : (raw ?? {}); return (o.next_step || '').slice(0, 100); })() }}",
-            "origin_source": "ticket_backfill",
-            "ticket_id": "={{ $('Fetch Original Ticket').item.json.ticket_id }}",
-            "created_at": "={{ new Date().toISOString() }}",
-            "last_updated": "={{ new Date().toISOString() }}"
-          },
-          "matchingColumns": [
-            "id"
-          ],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "project_client",
-              "displayName": "project_client",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "task",
-              "displayName": "task",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "lead",
-              "displayName": "lead",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note",
-              "displayName": "latest_note",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note_at",
-              "displayName": "latest_note_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "next_step",
-              "displayName": "next_step",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "origin_source",
-              "displayName": "origin_source",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "ticket_id",
-              "displayName": "ticket_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "last_updated",
-              "displayName": "last_updated",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "RAW"
-        }
-      },
-      "id": "85d02c08-3016-4d2e-9caf-f2bc0d5c314e",
-      "name": "Log Backfill WIP to Sheet",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -6848,
-        5696
-      ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "operation": "appendOrUpdate",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.ticketsSheetTab }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "thread_id": "={{ $('Build Normalized Fields').item.json.thread_id }}",
-            "status": "={{ $('Build Status Change Note').item.json.status }}",
-            "latest_note": "={{ $('Build Status Change Note').item.json.latest_note }}",
-            "latest_note_at": "={{ new Date().toISOString() }}",
-            "last_updated": "={{ new Date().toISOString() }}"
-          },
-          "matchingColumns": [
-            "thread_id"
-          ],
-          "schema": [
-            {
-              "id": "ticket_id",
-              "displayName": "ticket_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "email_id",
-              "displayName": "email_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "thread_id",
-              "displayName": "thread_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "date_received",
-              "displayName": "date_received",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "sender",
-              "displayName": "sender",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "sender_name",
-              "displayName": "sender_name",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "subject",
-              "displayName": "subject",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "body_excerpt",
-              "displayName": "body_excerpt",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "email_link",
-              "displayName": "email_link",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "has_attachment",
-              "displayName": "has_attachment",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "boolean"
-            },
-            {
-              "id": "summary",
-              "displayName": "summary",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "category",
-              "displayName": "category",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "priority",
-              "displayName": "priority",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "assigned_team",
-              "displayName": "assigned_team",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "next_action",
-              "displayName": "next_action",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "ai_confidence",
-              "displayName": "ai_confidence",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "is_repeat",
-              "displayName": "is_repeat",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "boolean"
-            },
-            {
-              "id": "similar_ticket_ids",
-              "displayName": "similar_ticket_ids",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "assigned_to",
-              "displayName": "assigned_to",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "first_response_at",
-              "displayName": "first_response_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "resolved_at",
-              "displayName": "resolved_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "response_time_hours",
-              "displayName": "response_time_hours",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "resolution_time_hours",
-              "displayName": "resolution_time_hours",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "internal_notes",
-              "displayName": "internal_notes",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "last_updated",
-              "displayName": "last_updated",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note",
-              "displayName": "latest_note",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note_at",
-              "displayName": "latest_note_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "RAW"
-        }
-      },
-      "id": "f89305e9-cdcc-4d9d-9041-82bd8cd68a26",
-      "name": "Update Ticket Sheet Status",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -6848,
-        5392
-      ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "operation": "appendOrUpdate",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.wipTasksSheetTab }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $('Fetch Linked WIP').item.json.id }}",
-            "status": "={{ $('Build Status Change Note').item.json.status }}",
-            "latest_note": "={{ $('Build Status Change Note').item.json.latest_note || '' }}",
-            "latest_note_at": "={{ $('Build Status Change Note').item.json.latest_note_at || '' }}",
-            "last_updated": "={{ new Date().toISOString() }}"
-          },
-          "matchingColumns": [
-            "id"
-          ],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "project_client",
-              "displayName": "project_client",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "task",
-              "displayName": "task",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "lead",
-              "displayName": "lead",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note",
-              "displayName": "latest_note",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note_at",
-              "displayName": "latest_note_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "next_step",
-              "displayName": "next_step",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "origin_source",
-              "displayName": "origin_source",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "ticket_id",
-              "displayName": "ticket_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "last_updated",
-              "displayName": "last_updated",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "RAW"
-        }
-      },
-      "id": "c94b21e8-c9a4-4cce-89cb-702aa657f0b9",
-      "name": "Update WIP Sheet (Status)",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -7360,
-        5392
-      ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "operation": "appendOrUpdate",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.wipTasksSheetTab }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $('Set WIP Task ID').item.json.wip_task_id }}",
-            "project_client": "={{ $('Build Ticket Row').item.json.project_client || (() => { const raw = $('Generate WIP Fields').item.json.output ?? $('Generate WIP Fields').item.json; const o = typeof raw === 'string' ? JSON.parse(raw) : (raw ?? {}); return o.project_client || 'Internal'; })() }}",
-            "task": "={{ (() => { const raw = $('Generate WIP Fields').item.json.output ?? $('Generate WIP Fields').item.json; const o = typeof raw === 'string' ? JSON.parse(raw) : (raw ?? {}); return (o.task || 'Review helpdesk ticket').slice(0, 80); })() }}",
-            "lead": "={{ $('Create WIP Task').item.json.lead || '' }}",
-            "status": "to_do",
-            "latest_note": "={{ $('Create WIP Task').item.json.latest_note || '' }}",
-            "latest_note_at": "={{ new Date().toISOString() }}",
-            "next_step": "={{ (() => { const raw = $('Generate WIP Fields').item.json.output ?? $('Generate WIP Fields').item.json; const o = typeof raw === 'string' ? JSON.parse(raw) : (raw ?? {}); return (o.next_step || '').slice(0, 100); })() }}",
-            "origin_source": "ticket",
-            "ticket_id": "={{ $('Build Ticket Row').item.json.ticket_id }}",
-            "created_at": "={{ new Date().toISOString() }}",
-            "last_updated": "={{ new Date().toISOString() }}"
-          },
-          "matchingColumns": [
-            "id"
-          ],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "project_client",
-              "displayName": "project_client",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "task",
-              "displayName": "task",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "lead",
-              "displayName": "lead",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note",
-              "displayName": "latest_note",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note_at",
-              "displayName": "latest_note_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "next_step",
-              "displayName": "next_step",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "origin_source",
-              "displayName": "origin_source",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "ticket_id",
-              "displayName": "ticket_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "last_updated",
-              "displayName": "last_updated",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "RAW"
-        }
-      },
-      "id": "6cb8e6d0-bf34-433e-afcf-08646b10f02a",
-      "name": "Log WIP to Sheet",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -6560,
-        5888
-      ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
-        }
-      },
-      "continueOnFail": true
     },
     {
       "parameters": {
@@ -874,7 +84,7 @@
           "fieldValues": [
             {
               "fieldId": "ticket_id",
-              "fieldValue": "={{ $('Append to Existing Notes').item.json.ticket_id || $('Lookup Existing Thread').first().json.ticket_id }}"
+              "fieldValue": "={{ $('Lookup Existing Thread').first().json.ticket_id }}"
             },
             {
               "fieldId": "wip_task_id",
@@ -1194,6 +404,22 @@
             {
               "fieldId": "status",
               "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "internal_notes",
+              "fieldValue": "={{ (($('Lookup Existing Thread').first().json.internal_notes || '') + '\\n\\n[' + $('Build Normalized Fields').item.json.date_received + ' from ' + $('Build Normalized Fields').item.json.sender + ']\\n' + $('Build Normalized Fields').item.json.body_excerpt).trim() }}"
+            },
+            {
+              "fieldId": "latest_note",
+              "fieldValue": "={{ $('Build Status Change Note').item.json.latest_note }}"
+            },
+            {
+              "fieldId": "latest_note_at",
+              "fieldValue": "={{ $('Build Status Change Note').item.json.latest_note_at }}"
+            },
+            {
+              "fieldId": "last_updated",
+              "fieldValue": "={{ $('Build Status Change Note').item.json.last_updated }}"
             }
           ]
         }
@@ -2850,37 +2076,37 @@
             {
               "id": "assign-date_received",
               "name": "date_received",
-              "value": "",
+              "value": "={{ $json.execution?.error?.timestamp ? new Date($json.execution.error.timestamp).toISOString() : new Date().toISOString() }}",
               "type": "string"
             },
             {
               "id": "assign-sender",
               "name": "sender",
-              "value": "",
+              "value": "workflow-error@internal",
               "type": "string"
             },
             {
               "id": "assign-sender_name",
               "name": "sender_name",
-              "value": "",
+              "value": "Workflow Error Handler",
               "type": "string"
             },
             {
               "id": "assign-subject",
               "name": "subject",
-              "value": "",
+              "value": "={{ '[ERROR] ' + ($json.execution?.error?.node?.name || 'Unknown node') + ' — ' + ($json.execution?.error?.message || 'Unknown error').slice(0, 100) }}",
               "type": "string"
             },
             {
               "id": "assign-body_excerpt",
               "name": "body_excerpt",
-              "value": "",
+              "value": "={{ 'Node: ' + ($json.execution?.error?.node?.name || '') + '\\nType: ' + ($json.execution?.error?.name || '') + '\\nMessage: ' + ($json.execution?.error?.message || '') }}",
               "type": "string"
             },
             {
               "id": "assign-email_link",
               "name": "email_link",
-              "value": "",
+              "value": "={{ $json.execution?.url || '' }}",
               "type": "string"
             },
             {
@@ -2892,7 +2118,7 @@
             {
               "id": "assign-summary",
               "name": "summary",
-              "value": "[AI classification failed — manual review needed]",
+              "value": "={{ '[WORKFLOW ERROR] ' + ($json.execution?.error?.node?.name || '') + ': ' + ($json.execution?.error?.message || 'Unhandled error — manual review needed').slice(0, 180) }}",
               "type": "string"
             },
             {
@@ -2904,7 +2130,7 @@
             {
               "id": "assign-priority",
               "name": "priority",
-              "value": "={{ $('Config1').item.json.aiFallbackPriority }}",
+              "value": "high",
               "type": "string"
             },
             {
@@ -2916,7 +2142,7 @@
             {
               "id": "assign-next_action",
               "name": "next_action",
-              "value": "",
+              "value": "Review workflow execution log and fix the failing node",
               "type": "string"
             },
             {
@@ -2946,7 +2172,7 @@
             {
               "id": "assign-status",
               "name": "status",
-              "value": "",
+              "value": "new",
               "type": "string"
             },
             {
@@ -2964,19 +2190,19 @@
             {
               "id": "assign-response_time_hours",
               "name": "response_time_hours",
-              "value": "",
-              "type": "string"
+              "value": 0,
+              "type": "number"
             },
             {
               "id": "assign-resolution_time_hours",
               "name": "resolution_time_hours",
-              "value": "",
-              "type": "string"
+              "value": 0,
+              "type": "number"
             },
             {
               "id": "assign-internal_notes",
               "name": "internal_notes",
-              "value": "",
+              "value": "={{ 'Execution ID: ' + ($json.execution?.id || 'N/A') + '\\nFailed node: ' + ($json.execution?.error?.node?.name || 'N/A') + '\\nError type: ' + ($json.execution?.error?.name || 'N/A') + '\\nMessage: ' + ($json.execution?.error?.message || 'N/A') + '\\nLast executed: ' + ($json.execution?.lastNodeExecuted || 'N/A') }}",
               "type": "string"
             },
             {
@@ -3245,331 +2471,6 @@
         }
       },
       "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.ticketsSheetTab }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "ticket_id": "={{ $json.ticket_id }}",
-            "email_id": "={{ $json.email_id }}",
-            "thread_id": "={{ $json.thread_id }}",
-            "date_received": "={{ $json.date_received }}",
-            "sender": "={{ $json.sender }}",
-            "sender_name": "={{ $json.sender_name }}",
-            "subject": "={{ $json.subject }}",
-            "body_excerpt": "={{ $json.body_excerpt }}",
-            "email_link": "={{ $json.email_link }}",
-            "has_attachment": "={{ $json.has_attachment }}",
-            "summary": "={{ $json.summary }}",
-            "category": "={{ $json.category }}",
-            "priority": "={{ $json.priority }}",
-            "assigned_team": "={{ $json.assigned_team }}",
-            "next_action": "={{ $json.next_action }}",
-            "ai_confidence": "={{ $json.ai_confidence }}",
-            "is_repeat": "={{ $json.is_repeat }}",
-            "similar_ticket_ids": "={{ $json.similar_ticket_ids }}",
-            "assigned_to": "={{ $json.assigned_to }}",
-            "status": "={{ $json.status }}",
-            "first_response_at": "={{ $json.first_response_at }}",
-            "resolved_at": "={{ $json.resolved_at }}",
-            "response_time_hours": "={{ $json.response_time_hours }}",
-            "resolution_time_hours": "={{ $json.resolution_time_hours }}",
-            "internal_notes": "={{ $json.internal_notes }}",
-            "last_updated": "={{ $json.last_updated }}",
-            "latest_note": "={{ $json.latest_note }}",
-            "latest_note_at": "={{ $json.latest_note_at }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "ticket_id",
-              "displayName": "ticket_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "email_id",
-              "displayName": "email_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "thread_id",
-              "displayName": "thread_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "date_received",
-              "displayName": "date_received",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "sender",
-              "displayName": "sender",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "sender_name",
-              "displayName": "sender_name",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "subject",
-              "displayName": "subject",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "body_excerpt",
-              "displayName": "body_excerpt",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "email_link",
-              "displayName": "email_link",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "has_attachment",
-              "displayName": "has_attachment",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "boolean"
-            },
-            {
-              "id": "summary",
-              "displayName": "summary",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "category",
-              "displayName": "category",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "priority",
-              "displayName": "priority",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "assigned_team",
-              "displayName": "assigned_team",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "next_action",
-              "displayName": "next_action",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "ai_confidence",
-              "displayName": "ai_confidence",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "is_repeat",
-              "displayName": "is_repeat",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "boolean"
-            },
-            {
-              "id": "similar_ticket_ids",
-              "displayName": "similar_ticket_ids",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "assigned_to",
-              "displayName": "assigned_to",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "first_response_at",
-              "displayName": "first_response_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "resolved_at",
-              "displayName": "resolved_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "response_time_hours",
-              "displayName": "response_time_hours",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "resolution_time_hours",
-              "displayName": "resolution_time_hours",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "internal_notes",
-              "displayName": "internal_notes",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "last_updated",
-              "displayName": "last_updated",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note",
-              "displayName": "latest_note",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note_at",
-              "displayName": "latest_note_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "RAW"
-        }
-      },
-      "id": "123cf3b6-0468-429f-a921-54a0e105eef1",
-      "name": "Log to Sheet",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -6848,
-        5888
-      ],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
-        }
-      }
     },
     {
       "parameters": {
@@ -3943,311 +2844,6 @@
     },
     {
       "parameters": {
-        "operation": "appendOrUpdate",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.ticketsSheetTab }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "thread_id": "={{ $('Build Normalized Fields').item.json.thread_id }}",
-            "internal_notes": "={{ (($json.internal_notes || '') + '\\n\\n[' + $('Build Normalized Fields').item.json.date_received + ' from ' + $('Build Normalized Fields').item.json.sender + ']\\n' + $('Build Normalized Fields').item.json.body_excerpt).trim() }}",
-            "last_updated": "={{ new Date().toISOString() }}",
-            "ai_confidence": 0,
-            "response_time_hours": 0,
-            "resolution_time_hours": 0,
-            "latest_note": "={{ (() => { const o = $('Summarize Reply').item.json.output; return (typeof o === 'object' ? o?.summary : $('Summarize Reply').item.json.text) || ''; })() }}",
-            "latest_note_at": "={{ new Date().toISOString() }}"
-          },
-          "matchingColumns": [
-            "thread_id"
-          ],
-          "schema": [
-            {
-              "id": "ticket_id",
-              "displayName": "ticket_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "email_id",
-              "displayName": "email_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "thread_id",
-              "displayName": "thread_id",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "date_received",
-              "displayName": "date_received",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "sender",
-              "displayName": "sender",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "sender_name",
-              "displayName": "sender_name",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "subject",
-              "displayName": "subject",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "body_excerpt",
-              "displayName": "body_excerpt",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "email_link",
-              "displayName": "email_link",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "has_attachment",
-              "displayName": "has_attachment",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "boolean"
-            },
-            {
-              "id": "summary",
-              "displayName": "summary",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "category",
-              "displayName": "category",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "priority",
-              "displayName": "priority",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "assigned_team",
-              "displayName": "assigned_team",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "next_action",
-              "displayName": "next_action",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "ai_confidence",
-              "displayName": "ai_confidence",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "is_repeat",
-              "displayName": "is_repeat",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "boolean"
-            },
-            {
-              "id": "similar_ticket_ids",
-              "displayName": "similar_ticket_ids",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "assigned_to",
-              "displayName": "assigned_to",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "first_response_at",
-              "displayName": "first_response_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "resolved_at",
-              "displayName": "resolved_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "response_time_hours",
-              "displayName": "response_time_hours",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "resolution_time_hours",
-              "displayName": "resolution_time_hours",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "number"
-            },
-            {
-              "id": "internal_notes",
-              "displayName": "internal_notes",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "last_updated",
-              "displayName": "last_updated",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note",
-              "displayName": "latest_note",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            },
-            {
-              "id": "latest_note_at",
-              "displayName": "latest_note_at",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "RAW"
-        }
-      },
-      "id": "4015629e-5dde-425b-bcbe-3870cbacd48f",
-      "name": "Append to Existing Notes",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -9088,
-        5552
-      ],
-      "retryOnFail": false,
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "version": 2,
@@ -4282,41 +2878,33 @@
     },
     {
       "parameters": {
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Config').item.json.helpdeskSheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Config').item.json.ticketsSheetTab }}"
-        },
-        "filtersUI": {
-          "values": [
+        "operation": "getAll",
+        "tableId": "tickets",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
             {
-              "lookupColumn": "thread_id",
-              "lookupValue": "={{ $('Build Normalized Fields').item.json.thread_id }}"
+              "keyName": "thread_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Build Normalized Fields').item.json.thread_id }}"
             }
           ]
-        },
-        "options": {
-          "returnFirstMatch": true
         }
       },
       "id": "e7d915ec-7d95-4d24-88aa-6cc33925afe5",
       "name": "Lookup Existing Thread",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
       "position": [
         -10688,
         5856
       ],
       "alwaysOutputData": true,
       "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "MFpjEhalqvHmf1ra",
-          "name": "Google Sheets account - truc.pham"
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
         }
       }
     },
@@ -4673,44 +3261,11 @@
   ],
   "pinData": {},
   "connections": {
-    "Update WIP Sheet (Status)": {
-      "main": [
-        [
-          {
-            "node": "Update Ticket Status",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Log Backfill WIP to Sheet": {
-      "main": [
-        [
-          {
-            "node": "Log Backfill Note",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Update Ticket Sheet Status": {
-      "main": [
-        [
-          {
-            "node": "Log Status Change Note",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Backfill Ticket WIP ID": {
       "main": [
         [
           {
-            "node": "Log Backfill WIP to Sheet",
+            "node": "Log Backfill Note",
             "type": "main",
             "index": 0
           }
@@ -4787,7 +3342,7 @@
       "main": [
         [
           {
-            "node": "Update Ticket Sheet Status",
+            "node": "Log Status Change Note",
             "type": "main",
             "index": 0
           }
@@ -4798,7 +3353,7 @@
       "main": [
         [
           {
-            "node": "Update WIP Sheet (Status)",
+            "node": "Update Ticket Status",
             "type": "main",
             "index": 0
           }
@@ -4882,7 +3437,7 @@
       "main": [
         [
           {
-            "node": "Append to Existing Notes",
+            "node": "Lookup Linked WIP",
             "type": "main",
             "index": 0
           }
@@ -5136,17 +3691,6 @@
         ]
       ]
     },
-    "Log WIP to Sheet": {
-      "main": [
-        [
-          {
-            "node": "Mark Message as Read",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Log Initial Note": {
       "main": [
         [
@@ -5191,17 +3735,6 @@
         ]
       ]
     },
-    "Log to Sheet": {
-      "main": [
-        [
-          {
-            "node": "Log WIP to Sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Build Ticket Row": {
       "main": [
         [
@@ -5212,11 +3745,6 @@
           },
           {
             "node": "Log to Supabase",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Log to Sheet",
             "type": "main",
             "index": 0
           }
@@ -5306,17 +3834,6 @@
           {
             "node": "Search Similar Tickets",
             "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Append to Existing Notes": {
-      "main": [
-        [
-          {
-            "node": "Lookup Linked WIP",
-            "type": "main",
             "index": 0
           }
         ]
