@@ -52,7 +52,7 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 Daily standup transcript → structured WIP task updates in Supabase. Replaces the legacy Google Apps Script (`main.js`) with an n8n workflow backed by Supabase instead of Google Sheets.
 
-> **Status:** active development — Schedule Trigger fires at 09:00 and 17:00 Asia/Ho_Chi_Minh. Workflow is inactive (`active: false`) until fully tested. Monthly rollover is out of scope and deferred to Phase 3.3.
+> **Status:** active — Schedule Trigger fires at 09:00 and 17:00 Asia/Ho_Chi_Minh. Monthly rollover is out of scope and deferred to Phase 3.3.
 
 #### What it does
 
@@ -135,6 +135,14 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-15
+- Daily WIP Sync Phase 3.2: **multi-item fix** — added `Group Candidates Per Proposal` node between WIP Match Layer A and Build WIP Match Prompt to correctly correlate candidates per proposal; refactored `Build WIP Match Prompt` and `Apply Match Decision` from `itemMatching(0)` to `items.map()` + `pairedItem` pattern
+- Added `Tag Create Result`, `Tag Update Result`, `Tag Complete Result` nodes after each Sheet Sync branch to explicitly normalize and tag results before merging (replaces the single `Normalize WIP Result` catch-all)
+- `Gmail Send Summary` upgraded to styled HTML email with AppSheet mobile/browser deep links, summary count table, and per-task cards with colour-coded left borders per action type
+- Bug fix: `Gmail Send No actionable items` `sendTo` now reads from `$json.summary_email_to` (was referencing stale `$('Merge System Config').item` which is out of scope at that point)
+- `Merge Action Branches` and `Merge Before Summary` modes reset to default (removed explicit `mode: append`)
+- Workflow activated (`active: true`)
 
 ### 2026-06-12
 - Daily WIP Sync Phase 3.2: email summary now lists itemized created/updated/completed tasks (title → status, project tag, truncated note) instead of just C/U/D counts; `Aggregate Summary Counts` extended to emit `created`/`updated`/`completed` arrays; added `Merge Action Branches` (3-input append) before `Normalize WIP Result` and `Merge Before Summary` (2-input append) before `Aggregate Summary Counts` so all action branches and cascade-close converge cleanly; `Normalize WIP Result` switched from `$('Switch Action').itemMatching(0)` to `$input.item.json` to work correctly downstream of the merge

@@ -8,13 +8,13 @@
         "width": 620,
         "color": 3
       },
-      "id": "0c604646-288f-4a32-8616-afe43a6dd12d",
+      "id": "d25b21e0-4451-4b3b-8bc2-60ba091896b0",
       "name": "Stage A Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -36608,
-        10512
+        -38032,
+        13056
       ]
     },
     {
@@ -24,13 +24,13 @@
         "width": 820,
         "color": 4
       },
-      "id": "197da155-ec28-4331-89a1-4179277aae6e",
+      "id": "79add964-b096-46b7-8ad8-9a333b753b45",
       "name": "Stage B Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -35472,
-        10480
+        -36896,
+        13024
       ]
     },
     {
@@ -40,13 +40,13 @@
         "width": 900,
         "color": 7
       },
-      "id": "bb38693d-1e79-47fe-af79-fa2a95b4f5c6",
+      "id": "65801f49-99f1-4b43-8f51-3445264c4af4",
       "name": "Stage C Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -31792,
-        10080
+        -33216,
+        12624
       ]
     },
     {
@@ -56,13 +56,13 @@
         "width": 980,
         "color": 3
       },
-      "id": "84b9d993-ff1b-494b-9c05-b76ad34cf587",
+      "id": "8aa139e9-61ed-43e8-aa8a-dec7d1e36e11",
       "name": "Stage D Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -30800,
-        9904
+        -32224,
+        12448
       ]
     },
     {
@@ -72,13 +72,13 @@
         "width": 400,
         "color": 4
       },
-      "id": "2ac34d9f-b5e6-4e18-82ae-632945152d1d",
+      "id": "bec1a2aa-176d-4d0c-8c22-c7da25896f20",
       "name": "Sheet Sync Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -28944,
-        9920
+        -30368,
+        12464
       ]
     },
     {
@@ -88,13 +88,13 @@
         "width": 700,
         "color": 6
       },
-      "id": "3dd24d19-c74c-4a12-bb3c-52fba02f92b3",
+      "id": "7c8b09c3-69cb-42a3-96fa-2fd95b2af212",
       "name": "Stage E Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -27728,
-        10096
+        -29152,
+        12640
       ]
     },
     {
@@ -104,13 +104,13 @@
         "width": 700,
         "color": 5
       },
-      "id": "a0f79765-c956-4f2a-b00d-e6191d2e1e8f",
+      "id": "5d04be65-0c02-4e92-b85e-845afd9757da",
       "name": "Stage F Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -27232,
-        10864
+        -28656,
+        13408
       ]
     },
     {
@@ -175,13 +175,13 @@
         },
         "options": {}
       },
-      "id": "cafe3e75-9ef9-475d-b9c1-10189030aea8",
+      "id": "8d372e39-c6bc-4d66-a280-de5f6119e459",
       "name": "Config",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -36352,
-        10856
+        -37776,
+        13616
       ]
     },
     {
@@ -190,13 +190,13 @@
         "tableId": "system_config",
         "returnAll": true
       },
-      "id": "3716a6da-10a6-43bb-b11e-57b73636dd5a",
+      "id": "4bd189a2-881d-4fc6-a6b0-e3782b8d660e",
       "name": "Load System Config",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -36128,
-        10856
+        -37552,
+        13616
       ],
       "credentials": {
         "supabaseApi": {
@@ -209,26 +209,26 @@
       "parameters": {
         "jsCode": "const acc = {};\nfor (const item of items) {\n  const row = item.json || {};\n  if (!row.key) continue;\n  acc[row.key] = row.value;\n}\nreturn [{ json: acc }];"
       },
-      "id": "8f88f7b8-01a5-46c0-9c27-4dafccc9c865",
+      "id": "7866ab2f-3027-43f8-989d-103a8f7ab3b4",
       "name": "Merge System Config",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -35904,
-        10856
+        -37328,
+        13616
       ]
     },
     {
       "parameters": {
         "jsCode": "const cfg = $('Config').first().json;\nconst body = {};\nconst tz = cfg.tz || 'Asia/Ho_Chi_Minh';\nconst rawDate = body.date || $now.setZone(tz).toISODate();\nconst dt = DateTime.fromISO(rawDate, { zone: tz });\nconst target = dt.isValid ? dt : $now.setZone(tz);\nreturn [{\n  json: {\n    ...cfg,\n    ...$json,\n    targetDate: target.toISODate(),\n    dayStart: target.startOf('day').toISO(),\n    dayEnd: target.endOf('day').toISO(),\n    errors: [],\n    tasks_created: 0,\n    tasks_updated: 0,\n    tasks_completed: 0,\n    tickets_auto_closed: 0,\n    doubleRunWarning: false\n  }\n}];"
       },
-      "id": "881a3302-f53a-4c61-92c7-d3e40fc0fcdf",
+      "id": "48d8d20d-3ead-4c25-a9de-4b28b0479cc9",
       "name": "Resolve Date",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -35680,
-        10856
+        -37104,
+        13616
       ]
     },
     {
@@ -246,13 +246,13 @@
           "orderBy": "startTime"
         }
       },
-      "id": "0b1cfa04-4cf6-4ebc-a016-02c877cb4975",
+      "id": "e4ecaf2c-2225-4f62-91a8-bbbd3320a4ca",
       "name": "Get Calendar Events",
       "type": "n8n-nodes-base.googleCalendar",
       "typeVersion": 1.3,
       "position": [
-        -35456,
-        10856
+        -36880,
+        13616
       ],
       "credentials": {
         "googleCalendarOAuth2Api": {
@@ -265,13 +265,13 @@
       "parameters": {
         "jsCode": "const cfg = $('Resolve Date').first().json;\nconst sysCfg = $('Merge System Config').first().json;\nconst rawPattern = sysCfg.daily_meeting_title_pattern || cfg.dailyMeetingTitlePattern || 'Daily WIP|RMIT Vietnam Capstone|Internal Discussion';\nlet matcher;\ntry { matcher = new RegExp(rawPattern, 'i'); }\ncatch (e) { matcher = new RegExp(String(rawPattern).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'i'); }\n\nconst matched = [];\nitems.forEach((it, idx) => {\n  const event = it.json;\n  if (matcher.test(event.summary || event.title || '')) matched.push({ event, idx });\n});\n\nif (!matched.length) {\n  const out = { json: { ...cfg, meetingFound: false, summaryStatus: 'no_meeting' } };\n  if (items.length > 0) out.pairedItem = { item: 0 };\n  return [out];\n}\n\nreturn matched.map(({ event, idx }) => ({\n  json: {\n    ...cfg, ...event, event,\n    meetingFound: true,\n    calendar_event_id: event.id,\n    title: event.summary || event.title || 'Daily WIP',\n    start_time: event.start?.dateTime || event.start?.date || null,\n    end_time: event.end?.dateTime || event.end?.date || null,\n    attendees: event.attendees || []\n  },\n  pairedItem: { item: idx }\n}));"
       },
-      "id": "d6e46439-a6d5-4493-ba73-1ea689907e8f",
+      "id": "53da59af-42dd-47e3-b393-4c9a2cfa26e8",
       "name": "Filter Daily WIP Meeting",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -35232,
-        10856
+        -36656,
+        13616
       ]
     },
     {
@@ -299,13 +299,13 @@
         },
         "options": {}
       },
-      "id": "76afb80a-8478-4d86-8578-b9f085411f76",
+      "id": "1c50a505-9af7-430f-81ae-70c411d18088",
       "name": "IF: meeting found?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -35008,
-        10856
+        -36432,
+        13616
       ]
     },
     {
@@ -318,13 +318,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "1b0158b3-fa08-45ff-8ce6-0d1624649143",
+      "id": "1143994b-21e7-4a86-b1a7-30dfa4a4456e",
       "name": "Gmail Send No standup today",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -34784,
-        10952
+        -36208,
+        13712
       ],
       "webhookId": "fc8ff919-7464-4265-8a26-2e56b303169c",
       "credentials": {
@@ -339,13 +339,13 @@
       "parameters": {
         "jsCode": "const sysCfg = $('Merge System Config').first().json;\nconst rawPattern = sysCfg.transcript_title_pattern || 'Transcript';\nlet titleMatcher;\ntry { titleMatcher = new RegExp(rawPattern, 'i'); }\ncatch (e) { titleMatcher = new RegExp(String(rawPattern).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'i'); }\n\nconst out = [];\nfor (const it of items) {\n  const base = it?.json;\n  const isPlainObject = base !== null && typeof base === 'object' && !Array.isArray(base) && !(base instanceof Error);\n  if (!isPlainObject) continue;\n  if (base.meetingFound === false) { out.push({ json: base }); continue; }\n  const event = base.event || base;\n  const attachments = event.attachments || [];\n  const candidates = attachments.filter(a =>\n    /application\\/vnd\\.google-apps\\.document/i.test(a.mimeType || '')\n    && titleMatcher.test(a.title || a.name || '')\n  );\n  if (!candidates.length) {\n    out.push({ json: { ...base, hasTranscriptDoc: false, summaryStatus: 'no_transcript', docId: null } });\n    continue;\n  }\n  for (const att of candidates) {\n    out.push({ json: {\n      ...base,\n      hasTranscriptDoc: true,\n      docId: att.fileId || att.id,\n      attachmentTitle: att.title || att.name || '',\n      fileUrl: att.fileUrl || att.webViewLink || null,\n      transcript_url: att.fileUrl || att.webViewLink || null,\n      transcript_attachment_id: att.fileId || att.id\n    } });\n  }\n}\nreturn out;"
       },
-      "id": "299e7e3d-840c-417b-9db7-b1dad1d108f3",
+      "id": "a160db91-454e-4318-a1a1-f3bf63df947a",
       "name": "Extract Candidate Attachments",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -34784,
-        10760
+        -36208,
+        13520
       ]
     },
     {
@@ -373,13 +373,13 @@
         },
         "options": {}
       },
-      "id": "918b2824-39bf-41e9-bb58-c4565a0ce07e",
+      "id": "7b966882-25a3-4dee-95cc-466f1c62b385",
       "name": "IF: has any candidate?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -34560,
-        10760
+        -35984,
+        13520
       ]
     },
     {
@@ -392,13 +392,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "f3cd7c9e-2b51-48a2-874c-fce925007886",
+      "id": "52343827-ec51-4067-8cc6-c1900b9216ea",
       "name": "Gmail Send No transcript on meeting",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -34336,
-        10856
+        -35760,
+        13520
       ],
       "webhookId": "d125d7c4-e023-46dc-b843-7e71011860f7",
       "credentials": {
@@ -413,13 +413,13 @@
       "parameters": {
         "jsCode": "const out = [];\nfor (let i = 0; i < items.length; i++) {\n  const it = items[i];\n  let text = String(it.json.content || '');\n  let startIndex = text.lastIndexOf('📖 Transcript');\n  if (startIndex >= 0) text = text.slice(startIndex);\n  text = text\n    .replace(/^.*?📖 Transcript\\s*/s, '')\n    .replace(/Transcript may contain errors[\\s\\S]*$/i, '')\n    .replace(/This editable transcript was computer generated[\\s\\S]*$/i, '')\n    .replace(/\\b\\d{1,2}:\\d{2}(?::\\d{2})?\\b/g, '')\n    .replace(/^\\s*(Speaker \\d+|Unknown Speaker|[A-Z][A-Za-z .'-]{1,40})\\s*:\\s*/gm, '$1: ')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n  const ancestor = $('Extract Candidate Attachments').itemMatching(i).json;\n  out.push({ json: { ...ancestor, transcript: text } });\n}\nreturn out;"
       },
-      "id": "64135749-7189-4d44-83f2-6dae6bf12b14",
+      "id": "50f61e70-67cf-4824-9c58-9e69418f3208",
       "name": "Clean Transcript",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -34112,
-        10664
+        -35536,
+        13328
       ]
     },
     {
@@ -443,13 +443,13 @@
           ]
         }
       },
-      "id": "0700a213-1260-4c1e-ae63-fc96e3d0c782",
+      "id": "76050742-9f7e-4098-afd6-de93783b26dd",
       "name": "Load Active Projects",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -31648,
-        10392
+        -33072,
+        12944
       ],
       "credentials": {
         "supabaseApi": {
@@ -462,13 +462,13 @@
       "parameters": {
         "jsCode": "const base = $('Loop Per Meeting').first().json;\nconst cfg = $('Resolve Date').first().json;\nconst grouped = new Map();\nfor (const item of items) {\n  const r = item.json || {};\n  const pc = r.project_client || 'Internal';\n  if (!grouped.has(pc)) grouped.set(pc, []);\n  grouped.get(pc).push({\n    id: r.id, task: r.task, lead: r.lead, status: r.status,\n    latest_note: r.latest_note || r.note || '', next_step: r.next_step\n  });\n}\nconst projects = [...grouped.entries()].map(([project_client, tasks]) => ({ project_client, tasks }));\n\nconst dt = DateTime.fromISO(cfg.targetDate);\nconst todayTag = dt.toFormat('dd MMM');\n\nconst userPrompt = `TARGET_DATE: ${cfg.targetDate}\nNOTE_TAG: [${todayTag}]\n\nTRANSCRIPT:\n${base.transcript}\n\nACTIVE PROJECTS AND THEIR CURRENT TASKS:\n${JSON.stringify(projects, null, 2)}\n\nOUTPUT FORMAT (strict JSON):\n{\n  \"mentioned_projects\": [\n    {\n      \"project_client\": \"Exact project_client string from list above\",\n      \"actions\": [\n        {\n          \"action\": \"update\",\n          \"existing_task_id\": \"uuid-from-tasks-list\",\n          \"task\": \"exact task title from list\",\n          \"status\": \"in_progress\",\n          \"latest_note\": \"[${todayTag}] discussed progress on...\",\n          \"next_step\": \"deploy to staging by Friday\",\n          \"lead\": \"Truc\"\n        },\n        {\n          \"action\": \"create\",\n          \"task\": \"Set up monitoring for new API endpoint\",\n          \"status\": \"to_do\",\n          \"latest_note\": \"[${todayTag}] mentioned need for monitoring\",\n          \"next_step\": \"configure Datadog alerts\",\n          \"lead\": \"Sang\"\n        },\n        {\n          \"action\": \"complete\",\n          \"existing_task_id\": \"uuid-from-tasks-list\",\n          \"task\": \"exact task title from list\"\n        }\n      ]\n    }\n  ]\n}\n\nIf no active projects are mentioned, return: {\"mentioned_projects\": []}\nOmit fields not explicitly changed in the transcript.`;\n\nreturn [{ json: {\n  ...base, projects,\n  project_client_list: projects.map(p => p.project_client),\n  targetDate: cfg.targetDate, todayTag,\n  llmUserPrompt: userPrompt\n} }];"
       },
-      "id": "f97dbb48-2a02-4f7b-a1a7-10c3a9bcc8fd",
+      "id": "b7eb6e5f-f671-4931-9e1b-ba07612f47d1",
       "name": "Build Project Index",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -31424,
-        10392
+        -32848,
+        12944
       ]
     },
     {
@@ -485,13 +485,13 @@
         },
         "batching": {}
       },
-      "id": "ebaa9f7b-8154-44d3-aeb3-e44b25dabdab",
+      "id": "4f9a723c-4ab3-4fb5-a822-469487fa0298",
       "name": "LLM Chain: Classify & Extract Actions",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        -31200,
-        10392
+        -32624,
+        12944
       ]
     },
     {
@@ -507,13 +507,13 @@
           "temperature": 0.2
         }
       },
-      "id": "d8bf1363-6e91-47f0-8c64-77b8e8cfe80c",
+      "id": "5416532d-b8db-4ffb-8529-4f0d70ef220d",
       "name": "LLM Model: Classify Extract",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -31192,
-        10616
+        -32624,
+        13168
       ],
       "credentials": {
         "openAiApi": {
@@ -527,26 +527,26 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"required\": [\"mentioned_projects\"],\n  \"properties\": {\n    \"mentioned_projects\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"additionalProperties\": false,\n        \"required\": [\"project_client\", \"actions\"],\n        \"properties\": {\n          \"project_client\": { \"type\": \"string\" },\n          \"actions\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"additionalProperties\": false,\n              \"required\": [\"action\"],\n              \"properties\": {\n                \"action\": { \"type\": \"string\", \"enum\": [\"create\", \"update\", \"complete\"] },\n                \"existing_task_id\": { \"type\": [\"string\", \"null\"] },\n                \"task\": { \"type\": \"string\" },\n                \"status\": { \"type\": [\"string\", \"null\"] },\n                \"latest_note\": { \"type\": [\"string\", \"null\"] },\n                \"next_step\": { \"type\": [\"string\", \"null\"] },\n                \"lead\": { \"type\": [\"string\", \"null\"] }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}"
       },
-      "id": "b6ff4bb9-48b3-4299-ad41-7355a6cffacd",
+      "id": "878a7d91-ebf2-4d42-b925-1c3f6832eaec",
       "name": "Output Parser: Mentioned Projects",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -31064,
-        10616
+        -32496,
+        13168
       ]
     },
     {
       "parameters": {
         "jsCode": "const base = $('Build Project Index').itemMatching(0).json;\nconst out = $json.output || $json;\nconst mentioned = Array.isArray(out.mentioned_projects) ? out.mentioned_projects : [];\nif (!mentioned.length) {\n  return [{ json: { ...base, hasMentions: false, noActions: true } }];\n}\nconst allActions = [];\nfor (const m of mentioned) {\n  const actions = Array.isArray(m.actions) ? m.actions : [];\n  for (const a of actions) {\n    allActions.push({\n      json: {\n        ...base,\n        hasMentions: true,\n        project_client: m.project_client,\n        action: a.action || 'update',\n        existing_task_id: a.existing_task_id || null,\n        task: a.task || '',\n        status: a.status || null,\n        latest_note: a.latest_note || '',\n        next_step: a.next_step || '',\n        lead: a.lead || '',\n        meeting_id: null,\n        calendar_event_id: base.calendar_event_id,\n        errors: []\n      }\n    });\n  }\n}\nif (!allActions.length) {\n  return [{ json: { ...base, hasMentions: true, noActions: true } }];\n}\nreturn allActions;"
       },
-      "id": "b538ac62-a542-4d6f-b881-b7fd8743904d",
+      "id": "0f6e43ee-84bb-468e-9fc2-2ce38f1676a9",
       "name": "Parse Classified Actions",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -30848,
-        10392
+        -32272,
+        12944
       ]
     },
     {
@@ -573,18 +573,18 @@
         },
         "options": {}
       },
-      "id": "fb48d668-ba42-4383-ba84-55d41feac814",
+      "id": "f094dde7-f32d-4a76-9b1a-8a7aa58bd58c",
       "name": "IF: has actions?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -30624,
-        10392
+        -32048,
+        12944
       ]
     },
     {
       "parameters": {
-        "sendTo": "={{ $('Merge System Config').item.json.summary_email_to }}",
+        "sendTo": "={{ $json.summary_email_to }}",
         "subject": "={{ '[Daily WIP Sync] ' + $('Resolve Date').first().json.targetDate + ' — ' + ($json.title || 'Meeting') + ' — No actionable items' }}",
         "emailType": "text",
         "message": "={{ 'Daily WIP transcript was processed, but no actionable WIP updates were found.\\n\\nMeeting: ' + ($json.title || 'Meeting') + '\\nDate: ' + $('Resolve Date').first().json.targetDate }}",
@@ -592,13 +592,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "027018f2-9c72-4c11-a777-6fc8fab01d57",
+      "id": "ea114eaa-948e-46cf-91a0-45688288cdbb",
       "name": "Gmail Send No actionable items",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -30400,
-        10636
+        -31824,
+        13184
       ],
       "webhookId": "c59cb272-f1b2-4b62-8614-ec4d3ce802ed",
       "credentials": {
@@ -614,13 +614,13 @@
         "mode": "expression",
         "output": "={{ $json.action === 'create' ? 0 : ($json.action === 'complete' ? 2 : 1) }}"
       },
-      "id": "1e02fd59-249b-4424-b99d-d3f14412b929",
+      "id": "2118815c-d7d8-4289-934b-6b0620d6244c",
       "name": "Switch Action",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        -30400,
-        10224
+        -31824,
+        12768
       ]
     },
     {
@@ -649,13 +649,13 @@
           ]
         }
       },
-      "id": "2ee77106-df7a-4b97-95de-b7a4954d12b3",
+      "id": "c05d83d7-4f23-4bdf-871b-84ff2581546f",
       "name": "WIP Match Layer A (Lookup Candidates)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -30176,
-        10380
+        -31600,
+        12928
       ],
       "credentials": {
         "supabaseApi": {
@@ -667,15 +667,15 @@
     },
     {
       "parameters": {
-        "jsCode": "const action = $('Switch Action').itemMatching(0).json;\nconst candidates = items.map(i => ({\n  id: i.json.id,\n  task: i.json.task,\n  lead: i.json.lead,\n  status: i.json.status,\n  latest_note: i.json.latest_note || i.json.note,\n  next_step: i.json.next_step\n}));\nconst userPrompt = `You decide whether a newly proposed WIP task already exists in the current open task list for the same project_client. If yes, output decision=match with the existing task id and a confidence 0..1. Otherwise output decision=new.\\n\\nPROJECT_CLIENT: ${action.project_client}\\n\\nNEW TASK PROPOSAL:\\n${JSON.stringify({ task: action.task, lead: action.lead, status: action.status, latest_note: action.latest_note, next_step: action.next_step }, null, 2)}\\n\\nEXISTING OPEN TASKS FOR THIS PROJECT:\\n${JSON.stringify(candidates, null, 2)}\\n\\nReturn strict JSON: { \"decision\": \"match\" | \"new\", \"match_id\": \"<uuid or null>\", \"confidence\": <0..1>, \"reason\": \"<short>\" }`;\nreturn [{ json: { ...action, candidates, matcherUserPrompt: userPrompt } }];"
+        "jsCode": "return items.map((item, idx) => {\n  const action = item.json || {};\n  const candidates = (Array.isArray(action.candidates) ? action.candidates : []).map(c => ({\n    id: c.id,\n    task: c.task,\n    lead: c.lead,\n    status: c.status,\n    latest_note: c.latest_note || c.note,\n    next_step: c.next_step\n  }));\n  const userPrompt = `You decide whether a newly proposed WIP task already exists in the current open task list for the same project_client. If yes, output decision=match with the existing task id and a confidence 0..1. Otherwise output decision=new.\\n\\nPROJECT_CLIENT: ${action.project_client}\\n\\nNEW TASK PROPOSAL:\\n${JSON.stringify({ task: action.task, lead: action.lead, status: action.status, latest_note: action.latest_note, next_step: action.next_step }, null, 2)}\\n\\nEXISTING OPEN TASKS FOR THIS PROJECT:\\n${JSON.stringify(candidates, null, 2)}\\n\\nReturn strict JSON: { \"decision\": \"match\" | \"new\", \"match_id\": \"<uuid or null>\", \"confidence\": <0..1>, \"reason\": \"<short>\" }`;\n  return { json: { ...action, candidates, matcherUserPrompt: userPrompt }, pairedItem: { item: idx } };\n});"
       },
-      "id": "ff4d1a00-f5b2-43d4-88d8-d90d49ea483f",
+      "id": "be9fd7c4-2064-4d2b-997d-77fed4e43047",
       "name": "Build WIP Match Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -29952,
-        10380
+        -31152,
+        12928
       ]
     },
     {
@@ -692,13 +692,13 @@
         },
         "batching": {}
       },
-      "id": "653b9b10-7aa4-4c54-a0c1-1981cfa8c980",
+      "id": "29b0fca2-50af-46d6-9733-cabbbec69f4d",
       "name": "LLM Chain: WIP Matcher",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        -29728,
-        10380
+        -30928,
+        12928
       ]
     },
     {
@@ -714,13 +714,13 @@
           "temperature": 0.1
         }
       },
-      "id": "6160207d-caa6-4dad-b479-94a0cce8bd7e",
+      "id": "70f43367-5613-4667-a477-a5609c69c68e",
       "name": "LLM Model: WIP Matcher",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -29720,
-        10604
+        -30928,
+        13152
       ],
       "credentials": {
         "openAiApi": {
@@ -734,26 +734,26 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"required\": [\"decision\", \"match_id\", \"confidence\"],\n  \"properties\": {\n    \"decision\": { \"type\": \"string\", \"enum\": [\"match\", \"new\"] },\n    \"match_id\": { \"type\": [\"string\", \"null\"] },\n    \"confidence\": { \"type\": \"number\", \"minimum\": 0, \"maximum\": 1 },\n    \"reason\": { \"type\": [\"string\", \"null\"] }\n  }\n}"
       },
-      "id": "a24cb58c-da84-4a49-b207-5fd8c7a46329",
+      "id": "9566dae9-e9d2-46de-846b-1efdef4994cb",
       "name": "Output Parser: WIP Match",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -29592,
-        10604
+        -30800,
+        13152
       ]
     },
     {
       "parameters": {
-        "jsCode": "const action = $('Build WIP Match Prompt').itemMatching(0).json;\nconst m = $json.output || {};\nconst threshold = Number($('Merge System Config').first().json.wipConfidenceThreshold ?? 0.82);\nconst matched = m.decision === 'match' && m.match_id && Number(m.confidence || 0) >= threshold;\nreturn [{\n  json: {\n    ...action,\n    matcher: m,\n    action: matched ? 'update' : 'create',\n    existing_task_id: matched ? m.match_id : action.existing_task_id,\n    matcherMatched: matched\n  }\n}];"
+        "jsCode": "const threshold = Number($('Merge System Config').first().json.wipConfidenceThreshold ?? 0.82);\nreturn items.map((item, idx) => {\n  let action = {};\n  try { action = $('Build WIP Match Prompt').itemMatching(idx).json || {}; } catch (e) { action = {}; }\n  const m = (item.json && item.json.output) || item.json || {};\n  const matched = m.decision === 'match' && m.match_id && Number(m.confidence || 0) >= threshold;\n  return {\n    json: {\n      ...action,\n      matcher: m,\n      action: matched ? 'update' : 'create',\n      existing_task_id: matched ? m.match_id : action.existing_task_id,\n      matcherMatched: matched\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "03b0cf80-863f-4da3-8dbf-a8151f3da4da",
+      "id": "bea1d653-6fdb-4d52-ada6-e9605cc2492c",
       "name": "Apply Match Decision",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -29376,
-        10380
+        -30576,
+        12928
       ]
     },
     {
@@ -781,13 +781,13 @@
         },
         "options": {}
       },
-      "id": "b5c8ea5b-4524-4d97-abc8-57f99638dc11",
+      "id": "31e8fc45-355e-40d0-9588-6b3f1501aaec",
       "name": "IF: matcher chose update?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -29152,
-        10380
+        -30352,
+        12928
       ]
     },
     {
@@ -826,13 +826,13 @@
           ]
         }
       },
-      "id": "369e3aae-20c2-4eff-87fd-896a9f87eb19",
+      "id": "f0c8bedb-aa99-4f5e-baf3-5e00ff3a29d2",
       "name": "Supabase Create WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -28928,
-        10428
+        -30128,
+        12976
       ],
       "credentials": {
         "supabaseApi": {
@@ -881,13 +881,13 @@
           ]
         }
       },
-      "id": "add0eb1c-0c71-4b5d-baf6-90c79f9dcf34",
+      "id": "ef7c5e17-82c6-445b-9d25-adfbe974f685",
       "name": "Supabase Update WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -28928,
-        10160
+        -30128,
+        12704
       ],
       "credentials": {
         "supabaseApi": {
@@ -924,13 +924,13 @@
           ]
         }
       },
-      "id": "7e72deaa-b1da-4715-b1f9-93c313f1d8da",
+      "id": "8c10c580-edb3-4bf7-84e0-ae9fb299ccff",
       "name": "Supabase Complete WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -28928,
-        10688
+        -30128,
+        13232
       ],
       "credentials": {
         "supabaseApi": {
@@ -1089,13 +1089,13 @@
           "cellFormat": "RAW"
         }
       },
-      "id": "0341b25a-565d-456d-b709-c640decc1694",
+      "id": "da93d422-4055-4718-b227-e84fffff854f",
       "name": "Sheet Sync Create WIP",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -28704,
-        10428
+        -29904,
+        12976
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1249,13 +1249,13 @@
           "cellFormat": "RAW"
         }
       },
-      "id": "0b5d7304-ad6f-45cb-a255-0b0e36ddd827",
+      "id": "789dc8bf-1d71-409e-a702-f0c15e1c66e8",
       "name": "Sheet Sync Update WIP",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -28704,
-        10160
+        -29904,
+        12704
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1405,13 +1405,13 @@
           "cellFormat": "RAW"
         }
       },
-      "id": "1de12fa4-8389-4c44-8550-61801a5bd671",
+      "id": "4db5aa9f-c1fb-451d-8175-cd8b8ce68477",
       "name": "Sheet Sync Complete WIP",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -28704,
-        10688
+        -29904,
+        13232
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1423,15 +1423,15 @@
     },
     {
       "parameters": {
-        "jsCode": "const source = $input.item.json;\nconst out = $json || {};\nconst err = out.error ? [out.error.message || JSON.stringify(out.error)] : [];\nconst id = out.id || source.existing_task_id || out.wip_task_id || null;\nreturn [{ json: { ...source, wip_task_id: id, action_applied: source.action, errors: [...(source.errors || []), ...err] } }];"
+        "jsCode": "return items.map((item, idx) => {\n  const s = item.json || {};\n  return {\n    json: {\n      action_applied: s.action_applied || null,\n      task: s.task || '',\n      project_client: s.project_client || '',\n      lead: s.lead || '',\n      latest_note: s.latest_note || '',\n      next_step: s.next_step || '',\n      status: s.status || '',\n      existing_task_id: s.existing_task_id || null,\n      wip_task_id: s.wip_task_id || null,\n      errors: Array.isArray(s.errors) ? s.errors : []\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "3bb773a3-0a7e-4d28-8aef-d898fb5fa7ea",
+      "id": "0f99cce7-c3b5-4020-b056-99301e9411a7",
       "name": "Normalize WIP Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -28480,
-        10420
+        -29232,
+        12960
       ]
     },
     {
@@ -1450,13 +1450,13 @@
           ]
         }
       },
-      "id": "7c5a7032-7835-45c6-9727-50214abaa999",
+      "id": "a52aba73-c0a7-45c3-8022-3aed929e49ff",
       "name": "Lookup Existing Meeting (Pre-Loop)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -33888,
-        10664
+        -35312,
+        13328
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -1471,13 +1471,13 @@
       "parameters": {
         "jsCode": "const existingRows = $('Lookup Existing Meeting (Pre-Loop)').all().map(i => i.json || {});\nconst rowsByEvent = new Map();\nfor (const row of existingRows) {\n  if (row.calendar_event_id && row.id && !rowsByEvent.has(row.calendar_event_id)) {\n    rowsByEvent.set(row.calendar_event_id, row);\n  }\n}\nreturn $('Clean Transcript').all().map(item => {\n  const clean = item.json || {};\n  return { json: { ...clean, existing_meeting_row: rowsByEvent.get(clean.calendar_event_id) || null } };\n});"
       },
-      "id": "26a3e681-45b4-4a1d-994a-2dc18064d62e",
+      "id": "e73c4ba4-cabc-48c9-9f5e-b16eb90b3a32",
       "name": "Rejoin Meetings By Event",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -33664,
-        10664
+        -35088,
+        13328
       ]
     },
     {
@@ -1496,13 +1496,13 @@
           ]
         }
       },
-      "id": "0e35b162-a477-494b-96b7-5f2c45f38f82",
+      "id": "3440f31e-387b-4adc-b426-5e2c9a0786b3",
       "name": "Lookup Existing Meeting Tasks",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -32544,
-        10664
+        -33968,
+        13328
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -1517,13 +1517,13 @@
       "parameters": {
         "jsCode": "const meetings = $('Attach Meeting To Context').all().map(i => i.json);\nconst taskRows = items.map(i => i.json || {});\nconst targetDate = $('Resolve Date').first().json.targetDate;\nreturn meetings.map(context => {\n  const meetingId = context.meeting_id;\n  const meeting = context.existing_meeting && context.existing_meeting.id ? context.existing_meeting : (meetingId ? { id: meetingId } : null);\n  const existingTasksForThisMeeting = taskRows.filter(r => r && r.meeting_id === meetingId && r.wip_task_id);\n  const createdToday = meeting && meeting.created_at ? String(meeting.created_at).slice(0,10) === targetDate : false;\n  return { json: { ...context, existing_meeting: meeting, meeting_exists: !!meeting, doubleRunWarning: !!meeting && createdToday && existingTasksForThisMeeting.length > 0 } };\n});"
       },
-      "id": "940e0e86-0e4d-44ba-b6b8-6ed455e5924d",
+      "id": "301ee8ee-fea0-433b-9d12-a4bfb29db74b",
       "name": "Check Double Run Guard",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -32320,
-        10664
+        -33744,
+        13328
       ]
     },
     {
@@ -1551,13 +1551,13 @@
         },
         "options": {}
       },
-      "id": "69e0400f-87a6-443a-bb37-0d0eb3ec045c",
+      "id": "0b19c6d6-3250-4333-9aab-059ee9a60894",
       "name": "IF: meeting exists (Pre-Loop)",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -33440,
-        10664
+        -34864,
+        13328
       ]
     },
     {
@@ -1594,13 +1594,13 @@
           ]
         }
       },
-      "id": "72e69c7f-5051-47d5-926b-f9da5ac6b939",
+      "id": "68bbf9a9-26c7-433c-be29-d05ff47142a4",
       "name": "Update Meeting Row (Pre-Loop)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -33216,
-        10496
+        -34640,
+        13136
       ],
       "credentials": {
         "supabaseApi": {
@@ -1646,13 +1646,13 @@
           ]
         }
       },
-      "id": "b046d5ef-d8f0-4cbe-aa1a-0c2f84c758c2",
+      "id": "5a230525-df5d-4565-9f79-54a481af6c45",
       "name": "Create Meeting Row (Pre-Loop)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -33216,
-        10688
+        -34640,
+        13328
       ],
       "credentials": {
         "supabaseApi": {
@@ -1666,13 +1666,13 @@
       "parameters": {
         "jsCode": "const out = [];\nfor (let i = 0; i < items.length; i++) {\n  const row = items[i].json || {};\n  const upstream = $('Rejoin Meetings By Event').itemMatching(i).json;\n  const { existing_meeting_row, ...clean } = upstream;\n  const existing_meeting = existing_meeting_row || row;\n  const meeting_id = existing_meeting.id || row.id || clean.meeting_id || null;\n  out.push({ json: { ...clean, meeting_id, existing_meeting } });\n}\nreturn out;"
       },
-      "id": "052c2544-ca90-43ae-9177-6f07a1ba449a",
+      "id": "ee552dbb-4200-4ae4-b5d0-d868847fd0e1",
       "name": "Attach Meeting To Context",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -32768,
-        10664
+        -34192,
+        13328
       ]
     },
     {
@@ -1700,26 +1700,26 @@
         },
         "options": {}
       },
-      "id": "3fbf7c25-9aa9-4363-a115-7234b7d36bd3",
+      "id": "7715546d-cf64-4379-a3de-ee8256fc16a6",
       "name": "IF: already processed?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -31872,
-        10392
+        -33296,
+        12944
       ]
     },
     {
       "parameters": {
         "jsCode": "const action = $json;\nconst guard = $('Loop Per Meeting').first().json;\nconst meeting_id = guard.meeting_id;\nreturn [{ json: { ...action, meeting_id, missing_meeting_id: !meeting_id, existing_meeting: guard.existing_meeting || null, meeting_exists: !!guard.meeting_exists, doubleRunWarning: !!guard.doubleRunWarning } }];"
       },
-      "id": "a61dbfc6-c481-4210-823a-37f30a604d31",
+      "id": "7352589e-6d25-42a9-aced-7c290a6948c9",
       "name": "Attach Meeting ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -28256,
-        10420
+        -29008,
+        12960
       ]
     },
     {
@@ -1747,13 +1747,13 @@
         },
         "options": {}
       },
-      "id": "3c5350b8-47d8-4eba-b8ea-ad9440d30e40",
+      "id": "597ad081-df01-4286-9371-bbcbd6270e2c",
       "name": "IF: meeting_id present",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -28032,
-        10420
+        -28784,
+        12960
       ]
     },
     {
@@ -1772,13 +1772,13 @@
           ]
         }
       },
-      "id": "83bcdcff-7bb4-4369-990c-97d42fd6e70a",
+      "id": "b4a0c330-76b6-4121-bbe4-f3121ce1c42d",
       "name": "Insert meeting_tasks junction",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -27808,
-        10420
+        -28560,
+        12960
       ],
       "credentials": {
         "supabaseApi": {
@@ -1792,13 +1792,13 @@
       "parameters": {
         "jsCode": "const base = $('Attach Meeting ID').itemMatching(0).json;\nconst shouldCascade = base.action_applied === 'complete' && !!base.wip_task_id;\nreturn [{ json: { ...base, shouldCascade, close_wip_task_id: shouldCascade ? base.wip_task_id : null } }];"
       },
-      "id": "3ec49f25-a393-4e0e-8070-ed4a71ca0300",
+      "id": "896f70ac-fdff-4752-b018-0dccaf958952",
       "name": "Collect Completed for Cascade",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -27584,
-        10420
+        -28336,
+        12960
       ]
     },
     {
@@ -1826,13 +1826,13 @@
         },
         "options": {}
       },
-      "id": "38d10205-3490-4cb8-8a11-750bcb9520eb",
+      "id": "c4909a9a-f99a-4088-81a4-5db83ae1b9e9",
       "name": "IF: cascade tickets?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -27360,
-        10420
+        -28112,
+        12960
       ]
     },
     {
@@ -1862,13 +1862,13 @@
           ]
         }
       },
-      "id": "4e3e0578-a34a-49ff-b6f9-58bbef97364e",
+      "id": "3a938296-3690-4fef-87d5-af4b893293ed",
       "name": "Cascade Close Tickets",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -27136,
-        10348
+        -27888,
+        12896
       ],
       "credentials": {
         "supabaseApi": {
@@ -1882,32 +1882,31 @@
       "parameters": {
         "jsCode": "const applied = $('Normalize WIP Result').all().map(i => i.json);\nlet cascades = [];\ntry { cascades = $('Cascade Close Tickets').all().map(i => i.json); } catch (e) { cascades = []; }\nconst counts = { tasks_created: 0, tasks_updated: 0, tasks_completed: 0, tickets_auto_closed: 0, errors: [], doubleRunWarning: false, created: [], updated: [], completed: [] };\nconst truncate = (value, max = 140) => {\n  const text = String(value || '').replace(/\\s+/g, ' ').trim();\n  return text.length > max ? text.slice(0, max - 1) + '…' : text;\n};\nconst itemize = (a) => {\n  const entry = {\n    title: String(a.task || a.title || a.name || 'Untitled task'),\n    status: String(a.status || a.action_applied || ''),\n    note: truncate(a.latest_note || a.note || a.description || '')\n  };\n  const project = a.project_client || a.project;\n  if (project) entry.project = String(project);\n  return entry;\n};\nfor (const a of applied) {\n  if (a.action_applied === 'create') { counts.tasks_created += 1; counts.created.push(itemize(a)); }\n  if (a.action_applied === 'update') { counts.tasks_updated += 1; counts.updated.push(itemize(a)); }\n  if (a.action_applied === 'complete') { counts.tasks_completed += 1; counts.completed.push(itemize(a)); }\n  if (a.doubleRunWarning) counts.doubleRunWarning = true;\n  if (Array.isArray(a.errors)) counts.errors.push(...a.errors);\n}\ncounts.tickets_auto_closed = cascades.filter(c => c && !c.error).length;\nfor (const c of cascades) if (c && c.error) counts.errors.push(c.error.message || JSON.stringify(c.error));\nconst meeting = $('Loop Per Meeting').first().json;  // current iteration meeting context\nreturn [{ json: { ...$('Resolve Date').first().json, ...counts, meeting_title: meeting.title || 'Meeting', meeting_id: meeting.meeting_id } }];"
       },
-      "id": "2256c1db-08e2-45a0-8c84-f2e6cd8e68fd",
+      "id": "818c8ce3-043b-41ea-924a-7937dc4a4e46",
       "name": "Aggregate Summary Counts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -26912,
-        10420
+        -27440,
+        12960
       ]
     },
     {
       "parameters": {
         "sendTo": "={{ $('Merge System Config').item.json.summary_email_to }}",
         "subject": "={{ '[Daily WIP Sync] ' + $json.targetDate + ' — ' + ($json.meeting_title || 'Meeting') + ' — C:' + $json.tasks_created + ' U:' + $json.tasks_updated + ' D:' + $json.tasks_completed }}",
-        "emailType": "text",
-        "message": "={{ (() => { const render = (label, entries) => label + ' (' + entries.length + '):\\n' + (entries.length ? entries.map(e => '  — ' + e.title + ' → ' + (e.status || '') + (e.project ? ' {' + e.project + '}' : '') + (e.note ? ' [' + e.note + ']' : '')).join('\\n') : '  — none'); return 'Daily WIP Sync summary for ' + $json.targetDate + '\\n\\nMeeting: ' + ($json.meeting_title || 'Meeting') + '\\n\\n' + render('Created', $json.created || []) + '\\n\\n' + render('Updated', $json.updated || []) + '\\n\\n' + render('Completed', $json.completed || []) + '\\n\\nTickets auto-closed: ' + $json.tickets_auto_closed + ($json.doubleRunWarning ? '\\n\\nWarning: meeting already had meeting_tasks populated for this date before this run.' : '') + (($json.errors || []).length ? '\\n\\nErrors:\\n- ' + $json.errors.join('\\n- ') : '\\n\\nErrors: none'); })() }}",
+        "message": "={{ (() => {\n  const esc = (v) => String(v ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;');\n\n  const appMobileUrl = 'https://www.appsheet.com/newshortcut/2b1fd1ea-00ce-450f-892d-dab42583ca8d';\n  const appBrowserUrl = 'https://www.appsheet.com/start/2b1fd1ea-00ce-450f-892d-dab42583ca8d';\n\n  const renderSection = (label, entries, colour) => {\n    entries = Array.isArray(entries) ? entries : [];\n\n    if (!entries.length) {\n      return `\n        <h2 style=\"font-size:16px;margin:28px 0 8px;color:#222;\">\n          ${label} <span style=\"color:#777;\">(0)</span>\n        </h2>\n        <div style=\"padding:12px 14px;background:#f6f6f6;border-radius:8px;color:#777;\">\n          No ${label.toLowerCase()} tasks.\n        </div>\n      `;\n    }\n\n    return `\n      <h2 style=\"font-size:16px;margin:28px 0 10px;color:#222;\">\n        ${label} <span style=\"color:#777;\">(${entries.length})</span>\n      </h2>\n\n      ${entries.map(e => `\n        <div style=\"border:1px solid #e5e7eb;border-left:4px solid ${colour};border-radius:10px;padding:14px 16px;margin-bottom:12px;background:#ffffff;\">\n          <div style=\"font-size:15px;font-weight:600;color:#111;margin-bottom:8px;\">\n            ${esc(e.title)}\n          </div>\n\n          <div style=\"font-size:13px;color:#555;line-height:1.6;\">\n            ${e.status ? `<div><strong>Status:</strong> ${esc(e.status)}</div>` : ''}\n            ${e.project ? `<div><strong>Project:</strong> ${esc(e.project)}</div>` : ''}\n            ${e.note ? `<div style=\"margin-top:6px;\"><strong>Note:</strong> ${esc(e.note)}</div>` : ''}\n          </div>\n        </div>\n      `).join('')}\n    `;\n  };\n\n  const created = $json.created || [];\n  const updated = $json.updated || [];\n  const completed = $json.completed || [];\n  const errors = $json.errors || [];\n\n  return `\n    <div style=\"font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;padding:24px;color:#222;\">\n      <div style=\"max-width:760px;margin:0 auto;background:#ffffff;border-radius:14px;padding:28px;border:1px solid #e5e7eb;\">\n\n        <div style=\"border-bottom:1px solid #e5e7eb;padding-bottom:18px;margin-bottom:20px;\">\n          <h1 style=\"font-size:22px;margin:0 0 8px;color:#111;\">\n            Daily WIP Sync Summary\n          </h1>\n\n          <div style=\"font-size:14px;color:#555;line-height:1.6;\">\n            <div><strong>Date:</strong> ${esc($json.targetDate)}</div>\n            <div><strong>Meeting:</strong> ${esc($json.meeting_title || 'Meeting')}</div>\n          </div>\n        </div>\n\n        <div style=\"padding:16px;background:#eef6ff;border:1px solid #bfdbfe;border-radius:10px;margin-bottom:24px;\">\n          <div style=\"font-size:15px;font-weight:700;color:#111;margin-bottom:8px;\">\n            Use this link to access WIP system:\n          </div>\n\n          <div style=\"font-size:13px;color:#555;line-height:1.6;margin-bottom:14px;\">\n            Use the mobile shortcut if you want to open it like an app on your phone. Use the browser link if you are working from desktop.\n          </div>\n\n          <table style=\"border-collapse:collapse;\">\n            <tr>\n              <td style=\"padding-right:10px;padding-bottom:8px;\">\n                <a href=\"${appMobileUrl}\" style=\"display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;\">\n                  Mobile download\n                </a>\n              </td>\n              <td style=\"padding-bottom:8px;\">\n                <a href=\"${appBrowserUrl}\" style=\"display:inline-block;background:#111827;color:#ffffff;text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;\">\n                  Open in browser\n                </a>\n              </td>\n            </tr>\n          </table>\n\n          <div style=\"font-size:12px;color:#666;line-height:1.5;margin-top:8px;\">\n            Mobile: <a href=\"${appMobileUrl}\" style=\"color:#2563eb;\">${appMobileUrl}</a><br>\n            Browser: <a href=\"${appBrowserUrl}\" style=\"color:#2563eb;\">${appBrowserUrl}</a>\n          </div>\n        </div>\n\n        <table style=\"width:100%;border-collapse:collapse;margin:18px 0 24px;\">\n          <tr>\n            <td style=\"padding:12px;background:#f9fafb;border-radius:8px;text-align:center;\">\n              <div style=\"font-size:20px;font-weight:700;\">${created.length}</div>\n              <div style=\"font-size:12px;color:#666;\">Created</div>\n            </td>\n            <td style=\"width:10px;\"></td>\n            <td style=\"padding:12px;background:#f9fafb;border-radius:8px;text-align:center;\">\n              <div style=\"font-size:20px;font-weight:700;\">${updated.length}</div>\n              <div style=\"font-size:12px;color:#666;\">Updated</div>\n            </td>\n            <td style=\"width:10px;\"></td>\n            <td style=\"padding:12px;background:#f9fafb;border-radius:8px;text-align:center;\">\n              <div style=\"font-size:20px;font-weight:700;\">${completed.length}</div>\n              <div style=\"font-size:12px;color:#666;\">Completed</div>\n            </td>\n            <td style=\"width:10px;\"></td>\n            <td style=\"padding:12px;background:#f9fafb;border-radius:8px;text-align:center;\">\n              <div style=\"font-size:20px;font-weight:700;\">${esc($json.tickets_auto_closed || 0)}</div>\n              <div style=\"font-size:12px;color:#666;\">Auto-closed</div>\n            </td>\n          </tr>\n        </table>\n\n        ${$json.doubleRunWarning ? `\n          <div style=\"padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;margin-bottom:20px;font-size:14px;\">\n            <strong>Warning:</strong> This meeting already had meeting tasks populated for this date before this run.\n          </div>\n        ` : ''}\n\n        ${renderSection('Created', created, '#22c55e')}\n        ${renderSection('Updated', updated, '#3b82f6')}\n        ${renderSection('Completed', completed, '#8b5cf6')}\n\n        <h2 style=\"font-size:16px;margin:28px 0 8px;color:#222;\">Errors</h2>\n\n        ${errors.length ? `\n          <div style=\"padding:12px 14px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#991b1b;font-size:14px;\">\n            ${errors.map(e => `<div>• ${esc(e)}</div>`).join('')}\n          </div>\n        ` : `\n          <div style=\"padding:12px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;color:#166534;font-size:14px;\">\n            No errors.\n          </div>\n        `}\n\n      </div>\n    </div>\n  `;\n})() }}",
         "options": {
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "5e3ba21f-3f05-41e6-b3fa-41bb5abfce4e",
+      "id": "5d904e30-b13f-433a-be51-76fc29cafda2",
       "name": "Gmail Send Summary",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -26688,
-        10616
+        -27216,
+        13168
       ],
       "webhookId": "8379d25e-ccc5-4383-aade-27d4aea0d088",
       "credentials": {
@@ -1923,13 +1922,13 @@
         "operation": "get",
         "documentURL": "={{   (($json.attachments || [])     .find(a =>        a.mimeType === 'application/vnd.google-apps.document' &&       (a.fileUrl || '').includes('docs.google.com/document/d/')     ) || {}).fileUrl || '' }}"
       },
-      "id": "11621233-5295-4d01-83e2-ce6a62bc67d1",
+      "id": "84093144-d601-4781-97e4-2f63de1bd604",
       "name": "Get Meeting Notes Doc",
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        -34336,
-        10664
+        -35760,
+        13328
       ],
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -1957,10 +1956,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -36576,
-        10856
+        -38000,
+        13616
       ],
-      "id": "ad86e90b-a977-4562-9720-4aedce98451d",
+      "id": "8af5beb3-390b-4663-bae7-9776ad46ffa0",
       "name": "Schedule Trigger"
     },
     {
@@ -1970,38 +1969,34 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -32096,
-        10664
+        -33520,
+        13328
       ],
-      "id": "3a8d30ce-fbf8-4c74-ab60-c53f4e06acfa",
+      "id": "66eb9587-0054-4ba0-9e69-ba2e0496e40f",
       "name": "Loop Per Meeting"
     },
     {
       "parameters": {
-        "mode": "append",
         "numberInputs": 3
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -28480,
-        10944
+        -29456,
+        12944
       ],
-      "id": "c86f0b27-5018-4d03-9cf5-918aa1d8976f",
+      "id": "2db33da5-37e3-4302-851b-7a9b25958f7f",
       "name": "Merge Action Branches"
     },
     {
-      "parameters": {
-        "mode": "append",
-        "numberInputs": 2
-      },
+      "parameters": {},
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -27136,
-        10640
+        -27664,
+        12960
       ],
-      "id": "7cfbe1ce-6b58-49f7-99b0-d720ac8d46ce",
+      "id": "353843a4-2b42-4762-a619-4f745ed8300f",
       "name": "Merge Before Summary"
     },
     {
@@ -2009,14 +2004,87 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -32992,
-        10664
+        -34416,
+        13328
       ],
-      "id": "25455d18-ea12-4f1a-bdad-4c56e0f1c088",
+      "id": "7853dff1-fd1c-40ff-b651-eae74dcfe2c7",
       "name": "Merge Pre-Loop Branches"
+    },
+    {
+      "parameters": {
+        "jsCode": "const createProposals = $('Switch Action').all(0).map(i => i.json);\nconst candidatesByProposalIdx = new Map();\nfor (const item of items) {\n  let pi = item.pairedItem;\n  let idx = 0;\n  if (pi && typeof pi === 'object') {\n    if (Array.isArray(pi)) idx = (pi[0] && pi[0].item) || 0;\n    else idx = pi.item || 0;\n  } else if (typeof pi === 'number') {\n    idx = pi;\n  }\n  if (!candidatesByProposalIdx.has(idx)) candidatesByProposalIdx.set(idx, []);\n  candidatesByProposalIdx.get(idx).push(item.json || {});\n}\nreturn createProposals.map((proposal, idx) => ({\n  json: { ...proposal, candidates: candidatesByProposalIdx.get(idx) || [] },\n  pairedItem: { item: idx }\n}));"
+      },
+      "id": "ce6c52e8-864f-4197-ba33-9337bb5aa7f0",
+      "name": "Group Candidates Per Proposal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -31376,
+        12928
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, idx) => {\n  let proposal = {};\n  try { proposal = $('Apply Match Decision').itemMatching(idx).json || {}; } catch (e) { proposal = {}; }\n  let dbRow = {};\n  try { dbRow = $('Supabase Create WIP').itemMatching(idx).json || {}; } catch (e) { dbRow = item.json || {}; }\n  const err = dbRow && dbRow.error ? [dbRow.error.message || JSON.stringify(dbRow.error)] : [];\n  return {\n    json: {\n      action_applied: 'create',\n      task: proposal.task || '',\n      project_client: proposal.project_client || '',\n      lead: proposal.lead || '',\n      latest_note: proposal.latest_note || proposal.note || '',\n      next_step: proposal.next_step || '',\n      status: dbRow.status || proposal.status || '',\n      existing_task_id: proposal.existing_task_id || null,\n      wip_task_id: dbRow.id || null,\n      errors: err\n    },\n    pairedItem: { item: idx }\n  };\n});"
+      },
+      "id": "80baaacf-8ea0-40e1-affc-a509b54e3213",
+      "name": "Tag Create Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -29680,
+        12976
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, idx) => {\n  let proposal = null;\n  try { const p = $('Apply Match Decision').itemMatching(idx); if (p && p.json && p.json.task) proposal = p.json; } catch (e) {}\n  if (!proposal) { try { const p = $('Switch Action').itemMatching(idx); if (p && p.json && p.json.task) proposal = p.json; } catch (e) {} }\n  proposal = proposal || {};\n  let dbRow = {};\n  try { dbRow = $('Supabase Update WIP').itemMatching(idx).json || {}; } catch (e) { dbRow = item.json || {}; }\n  const err = dbRow && dbRow.error ? [dbRow.error.message || JSON.stringify(dbRow.error)] : [];\n  return {\n    json: {\n      action_applied: 'update',\n      task: proposal.task || '',\n      project_client: proposal.project_client || '',\n      lead: proposal.lead || '',\n      latest_note: proposal.latest_note || proposal.note || '',\n      next_step: proposal.next_step || '',\n      status: dbRow.status || proposal.status || 'in_progress',\n      existing_task_id: proposal.existing_task_id || (dbRow.id || null),\n      wip_task_id: dbRow.id || proposal.existing_task_id || null,\n      errors: err\n    },\n    pairedItem: { item: idx }\n  };\n});"
+      },
+      "id": "7a8321fc-0c7d-4024-adfe-fc72dda3032c",
+      "name": "Tag Update Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -29680,
+        12704
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, idx) => {\n  let proposal = {};\n  try { proposal = $('Switch Action').itemMatching(idx).json || {}; } catch (e) { proposal = {}; }\n  let dbRow = {};\n  try { dbRow = $('Supabase Complete WIP').itemMatching(idx).json || {}; } catch (e) { dbRow = item.json || {}; }\n  const err = dbRow && dbRow.error ? [dbRow.error.message || JSON.stringify(dbRow.error)] : [];\n  return {\n    json: {\n      action_applied: 'complete',\n      task: proposal.task || '',\n      project_client: proposal.project_client || '',\n      lead: proposal.lead || '',\n      latest_note: proposal.latest_note || proposal.note || '',\n      next_step: proposal.next_step || '',\n      status: 'complete',\n      existing_task_id: proposal.existing_task_id || (dbRow.id || null),\n      wip_task_id: dbRow.id || proposal.existing_task_id || null,\n      errors: err\n    },\n    pairedItem: { item: idx }\n  };\n});"
+      },
+      "id": "d6e629a3-c926-4f78-8be5-3f6dacac1782",
+      "name": "Tag Complete Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -29680,
+        13232
+      ]
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-06-12T21:03:52.488+10:00",
+          "Readable date": "June 12th 2026, 9:03:52 pm",
+          "Readable time": "9:03:52 pm",
+          "Day of week": "Friday",
+          "Year": "2026",
+          "Month": "June",
+          "Day of month": "12",
+          "Hour": "21",
+          "Minute": "03",
+          "Second": "52",
+          "Timezone": "Australia/Melbourne (UTC+10:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
   "connections": {
     "Config": {
       "main": [
@@ -2339,6 +2407,17 @@
       "main": [
         [
           {
+            "node": "Group Candidates Per Proposal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group Candidates Per Proposal": {
+      "main": [
+        [
+          {
             "node": "Build WIP Match Prompt",
             "type": "main",
             "index": 0
@@ -2456,7 +2535,7 @@
       "main": [
         [
           {
-            "node": "Merge Action Branches",
+            "node": "Tag Create Result",
             "type": "main",
             "index": 0
           }
@@ -2467,6 +2546,39 @@
       "main": [
         [
           {
+            "node": "Tag Update Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Sync Complete WIP": {
+      "main": [
+        [
+          {
+            "node": "Tag Complete Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Create Result": {
+      "main": [
+        [
+          {
+            "node": "Merge Action Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Update Result": {
+      "main": [
+        [
+          {
             "node": "Merge Action Branches",
             "type": "main",
             "index": 1
@@ -2474,7 +2586,7 @@
         ]
       ]
     },
-    "Sheet Sync Complete WIP": {
+    "Tag Complete Result": {
       "main": [
         [
           {
@@ -2699,13 +2811,13 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "2dd20b5b-87e4-4859-89f7-30c63c1586d2",
+  "versionId": "6882d255-b414-4a4c-94aa-8b31c921ee81",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "d255ac8dbc9698cc025b4836557a5f10650e4466ca76edffa27a27761bc6d416"
