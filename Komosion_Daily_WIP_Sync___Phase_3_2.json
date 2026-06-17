@@ -221,7 +221,7 @@
         "calendar": {
           "__rl": true,
           "mode": "id",
-          "value": "={{ $('Config').item.json.calendarId }}"
+          "value": "={{ $('Config').first().json.calendarId }}"
         },
         "returnAll": true,
         "timeMin": "={{ $('Resolve Date').item.json.dayStart }}",
@@ -395,7 +395,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const out = [];\nfor (let i = 0; i < items.length; i++) {\n  const it = items[i];\n  let text = String(it.json.content || '');\n  let startIndex = text.lastIndexOf('📖 Transcript');\n  if (startIndex >= 0) text = text.slice(startIndex);\n  text = text\n    .replace(/^.*?📖 Transcript\\s*/s, '')\n    .replace(/Transcript may contain errors[\\s\\S]*$/i, '')\n    .replace(/This editable transcript was computer generated[\\s\\S]*$/i, '')\n    .replace(/\\b\\d{1,2}:\\d{2}(?::\\d{2})?\\b/g, '')\n    .replace(/^\\s*(Speaker \\d+|Unknown Speaker|[A-Z][A-Za-z .'-]{1,40})\\s*:\\s*/gm, '$1: ')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n  const ancestor = $('Extract Candidate Attachments').itemMatching(i).json;\n  out.push({ json: { ...ancestor, transcript: text } });\n}\nreturn out;"
+        "jsCode": "const out = [];\nfor (let i = 0; i < items.length; i++) {\n  const it = items[i];\n  let text = String(it.json.data || it.json.content || '');\n  let startIndex = text.lastIndexOf('📖 Transcript');\n  if (startIndex >= 0) text = text.slice(startIndex);\n  text = text\n    .replace(/^.*?📖 Transcript\\s*/s, '')\n    .replace(/Transcript may contain errors[\\s\\S]*$/i, '')\n    .replace(/This editable transcript was computer generated[\\s\\S]*$/i, '')\n    .replace(/\\b\\d{1,2}:\\d{2}(?::\\d{2})?\\b/g, '')\n    .replace(/^\\s*(Speaker \\d+|Unknown Speaker|[A-Z][A-Za-z .'-]{1,40})\\s*:\\s*/gm, '$1: ')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n  const ancestor = $('Extract Candidate Attachments').itemMatching(i).json;\n  out.push({ json: { ...ancestor, transcript: text } });\n}\nreturn out;"
       },
       "id": "53ef6b03-6c04-40d8-8658-4454dd0e50b5",
       "name": "Clean Transcript",
@@ -409,7 +409,7 @@
     {
       "parameters": {
         "operation": "getAll",
-        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "tableId": "={{ $('Config').first().json.wipTasksTable }}",
         "returnAll": true,
         "matchType": "allFilters",
         "filters": {
@@ -610,7 +610,7 @@
     {
       "parameters": {
         "operation": "getAll",
-        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "tableId": "={{ $('Config').first().json.wipTasksTable }}",
         "returnAll": true,
         "matchType": "allFilters",
         "filters": {
@@ -776,7 +776,7 @@
     },
     {
       "parameters": {
-        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "tableId": "={{ $('Config').first().json.wipTasksTable }}",
         "fieldsUi": {
           "fieldValues": [
             {
@@ -829,7 +829,7 @@
     {
       "parameters": {
         "operation": "update",
-        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "tableId": "={{ $('Config').first().json.wipTasksTable }}",
         "matchType": "allFilters",
         "filters": {
           "conditions": [
@@ -884,7 +884,7 @@
     {
       "parameters": {
         "operation": "update",
-        "tableId": "={{ $('Config').item.json.wipTasksTable }}",
+        "tableId": "={{ $('Config').first().json.wipTasksTable }}",
         "matchType": "allFilters",
         "filters": {
           "conditions": [
@@ -940,7 +940,7 @@
     {
       "parameters": {
         "operation": "getAll",
-        "tableId": "={{ $('Config').item.json.meetingsTable }}",
+        "tableId": "={{ $('Config').first().json.meetingsTable }}",
         "returnAll": true,
         "matchType": "allFilters",
         "filters": {
@@ -986,7 +986,7 @@
     {
       "parameters": {
         "operation": "getAll",
-        "tableId": "={{ $('Config').item.json.meetingTasksTable }}",
+        "tableId": "={{ $('Config').first().json.meetingTasksTable }}",
         "returnAll": true,
         "matchType": "allFilters",
         "filters": {
@@ -1066,7 +1066,7 @@
     {
       "parameters": {
         "operation": "update",
-        "tableId": "={{ $('Config').item.json.meetingsTable }}",
+        "tableId": "={{ $('Config').first().json.meetingsTable }}",
         "matchType": "allFilters",
         "filters": {
           "conditions": [
@@ -1081,15 +1081,15 @@
           "fieldValues": [
             {
               "fieldId": "title",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.title }}"
+              "fieldValue": "={{ $json.title }}"
             },
             {
               "fieldId": "transcript_url",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.transcript_url }}"
+              "fieldValue": "={{ $json.transcript_url }}"
             },
             {
               "fieldId": "transcript_attachment_id",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.transcript_attachment_id }}"
+              "fieldValue": "={{ $json.transcript_attachment_id }}"
             },
             {
               "fieldId": "project_client"
@@ -1115,36 +1115,36 @@
     },
     {
       "parameters": {
-        "tableId": "={{ $('Config').item.json.meetingsTable }}",
+        "tableId": "={{ $('Config').first().json.meetingsTable }}",
         "fieldsUi": {
           "fieldValues": [
             {
               "fieldId": "calendar_event_id",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.calendar_event_id }}"
+              "fieldValue": "={{ $json.calendar_event_id }}"
             },
             {
               "fieldId": "title",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.title }}"
+              "fieldValue": "={{ $json.title }}"
             },
             {
               "fieldId": "start_time",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.start_time }}"
+              "fieldValue": "={{ $json.start_time }}"
             },
             {
               "fieldId": "end_time",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.end_time }}"
+              "fieldValue": "={{ $json.end_time }}"
             },
             {
               "fieldId": "attendees",
-              "fieldValue": "={{ JSON.stringify($('Clean Transcript').itemMatching($itemIndex).json.attendees || []) }}"
+              "fieldValue": "={{ JSON.stringify($json.attendees || []) }}"
             },
             {
               "fieldId": "transcript_url",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.transcript_url }}"
+              "fieldValue": "={{ $json.transcript_url }}"
             },
             {
               "fieldId": "transcript_attachment_id",
-              "fieldValue": "={{ $('Clean Transcript').itemMatching($itemIndex).json.transcript_attachment_id }}"
+              "fieldValue": "={{ $json.transcript_attachment_id }}"
             }
           ]
         }
@@ -1261,7 +1261,7 @@
     },
     {
       "parameters": {
-        "tableId": "={{ $('Config').item.json.meetingTasksTable }}",
+        "tableId": "={{ $('Config').first().json.meetingTasksTable }}",
         "fieldsUi": {
           "fieldValues": [
             {
@@ -1341,7 +1341,7 @@
     {
       "parameters": {
         "operation": "update",
-        "tableId": "={{ $('Config').item.json.ticketsTable }}",
+        "tableId": "={{ $('Config').first().json.ticketsTable }}",
         "matchType": "allFilters",
         "filters": {
           "conditions": [
@@ -1416,27 +1416,6 @@
         "gmailOAuth2": {
           "id": "bNXKWDG0BBmbCj5C",
           "name": "Komosion Real - Gmail account"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "operation": "get",
-        "documentURL": "={{   (($json.attachments || [])     .find(a =>        a.mimeType === 'application/vnd.google-apps.document' &&       (a.fileUrl || '').includes('docs.google.com/document/d/')     ) || {}).fileUrl || '' }}"
-      },
-      "id": "5577aa01-3290-4c1c-9803-2c702f653a3f",
-      "name": "Get Meeting Notes Doc",
-      "type": "n8n-nodes-base.googleDocs",
-      "typeVersion": 2,
-      "position": [
-        -32160,
-        14736
-      ],
-      "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "FpYpbczO0qLPyfiH",
-          "name": "Truc - Komosion Google Docs account"
         }
       },
       "continueOnFail": true
@@ -1564,6 +1543,28 @@
         -26304,
         14640
       ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $json.docId }}/export?mimeType=text/plain",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -32144,
+        14736
+      ],
+      "id": "dc174ef9-e314-4697-aeb0-cebd96b06822",
+      "name": "Get Meeting Notes Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "FpYpbczO0qLPyfiH",
+          "name": "Truc - Komosion Google Docs account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -2185,17 +2186,6 @@
         ]
       ]
     },
-    "Get Meeting Notes Doc": {
-      "main": [
-        [
-          {
-            "node": "Clean Transcript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Schedule Trigger": {
       "main": [
         [
@@ -2258,6 +2248,17 @@
           }
         ]
       ]
+    },
+    "Get Meeting Notes Doc": {
+      "main": [
+        [
+          {
+            "node": "Clean Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -2269,7 +2270,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "timezone": "Asia/Vientiane"
   },
-  "versionId": "aca85a5a-f99f-4ae9-9c80-b78813a2f5af",
+  "versionId": "d27273ff-3cc1-4ce7-9e4f-87df48adb61b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "d255ac8dbc9698cc025b4836557a5f10650e4466ca76edffa27a27761bc6d416"

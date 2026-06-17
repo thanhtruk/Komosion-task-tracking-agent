@@ -133,6 +133,12 @@ Configure these credential types in your n8n instance (no secrets stored in this
 
 ## Changelog
 
+### 2026-06-18
+- Daily WIP Sync Phase 3.2: **`Get Meeting Notes Doc` replaced** — switched from the `googleDocs` node (operation: `get`) to an HTTP Request node calling the Drive export API directly (`/drive/v3/files/{{docId}}/export?mimeType=text/plain`); avoids Google Docs node plain-text limitations
+- `Clean Transcript`: added `data || content` fallback so the node correctly reads the HTTP Response body field returned by the new HTTP Request node
+- All Config node references updated from `$('Config').item.json.*` to `$('Config').first().json.*` (10 nodes: calendarId, wipTasksTable ×4, meetingsTable ×3, meetingTasksTable ×2, ticketsTable)
+- Update/Create Meeting Record field values simplified from `$('Clean Transcript').itemMatching($itemIndex).json.*` to `$json.*` (uses current item context directly)
+
 ### 2026-06-15 (3)
 - Helpdesk Intake: **Sheet Sync removed** — all `wip_tasks` Google Sheets sync nodes dropped; WIP data now lives exclusively in Supabase
 - Helpdesk Intake: **`wip_notes` written directly** — three new Supabase nodes (`Log Initial Note`, `Log Status Change Note`, `Log Backfill Note`) replace Sheet sync and log notes to the `wip_notes` table immediately on create/reply/backfill
