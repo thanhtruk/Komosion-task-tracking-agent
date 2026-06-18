@@ -143,6 +143,10 @@ Configure these credential types in your n8n instance (no secrets stored in this
 
 ## Changelog
 
+### 2026-06-18 (3)
+- Daily WIP Sync Phase 3.2: **LLM classify+extract system prompt retuned for higher recall** — substantive transcript points now surface as candidates (high → `auto_apply`, medium → `review_required`, low → `ignore`) instead of being silently dropped; explicit mapping `high→auto_apply / medium→review_required / low→ignore` documented in-prompt; CREATE path loosened so genuinely new client-specific deliverables/workstreams/campaigns produce a candidate even when details are incomplete (missing info goes into `next_step`); task-identity preservation and matching rules unchanged
+- OpenAI credentials on `LLM Model: Classify Extract` and the second classify/extract LLM node switched from `Truc - Test OpenAI account` to `Komosion - WIP OpenAI account` (production creds)
+
 ### 2026-06-18 (2)
 - Daily WIP Sync Phase 3.2: **confidence gate added** — `Resolve Confidence Tier` evaluates `write_mode` / `confidence_label` / `confidence_score` from the LLM and routes each action: `auto_apply` writes directly to `wip_tasks`; `review_required` inserts into `wip_update_candidates` (new Supabase node `Supabase Insert Review Candidate`) for human review; `ignore` is dropped
 - **Client Registry loaded** — new `Load Client Registry` node fetches active rows from `client_registry` (Supabase) and injects them as `CLIENT_REFERENCE` into the LLM prompt so the model can resolve spelling/transcription variants of client/project names
