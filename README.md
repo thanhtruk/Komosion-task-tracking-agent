@@ -58,8 +58,9 @@ Daily standup transcript → structured WIP task updates in Supabase. Replaces t
 |---|---|
 | **A — Trigger** | Schedule Trigger fires at 10:00 and 17:00 Asia/Ho_Chi_Minh (cron: `0 10 * * *`, `0 17 * * *`) |
 | **B — Transcript fetch** | Looks up today's calendar events matching `daily_meeting_title_pattern` (from `system_config`); supports multiple matched meetings. Picks the attached Google Doc transcript for each, exports to plain text, and cleans it (`cleanTranscriptContent` logic ported from AppScript) |
-| **C — LLM classify + extract** | Two-stage LLM call using explicit Chain/Model/Parser nodes: (1) classify which active projects are mentioned; (2) per-project extract WIP actions (`{action, task, lead, status, note, next_step, existing_task_id}`). Model and tunables read from Supabase `system_config` |
-| **D — Persist (per meeting)** | `Loop Per Meeting` (SplitInBatches) iterates over each matched meeting. Inside: applies actions to Supabase `wip_tasks`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); pre-loop meeting upsert (lookup→create/update→attach) runs before actions; `meeting_tasks` junction populated |
+| **C — LLM classify + extract** | Two-stage LLM call using explicit Chain/Model/Parser nodes: (1) classify which active projects are mentioned; (2) per-project extract WIP actions with confidence scoring (`confidence_score`, `confidence_label`, `write_mode`, `evidence_summary`, `match_reason`). Active client registry loaded from Supabase `client_registry` and injected as `CLIENT_REFERENCE` to help the LLM resolve name variants. Model and tunables read from Supabase `system_config` |
+| **D — Confidence gate** | `Resolve Confidence Tier` evaluates `write_mode` / `confidence_label` / `confidence_score` to produce `effective_tier` (auto_apply / review_required / ignore). `Switch Confidence Tier` routes: auto_apply → direct WIP write; review_required → `Supabase Insert Review Candidate` (stored in `wip_update_candidates` for human review); ignore → dropped. Gate can be disabled via `ENABLE_CONFIDENCE_GATE=false` |
+| **E — Persist (per meeting)** | `Loop Per Meeting` (SplitInBatches) iterates over each matched meeting. Inside: applies auto_apply actions to Supabase `wip_tasks`; Match Layer A guards creates (flips create→update if confidence ≥ `wipConfidenceThreshold`); pre-loop meeting upsert (lookup→create/update→attach) runs before actions; `meeting_tasks` junction populated |
 | **Cascade close** | Completed WIP tasks trigger `tickets SET status='resolved'` for all linked tickets |
 | **Email summary** | Gmail sends per-meeting summary with meeting title, C/U/D counts, auto-closed tickets, errors list, and double-run warning; separate emails for no-meeting, no-transcript, and no-actionable-items cases |
 | **Double-run guard** | Checks `meetings` + `meeting_tasks` tables per meeting; flags `doubleRunWarning` in summary if a meeting was already processed today; `IF: already processed?` gate inside loop skips re-processing |
@@ -72,6 +73,15 @@ Daily standup transcript → structured WIP task updates in Supabase. Replaces t
 | `transcript_title_pattern` | Prefix used to identify transcript Drive files |
 | `llm_model` | Model ID for the classify + extract LLM calls |
 | `wipConfidenceThreshold` | Confidence threshold for Match Layer A create→update flip |
+
+Additional tunables set in the **Config** node (can be overridden in `system_config`):
+
+| Key | Default | Description |
+|---|---|---|
+| `clientRegistryTable` | `client_registry` | Supabase table of active clients injected as LLM reference |
+| `wipCandidatesTable` | `wip_update_candidates` | Supabase table for medium-confidence review candidates |
+| `ENABLE_CONFIDENCE_GATE` | `true` | Set to `false` to bypass confidence routing and auto-apply all actions |
+| `review_queue_url` | *(empty)* | Optional URL included in review-candidate notifications |
 
 #### Parity with AppScript
 
@@ -132,6 +142,16 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-18 (2)
+- Daily WIP Sync Phase 3.2: **confidence gate added** — `Resolve Confidence Tier` evaluates `write_mode` / `confidence_label` / `confidence_score` from the LLM and routes each action: `auto_apply` writes directly to `wip_tasks`; `review_required` inserts into `wip_update_candidates` (new Supabase node `Supabase Insert Review Candidate`) for human review; `ignore` is dropped
+- **Client Registry loaded** — new `Load Client Registry` node fetches active rows from `client_registry` (Supabase) and injects them as `CLIENT_REFERENCE` into the LLM prompt so the model can resolve spelling/transcription variants of client/project names
+- **LLM system prompt overhauled** — rewrites the classify+extract prompt with explicit confidence scoring rules (high ≥0.70, medium 0.50–0.69, low <0.50), matching rules tightened (accuracy over coverage), `write_mode`, `evidence_summary`, `match_reason` added to output schema
+- **Output parser schema extended** — added `confidence_score`, `confidence_label`, `confidence_reason`, `write_mode`, `evidence_summary`, `match_reason` fields; `Parse Classified Actions` propagates them through the pipeline
+- **New Config vars**: `clientRegistryTable`, `wipCandidatesTable`, `ENABLE_CONFIDENCE_GATE` (default true), `review_queue_url` (empty)
+- `LLM Model: Classify Extract`: `.item.json.llm_model` → `.first().json.llm_model`
+- `Supabase Update WIP`: removed `lead` field from update payload (lead is not updated on existing tasks)
+- Canvas repositioned and node IDs regenerated on export
 
 ### 2026-06-18
 - Daily WIP Sync Phase 3.2: **`Get Meeting Notes Doc` replaced** — switched from the `googleDocs` node (operation: `get`) to an HTTP Request node calling the Drive export API directly (`/drive/v3/files/{{docId}}/export?mimeType=text/plain`); avoids Google Docs node plain-text limitations
