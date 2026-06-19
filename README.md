@@ -8,7 +8,7 @@ Automated helpdesk intake and WIP tracking for Komosion, built on n8n.
 
 ### Komosion Helpdesk Intake — Phase 1 - Ver2
 
-**File:** `Komosion_Helpdesk_Intake___Phase_1___Ver2.json`
+**File:** `Komosion_Helpdesk_Intake.json`
 
 Polls the `support@` Gmail inbox every 2 minutes, triages incoming emails, creates structured tickets, and links them to WIP tasks.
 
@@ -46,7 +46,7 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 ### Komosion Daily WIP Sync — Phase 3.2 _(in progress / testing)_
 
-**File:** `Komosion_Daily_WIP_Sync___Phase_3_2.json`
+**File:** `Komosion_Daily_WIP_Sync.json`
 
 Daily standup transcript → structured WIP task updates in Supabase. Replaces the legacy Google Apps Script (`main.js`) with an n8n workflow backed by Supabase instead of Google Sheets.
 
@@ -142,6 +142,9 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-19
+- **Workflow JSON files renamed** — phase/version suffixes removed from filenames for simplicity: `Komosion_Daily_WIP_Sync___Phase_3_2.json` → `Komosion_Daily_WIP_Sync.json`, `Komosion_Helpdesk_Intake___Phase_1___Ver2.json` → `Komosion_Helpdesk_Intake.json`; workflow internals unchanged
 
 ### 2026-06-18 (3)
 - Daily WIP Sync Phase 3.2: **LLM classify+extract system prompt retuned for higher recall** — substantive transcript points now surface as candidates (high → `auto_apply`, medium → `review_required`, low → `ignore`) instead of being silently dropped; explicit mapping `high→auto_apply / medium→review_required / low→ignore` documented in-prompt; CREATE path loosened so genuinely new client-specific deliverables/workstreams/campaigns produce a candidate even when details are incomplete (missing info goes into `next_step`); task-identity preservation and matching rules unchanged
