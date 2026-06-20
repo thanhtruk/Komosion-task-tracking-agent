@@ -35,139 +35,6 @@
     },
     {
       "parameters": {
-        "tableId": "wip_notes",
-        "fieldsUi": {
-          "fieldValues": [
-            {
-              "fieldId": "ticket_id",
-              "fieldValue": "={{ $('Fetch Original Ticket').item.json.ticket_id }}"
-            },
-            {
-              "fieldId": "wip_task_id",
-              "fieldValue": "={{ $('Set Backfill WIP Task ID').item.json.wip_task_id }}"
-            },
-            {
-              "fieldId": "author",
-              "fieldValue": "system"
-            },
-            {
-              "fieldId": "content",
-              "fieldValue": "={{ (() => { const d = new Date(); const tag = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',timeZone:'Asia/Ho_Chi_Minh'}); return '[' + tag + '] WIP backfilled from thread reply'; })() }}"
-            },
-            {
-              "fieldId": "note_type",
-              "fieldValue": "system"
-            }
-          ]
-        }
-      },
-      "id": "41d48902-ce65-4245-a7f9-a55363308ff8",
-      "name": "Log Backfill Note",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [
-        -17888,
-        12464
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "AOVJYpNDtqC5QXXf",
-          "name": "Komosion agent database"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "tableId": "wip_notes",
-        "fieldsUi": {
-          "fieldValues": [
-            {
-              "fieldId": "ticket_id",
-              "fieldValue": "={{ $('Lookup Existing Thread').first().json.ticket_id }}"
-            },
-            {
-              "fieldId": "wip_task_id",
-              "fieldValue": "={{ $('Fetch Linked WIP').item.json.id }}"
-            },
-            {
-              "fieldId": "author",
-              "fieldValue": "={{ $('Build Normalized Fields').item.json.sender }}"
-            },
-            {
-              "fieldId": "content",
-              "fieldValue": "={{ $('Build Status Change Note').item.json.latest_note }}"
-            },
-            {
-              "fieldId": "note_type",
-              "fieldValue": "={{ $('Build Status Change Note').item.json.status === $('Fetch Linked WIP').item.json.status ? 'reply' : 'status_change' }}"
-            }
-          ]
-        }
-      },
-      "id": "20323ece-e329-456e-82e7-faab685a2abc",
-      "name": "Log Status Change Note",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [
-        -17888,
-        12160
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "AOVJYpNDtqC5QXXf",
-          "name": "Komosion agent database"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "tableId": "wip_notes",
-        "fieldsUi": {
-          "fieldValues": [
-            {
-              "fieldId": "ticket_id",
-              "fieldValue": "={{ $('Build Ticket Row').item.json.ticket_id }}"
-            },
-            {
-              "fieldId": "wip_task_id",
-              "fieldValue": "={{ $('Set WIP Task ID').item.json.wip_task_id }}"
-            },
-            {
-              "fieldId": "author",
-              "fieldValue": "system"
-            },
-            {
-              "fieldId": "content",
-              "fieldValue": "={{ (() => { const d = new Date(); const tag = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',timeZone:'Asia/Ho_Chi_Minh'}); return '[' + tag + '] ' + ($('Classify Ticket').item.json.output?.summary || 'New ticket created'); })() }}"
-            },
-            {
-              "fieldId": "note_type",
-              "fieldValue": "system"
-            }
-          ]
-        }
-      },
-      "id": "2a090ccc-d434-4e0f-bb32-02144149cf26",
-      "name": "Log Initial Note",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [
-        -17888,
-        13072
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "AOVJYpNDtqC5QXXf",
-          "name": "Komosion agent database"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"summary\",\n    \"status\",\n    \"reason\"\n  ],\n  \"properties\": {\n    \"summary\": {\n      \"type\": \"string\",\n      \"maxLength\": 100,\n      \"description\": \"One sentence summary of the reply\"\n    },\n    \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"new\",\n        \"to_do\",\n        \"in_progress\",\n        \"waiting_client\",\n        \"blocked\",\n        \"complete\",\n        \"closed\"\n      ],\n      \"description\": \"Inferred status for both ticket and WIP task\"\n    },\n    \"reason\": {\n      \"type\": \"string\",\n      \"maxLength\": 150,\n      \"description\": \"Brief explanation of status choice\"\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
@@ -267,11 +134,11 @@
             },
             {
               "fieldId": "latest_note_at",
-              "fieldValue": "={{ $json.latest_note_at || new Date().toISOString() }}"
+              "fieldValue": "={{ $json.latest_note_at || (new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00') }}"
             },
             {
               "fieldId": "work_type",
-              "fieldValue": "={{ (() => { const raw = $json.output ?? $json; const o = typeof raw === 'string' ? (()=>{try{return JSON.parse(raw)}catch(e){return {}}})() : (raw ?? {}); const pc = (o.project_client || 'Internal').trim(); return (pc !== '' && pc !== 'Internal') ? 'client_work' : (o.work_type || 'in_the_business'); })() }}"
+              "fieldValue": "={{ (() => { const raw = $json.output ?? $json; const o = typeof raw === 'string' ? (()=>{try{return JSON.parse(raw)}catch(e){return {}}})() : (raw ?? {}); const pc = String(o.project_client || 'Internal').trim(); const llmType = o.work_type || null; if (llmType === 'new_business') return 'new_business'; if (pc !== '' && pc !== 'Internal') return 'client_work'; return llmType || 'in_the_business'; })() }}"
             }
           ]
         }
@@ -295,7 +162,7 @@
     {
       "parameters": {
         "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"project_client\",\n    \"task\",\n    \"note\",\n    \"next_step\"\n  ],\n  \"properties\": {\n    \"project_client\": {\n      \"type\": \"string\"\n    },\n    \"task\": {\n      \"type\": \"string\",\n      \"maxLength\": 80\n    },\n    \"lead\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ]\n    },\n    \"note\": {\n      \"type\": \"string\",\n      \"maxLength\": 300\n    },\n    \"next_step\": {\n      \"type\": \"string\",\n      \"maxLength\": 100\n    },\n    \"work_type\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ],\n      \"enum\": [\n        \"in_the_business\",\n        \"on_the_business\",\n        null\n      ]\n    }\n  },\n  \"additionalProperties\": false\n}"
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"project_client\",\n    \"task\",\n    \"note\",\n    \"next_step\"\n  ],\n  \"properties\": {\n    \"project_client\": {\n      \"type\": \"string\"\n    },\n    \"task\": {\n      \"type\": \"string\",\n      \"maxLength\": 80\n    },\n    \"lead\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ]\n    },\n    \"note\": {\n      \"type\": \"string\",\n      \"maxLength\": 300\n    },\n    \"next_step\": {\n      \"type\": \"string\",\n      \"maxLength\": 100\n    },\n    \"work_type\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"client_work\",\n        \"in_the_business\",\n        \"on_the_business\",\n        \"new_business\"\n      ]\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
       "id": "11233176-f86e-4928-9215-dd4e4c8aef15",
       "name": "Thread WIP Fields Output Schema",
@@ -340,7 +207,7 @@
         "text": "=Subject: {{ $('Fetch Original Ticket').item.json.subject || $('Build Normalized Fields').item.json.subject }}\nSummary: {{ $('Fetch Original Ticket').item.json.summary || '' }}\nSender: {{ $('Fetch Original Ticket').item.json.sender || $('Build Normalized Fields').item.json.sender }}\nCategory: {{ $('Fetch Original Ticket').item.json.category || '' }}\nBody: {{ $('Fetch Original Ticket').item.json.body_excerpt || $('Build Normalized Fields').item.json.body_excerpt }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a task generator for a creative agency.\nGiven a helpdesk ticket, generate a WIP task entry.\n\nRules:\n- project_client: infer from sender domain, subject, or body. If unclear, use \"Internal\".\n- task: imperative verb phrase, max 80 chars. E.g. \"Fix login redirect for staging environment\"\n- lead: who owns this task. The team_lead_map below is authoritative. Rules in order:\n  1. If the email body explicitly names an owner AND that name appears as a value in team_lead_map, return that exact name.\n  2. Else return team_lead_map[assigned_team].\n  3. If assigned_team is 'Unassigned' and no person mentioned, return null.\n  MUST return either null or an exact string value from team_lead_map. Never invent a name.\n  team_lead_map: {{ JSON.stringify($('Merge System Config').item.json.team_lead_map || {}) }}\n  assigned_team: {{ $('Fetch Original Ticket').item.json.assigned_team }}\n- note: 1-2 sentences of context from the ticket. Max 300 chars.\n- next_step: concrete next action, max 100 chars\n- work_type: only when project_client is \"Internal\", set \"in_the_business\" or \"on_the_business\". For a real client, leave null.\n\nWORK TYPE — only when project_client is \"Internal\":\n- in_the_business: day-to-day work that keeps the agency running (admin, finance, internal support, tooling maintenance, repeatable delivery ops).\n- on_the_business: work that builds the agency itself (strategy, new process or automation, the agency's own sales & marketing, hiring, R&D, internal product).\nFor Internal tasks ALWAYS set work_type; if unsure choose \"in_the_business\".\nFor tasks with a real client, OMIT work_type — the system sets client_work.",
+          "systemMessage": "You are a task generator for a creative agency.\nGiven a helpdesk ticket, generate a WIP task entry.\n\nRules:\n- project_client: infer from sender domain, subject, or body. If unclear, use \"Internal\".\n- task: imperative verb phrase, max 80 chars. E.g. \"Fix login redirect for staging environment\"\n- lead: who owns this task. The team_lead_map below is authoritative. Rules in order:\n  1. If the email body explicitly names an owner AND that name appears as a value in team_lead_map, return that exact name.\n  2. Else return team_lead_map[assigned_team].\n  3. If assigned_team is 'Unassigned' and no person mentioned, return null.\n  MUST return either null or an exact string value from team_lead_map. Never invent a name.\n  team_lead_map: {{ JSON.stringify($('Merge System Config').item.json.team_lead_map || {}) }}\n  assigned_team: {{ $('Fetch Original Ticket').item.json.assigned_team }}\n- note: 1-2 sentences of context from the ticket. Max 300 chars.\n- next_step: concrete next action, max 100 chars\n- work_type: see WORK TYPE section below. Always return one of: client_work, new_business, in_the_business, on_the_business. Never null.\n\nWORK TYPE:\nLuôn set work_type cho mọi task theo quy tắc sau:\n\n- client_work: task delivery cho client đã ký hợp đồng, đang trong giai đoạn thực thi. project_client là tên client thật (không phải \"Internal\"). KHÔNG tự set — system tự tính từ project_client.\n\n- new_business: task liên quan đến cơ hội kinh doanh chưa có hợp đồng — đề xuất (proposal), pitch, ý tưởng, nghiên cứu để tiếp cận prospect, follow-up cơ hội mới, prototype/demo để thuyết phục client chưa ký. project_client có thể là tên prospect HOẶC \"Internal\". Dấu hiệu nhận biết: ticket đề cập đến \"đề xuất\", \"proposal\", \"pitch\", \"ý tưởng mới\", \"tiếp cận\", \"cơ hội\", hoặc work chưa có client cam kết.\n\n- in_the_business: công việc vận hành nội bộ hàng ngày giữ agency hoạt động — admin, finance, support nội bộ, bảo trì tooling, delivery ops lặp lại. project_client = \"Internal\".\n\n- on_the_business: xây dựng agency — strategy, process mới, automation, sales & marketing của chính agency, tuyển dụng, R&D, internal product. project_client = \"Internal\".\n\nQuy tắc quyết định:\n1. project_client là tên client thật + không có dấu hiệu new_business → client_work (KHÔNG cần set, system tự tính)\n2. Nội dung ticket/body có dấu hiệu new_business (dù project_client là gì) → new_business\n3. project_client = \"Internal\", không có dấu hiệu new_business:\n   - Vận hành/ops/support → in_the_business\n   - Xây dựng năng lực/chiến lược → on_the_business\n   - Không chắc → in_the_business\n\nTrả về work_type cho MỌI task. Không bao giờ để null.",
           "maxIterations": 3,
           "returnIntermediateSteps": false
         }
@@ -487,7 +354,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const now = new Date();\nconst tag = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', timeZone: 'Asia/Ho_Chi_Minh' });\nconst replyOutput = (() => {\n  const raw = $('Summarize Reply').item.json.output;\n  if (typeof raw === 'object' && raw !== null) return raw;\n  if (typeof raw === 'string') { try { return JSON.parse(raw); } catch(e) {} }\n  return {};\n})();\nconst summary = replyOutput.summary || '';\nconst status  = replyOutput.status  || 'in_progress';\nconst reason  = replyOutput.reason  || '';\nconst newLine    = '[' + tag + '] ' + summary;\nconst statusLine = 'Status \\u2192 ' + status + ': ' + reason;\nreturn [{ json: {\n  latest_note: (newLine + ' | ' + statusLine).slice(0, 500),  // REPLACE, single line\n  latest_note_at: now.toISOString(),\n  last_updated:  now.toISOString(),\n  status:  status,\n  summary: summary,\n  reason:  reason\n}}];"
+        "jsCode": "const now = new Date();\nconst nowIso = now.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00';\nconst tag = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', timeZone: 'Asia/Ho_Chi_Minh' });\nconst replyOutput = (() => {\n  const raw = $('Summarize Reply').item.json.output;\n  if (typeof raw === 'object' && raw !== null) return raw;\n  if (typeof raw === 'string') { try { return JSON.parse(raw); } catch(e) {} }\n  return {};\n})();\nconst summary = replyOutput.summary || '';\nconst status  = replyOutput.status  || 'in_progress';\nconst reason  = replyOutput.reason  || '';\nconst newLine    = '[' + tag + '] ' + summary;\nconst statusLine = 'Status \\u2192 ' + status + ': ' + reason;\nreturn [{ json: {\n  latest_note: (newLine + ' | ' + statusLine).slice(0, 500),\n  latest_note_at: nowIso,\n  last_updated:  nowIso,\n  status:  status,\n  summary: summary,\n  reason:  reason\n}}];"
       },
       "id": "bef78cb1-9568-4e6c-88ca-465922871480",
       "name": "Build Status Change Note",
@@ -710,11 +577,11 @@
             },
             {
               "fieldId": "latest_note_at",
-              "fieldValue": "={{ $json.latest_note_at || new Date().toISOString() }}"
+              "fieldValue": "={{ $json.latest_note_at || (new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00') }}"
             },
             {
               "fieldId": "work_type",
-              "fieldValue": "={{ (() => {\n  const raw = $json.output ?? $json;\n\n  const o = typeof raw === 'string'\n    ? (() => {\n        try {\n          return JSON.parse(raw);\n        } catch (e) {\n          return {};\n        }\n      })()\n    : (raw ?? {});\n\n  const pc = String(o.project_client || 'Internal').trim();\n\n  return (pc !== '' && pc !== 'Internal')\n    ? 'client_work'\n    : (o.work_type || 'in_the_business');\n})() }}"
+              "fieldValue": "={{ (() => {\n  const raw = $json.output ?? $json;\n  const o = typeof raw === 'string'\n    ? (() => { try { return JSON.parse(raw); } catch (e) { return {}; } })()\n    : (raw ?? {});\n  const pc = String(o.project_client || 'Internal').trim();\n  const llmType = o.work_type || null;\n  if (llmType === 'new_business') return 'new_business';\n  if (pc !== '' && pc !== 'Internal') return 'client_work';\n  return llmType || 'in_the_business';\n})() }}"
             }
           ]
         }
@@ -738,7 +605,7 @@
     {
       "parameters": {
         "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"project_client\",\n    \"task\",\n    \"note\",\n    \"next_step\"\n  ],\n  \"properties\": {\n    \"project_client\": {\n      \"type\": \"string\"\n    },\n    \"task\": {\n      \"type\": \"string\",\n      \"maxLength\": 80\n    },\n    \"lead\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ]\n    },\n    \"note\": {\n      \"type\": \"string\",\n      \"maxLength\": 300\n    },\n    \"next_step\": {\n      \"type\": \"string\",\n      \"maxLength\": 100\n    },\n    \"work_type\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ],\n      \"enum\": [\n        \"in_the_business\",\n        \"on_the_business\",\n        null\n      ]\n    }\n  },\n  \"additionalProperties\": false\n}"
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"project_client\",\n    \"task\",\n    \"note\",\n    \"next_step\"\n  ],\n  \"properties\": {\n    \"project_client\": {\n      \"type\": \"string\"\n    },\n    \"task\": {\n      \"type\": \"string\",\n      \"maxLength\": 80\n    },\n    \"lead\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ]\n    },\n    \"note\": {\n      \"type\": \"string\",\n      \"maxLength\": 300\n    },\n    \"next_step\": {\n      \"type\": \"string\",\n      \"maxLength\": 100\n    },\n    \"work_type\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"client_work\",\n        \"in_the_business\",\n        \"on_the_business\",\n        \"new_business\"\n      ]\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
       "id": "e6d59eaf-a595-4038-a300-5cb9ec05f22e",
       "name": "WIP Fields Output Schema",
@@ -783,7 +650,7 @@
         "text": "=Subject: {{ $('Build Normalized Fields').item.json.subject }}\nSummary: {{ $('Classify Ticket').item.json.output.summary }}\nSender: {{ $('Build Normalized Fields').item.json.sender }}\nCategory: {{ $('Classify Ticket').item.json.output.category }}\nBody: {{ $('Build Normalized Fields').item.json.body_excerpt }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=You are a task generator for a creative agency.\nGiven a helpdesk ticket, generate a WIP task entry.\n\nRules:\n- project_client: infer from sender domain, subject, or body. If unclear, use \"Internal\".\n- task: imperative verb phrase, max 80 chars. E.g. \"Fix login redirect for staging environment\"\n- lead: who owns this task. The team_lead_map below is authoritative. Rules in order:\n  1. If the email body explicitly names an owner AND that name appears as a value in team_lead_map, return that exact name.\n  2. Else return team_lead_map[assigned_team].\n  3. If assigned_team is 'Unassigned' and no person mentioned, return null.\n  MUST return either null or an exact person name from team_lead_map. Never invent a person name.\n  team_lead_map: {{ JSON.stringify($('Merge System Config').item.json.team_lead_map || {}) }}\n  assigned_team: {{ $('Classify Ticket').item.json.output.assigned_team }}\n- note: 1-2 sentences of context from the ticket. Max 300 chars.\n- next_step: concrete next action, max 100 chars\n- work_type: only when project_client is \"Internal\", set \"in_the_business\" or \"on_the_business\". For a real client, leave null.\n\nWORK TYPE — only when project_client is \"Internal\":\n- in_the_business: day-to-day work that keeps the agency running (admin, finance, internal support, tooling maintenance, repeatable delivery ops).\n- on_the_business: work that builds the agency itself (strategy, new process or automation, the agency's own sales & marketing, hiring, R&D, internal product).\nFor Internal tasks ALWAYS set work_type; if unsure choose \"in_the_business\".\nFor tasks with a real client, OMIT work_type — the system sets client_work.",
+          "systemMessage": "=You are a task generator for a creative agency.\nGiven a helpdesk ticket, generate a WIP task entry.\n\nRules:\n- project_client: infer from sender domain, subject, or body. If unclear, use \"Internal\".\n- task: imperative verb phrase, max 80 chars. E.g. \"Fix login redirect for staging environment\"\n- lead: who owns this task. The team_lead_map below is authoritative. Rules in order:\n  1. If the email body explicitly names an owner AND that name appears as a value in team_lead_map, return that exact name.\n  2. Else return team_lead_map[assigned_team].\n  3. If assigned_team is 'Unassigned' and no person mentioned, return null.\n  MUST return either null or an exact person name from team_lead_map. Never invent a person name.\n  team_lead_map: {{ JSON.stringify($('Merge System Config').item.json.team_lead_map || {}) }}\n  assigned_team: {{ $('Classify Ticket').item.json.output.assigned_team }}\n- note: 1-2 sentences of context from the ticket. Max 300 chars.\n- next_step: concrete next action, max 100 chars\n- work_type: see WORK TYPE section below. Always return one of: client_work, new_business, in_the_business, on_the_business. Never null.\n\nWORK TYPE:\nLuôn set work_type cho mọi task theo quy tắc sau:\n\n- client_work: task delivery cho client đã ký hợp đồng, đang trong giai đoạn thực thi. project_client là tên client thật (không phải \"Internal\"). KHÔNG tự set — system tự tính từ project_client.\n\n- new_business: task liên quan đến cơ hội kinh doanh chưa có hợp đồng — đề xuất (proposal), pitch, ý tưởng, nghiên cứu để tiếp cận prospect, follow-up cơ hội mới, prototype/demo để thuyết phục client chưa ký. project_client có thể là tên prospect HOẶC \"Internal\". Dấu hiệu nhận biết: ticket đề cập đến \"đề xuất\", \"proposal\", \"pitch\", \"ý tưởng mới\", \"tiếp cận\", \"cơ hội\", hoặc work chưa có client cam kết.\n\n- in_the_business: công việc vận hành nội bộ hàng ngày giữ agency hoạt động — admin, finance, support nội bộ, bảo trì tooling, delivery ops lặp lại. project_client = \"Internal\".\n\n- on_the_business: xây dựng agency — strategy, process mới, automation, sales & marketing của chính agency, tuyển dụng, R&D, internal product. project_client = \"Internal\".\n\nQuy tắc quyết định:\n1. project_client là tên client thật + không có dấu hiệu new_business → client_work (KHÔNG cần set, system tự tính)\n2. Nội dung ticket/body có dấu hiệu new_business (dù project_client là gì) → new_business\n3. project_client = \"Internal\", không có dấu hiệu new_business:\n   - Vận hành/ops/support → in_the_business\n   - Xây dựng năng lực/chiến lược → on_the_business\n   - Không chắc → in_the_business\n\nTrả về work_type cho MỌI task. Không bao giờ để null.",
           "maxIterations": 3,
           "returnIntermediateSteps": false
         }
@@ -2084,7 +1951,7 @@
             {
               "id": "assign-date_received",
               "name": "date_received",
-              "value": "={{ $json.execution?.error?.timestamp ? new Date($json.execution.error.timestamp).toISOString() : new Date().toISOString() }}",
+              "value": "={{ (() => { const d = $json.execution?.error?.timestamp ? new Date($json.execution.error.timestamp) : new Date(); return d.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00'; })() }}",
               "type": "string"
             },
             {
@@ -2234,7 +2101,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const prefix = $('Config1').item.json.ticketIdPrefix;\nconst d = new Date();\nconst ymd = d.toISOString().slice(0, 10).replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8);\nreturn [{\n  json: {\n    ticket_id: `${prefix}-${ymd}-${rand}`,\n    last_updated: d.toISOString()\n  }\n}];"
+        "jsCode": "const prefix = $('Config1').item.json.ticketIdPrefix;\nconst d = new Date();\nconst vnDateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' });\nconst ymd = vnDateStr.replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8);\nconst vnIso = d.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00';\nreturn [{\n  json: {\n    ticket_id: `${prefix}-${ymd}-${rand}`,\n    last_updated: vnIso\n  }\n}];"
       },
       "id": "505adf85-9045-461e-b30e-64d432877ddb",
       "name": "Generate Error Ticket ID",
@@ -2459,7 +2326,7 @@
             },
             {
               "fieldId": "latest_note_at",
-              "fieldValue": "={{ $json.latest_note_at || new Date().toISOString() }}"
+              "fieldValue": "={{ $json.latest_note_at || (new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00') }}"
             }
           ]
         }
@@ -2655,7 +2522,7 @@
             {
               "id": "assign-latest_note_at",
               "name": "latest_note_at",
-              "value": "={{ new Date().toISOString() }}",
+              "value": "={{ new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00' }}",
               "type": "string"
             }
           ]
@@ -2673,7 +2540,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const prefix = $('Config').item.json.ticketIdPrefix;\nconst d = new Date();\nconst ymd = d.toISOString().slice(0, 10).replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8);\nreturn [{\n  json: {\n    ticket_id: `${prefix}-${ymd}-${rand}`,\n    last_updated: d.toISOString()\n  }\n}];"
+        "jsCode": "const prefix = $('Config').item.json.ticketIdPrefix;\nconst d = new Date();\nconst vnDateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' });\nconst ymd = vnDateStr.replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8);\nconst vnIso = d.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00';\nreturn [{\n  json: {\n    ticket_id: `${prefix}-${ymd}-${rand}`,\n    last_updated: vnIso\n  }\n}];"
       },
       "id": "5729fe03-3bb6-482c-a008-db2515831d0a",
       "name": "Generate Ticket ID",
@@ -3360,7 +3227,7 @@
       "main": [
         [
           {
-            "node": "Log Backfill Note",
+            "node": "Mark Message as Read",
             "type": "main",
             "index": 0
           }
@@ -3437,7 +3304,7 @@
       "main": [
         [
           {
-            "node": "Log Status Change Note",
+            "node": "Mark Message as Read",
             "type": "main",
             "index": 0
           }
@@ -3764,39 +3631,6 @@
         ]
       ]
     },
-    "Log Backfill Note": {
-      "main": [
-        [
-          {
-            "node": "Mark Message as Read",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Log Status Change Note": {
-      "main": [
-        [
-          {
-            "node": "Mark Message as Read",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Log Initial Note": {
-      "main": [
-        [
-          {
-            "node": "Mark Message as Read",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Generate Embedding1": {
       "ai_embedding": [
         [
@@ -3823,7 +3657,7 @@
       "main": [
         [
           {
-            "node": "Log Initial Note",
+            "node": "Mark Message as Read",
             "type": "main",
             "index": 0
           }
