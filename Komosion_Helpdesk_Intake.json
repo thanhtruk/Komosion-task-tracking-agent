@@ -1,5 +1,5 @@
 {
-  "name": "Komosion Helpdesk Intake — Phase 1 - Ver2",
+  "name": "Komosion Helpdesk Intake",
   "nodes": [
     {
       "parameters": {
@@ -8,13 +8,13 @@
         "width": 360,
         "color": 4
       },
-      "id": "07637290-b1de-432f-913e-55b8cc488479",
+      "id": "4e48c975-e671-4093-8134-3262cb0bbc9e",
       "name": "Sheet Sync Sticky",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -18624,
-        12656
+        -48896,
+        16176
       ]
     },
     {
@@ -24,13 +24,13 @@
         "width": 360,
         "color": 7
       },
-      "id": "90221d3a-7235-4ad9-aebf-0d81baf2af52",
+      "id": "0bc8d040-09e2-4cb9-be89-2820aa9f2a31",
       "name": "Note History Sticky",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -17712,
-        12176
+        -47728,
+        15440
       ]
     },
     {
@@ -38,13 +38,13 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"summary\",\n    \"status\",\n    \"reason\"\n  ],\n  \"properties\": {\n    \"summary\": {\n      \"type\": \"string\",\n      \"maxLength\": 100,\n      \"description\": \"One sentence summary of the reply\"\n    },\n    \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"new\",\n        \"to_do\",\n        \"in_progress\",\n        \"waiting_client\",\n        \"blocked\",\n        \"complete\",\n        \"closed\"\n      ],\n      \"description\": \"Inferred status for both ticket and WIP task\"\n    },\n    \"reason\": {\n      \"type\": \"string\",\n      \"maxLength\": 150,\n      \"description\": \"Brief explanation of status choice\"\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
-      "id": "e00dd62d-d72b-406f-96c5-a23bd345f437",
+      "id": "f5da63f2-a1dc-4c37-9cef-f01def3652bb",
       "name": "Reply Analysis Schema",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -20640,
-        12432
+        -48960,
+        16048
       ],
       "retryOnFail": false
     },
@@ -71,13 +71,13 @@
           ]
         }
       },
-      "id": "083f6c93-8515-4d37-85a5-6418bc9e700b",
+      "id": "ecf4e2aa-f1c4-4b5e-a229-c010ceb98239",
       "name": "Backfill Ticket WIP ID",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -18464,
-        12464
+        -47200,
+        16016
       ],
       "credentials": {
         "supabaseApi": {
@@ -90,13 +90,13 @@
       "parameters": {
         "jsCode": "const first = Array.isArray($input.all()) ? $input.first()?.json : $json;\nreturn [{ json: { wip_task_id: first?.id || first?.wip_task_id || null } }];"
       },
-      "id": "e3997811-d0fa-47d2-b214-a1015c11f96f",
+      "id": "09808741-e7ec-41ca-9377-b684b6020e95",
       "name": "Set Backfill WIP Task ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -18688,
-        12464
+        -47488,
+        16016
       ]
     },
     {
@@ -143,13 +143,13 @@
           ]
         }
       },
-      "id": "89e481d7-a054-4229-b35d-171b706ea038",
+      "id": "f859017e-e688-4279-9c52-d3700a121d1f",
       "name": "Create WIP from Thread",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -18912,
-        12464
+        -47712,
+        16016
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -164,13 +164,13 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"project_client\",\n    \"task\",\n    \"note\",\n    \"next_step\"\n  ],\n  \"properties\": {\n    \"project_client\": {\n      \"type\": \"string\"\n    },\n    \"task\": {\n      \"type\": \"string\",\n      \"maxLength\": 80\n    },\n    \"lead\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ]\n    },\n    \"note\": {\n      \"type\": \"string\",\n      \"maxLength\": 300\n    },\n    \"next_step\": {\n      \"type\": \"string\",\n      \"maxLength\": 100\n    },\n    \"work_type\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"client_work\",\n        \"in_the_business\",\n        \"on_the_business\",\n        \"new_business\"\n      ]\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
-      "id": "11233176-f86e-4928-9215-dd4e4c8aef15",
+      "id": "4da5a9a2-2574-428f-b18e-a740e0bd8eac",
       "name": "Thread WIP Fields Output Schema",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -19136,
-        12688
+        -47936,
+        16240
       ],
       "retryOnFail": false
     },
@@ -186,13 +186,13 @@
           "temperature": 0
         }
       },
-      "id": "da1504ea-328b-4911-8752-c2e9797211ea",
+      "id": "76ac5cba-3ef8-4806-a042-0ffa5f4e6fe9",
       "name": "OpenAI Thread WIP Fields Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -19264,
-        12688
+        -48064,
+        16240
       ],
       "credentials": {
         "openAiApi": {
@@ -212,13 +212,13 @@
           "returnIntermediateSteps": false
         }
       },
-      "id": "3a95a2c7-c571-4c16-a4dd-ca75c047eb18",
+      "id": "2c497878-45fc-40a5-ac21-43c9b4432762",
       "name": "Generate WIP Fields from Thread",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -19264,
-        12464
+        -48064,
+        16016
       ],
       "retryOnFail": true,
       "waitBetweenTries": 2000,
@@ -240,13 +240,13 @@
           ]
         }
       },
-      "id": "9695a558-2e38-4502-a98f-427e4d7095b5",
+      "id": "4fc57840-2e57-421d-906f-f928f9ea8afa",
       "name": "Fetch Original Ticket",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -19552,
-        12464
+        -48288,
+        16016
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -295,13 +295,13 @@
           ]
         }
       },
-      "id": "d9fb502b-866c-4837-a621-4cb59cd9ee3f",
+      "id": "e60fa05a-c20a-47f2-a2b5-b26d62f84872",
       "name": "Update Ticket Status",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -18464,
-        12160
+        -47200,
+        15680
       ],
       "credentials": {
         "supabaseApi": {
@@ -337,13 +337,13 @@
           ]
         }
       },
-      "id": "07279240-a68c-4317-96f0-f52a8dea80a0",
+      "id": "2b684f93-f53e-4867-88d9-c7ec8a945c86",
       "name": "Update WIP with Status",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -18912,
-        12160
+        -47488,
+        15680
       ],
       "credentials": {
         "supabaseApi": {
@@ -356,13 +356,13 @@
       "parameters": {
         "jsCode": "const now = new Date();\nconst nowIso = now.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00';\nconst tag = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', timeZone: 'Asia/Ho_Chi_Minh' });\nconst replyOutput = (() => {\n  const raw = $('Summarize Reply').item.json.output;\n  if (typeof raw === 'object' && raw !== null) return raw;\n  if (typeof raw === 'string') { try { return JSON.parse(raw); } catch(e) {} }\n  return {};\n})();\nconst summary = replyOutput.summary || '';\nconst status  = replyOutput.status  || 'in_progress';\nconst reason  = replyOutput.reason  || '';\nconst newLine    = '[' + tag + '] ' + summary;\nconst statusLine = 'Status \\u2192 ' + status + ': ' + reason;\nreturn [{ json: {\n  latest_note: (newLine + ' | ' + statusLine).slice(0, 500),\n  latest_note_at: nowIso,\n  last_updated:  nowIso,\n  status:  status,\n  summary: summary,\n  reason:  reason\n}}];"
       },
-      "id": "bef78cb1-9568-4e6c-88ca-465922871480",
+      "id": "b8b1ce76-eba5-40fd-a36f-02ad256f9302",
       "name": "Build Status Change Note",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -19200,
-        12160
+        -47712,
+        15680
       ]
     },
     {
@@ -381,13 +381,13 @@
           ]
         }
       },
-      "id": "1f87b9c8-4aac-4f62-9cc7-7301164b7c67",
+      "id": "c963eb42-a595-45d0-b326-0cd081a78f4c",
       "name": "Fetch Linked WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -19552,
-        12160
+        -48000,
+        15680
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -422,13 +422,13 @@
         },
         "options": {}
       },
-      "id": "6a37af10-11d3-42e1-ad72-f8d598feb415",
+      "id": "554514c8-27d2-4ef8-8f7d-af715a570745",
       "name": "Has Linked WIP?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -19904,
-        12320
+        -48512,
+        15824
       ]
     },
     {
@@ -447,13 +447,13 @@
           ]
         }
       },
-      "id": "a00bc205-8482-4758-a56b-6def350471da",
+      "id": "d0d939e2-1ce4-48f4-b20e-e0be7947af00",
       "name": "Lookup Linked WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -20192,
-        12320
+        -48736,
+        15824
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -475,13 +475,13 @@
           "temperature": 0
         }
       },
-      "id": "4aeb85df-5b53-44c4-9281-1463e122d568",
+      "id": "405d5db3-1ce3-4d90-9c4e-cb13c3e3ae1d",
       "name": "OpenAI Reply Summary Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -20768,
-        12432
+        -49088,
+        16048
       ],
       "credentials": {
         "openAiApi": {
@@ -501,13 +501,13 @@
           "returnIntermediateSteps": false
         }
       },
-      "id": "b6bc7f06-6fd9-42f9-b8f8-13d054a07acd",
+      "id": "f9e76efc-1aab-47f8-ba9f-89541e459a26",
       "name": "Summarize Reply",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -20768,
-        12208
+        -49088,
+        15824
       ],
       "retryOnFail": true,
       "waitBetweenTries": 2000,
@@ -520,26 +520,26 @@
         "width": 1200,
         "color": 5
       },
-      "id": "a5e4d51e-477b-4f1c-8b03-c2a91f8e005d",
+      "id": "1a625363-feb0-4f98-9b90-220689422783",
       "name": "Stage C (Extended) — Thread Reply + WIP Update",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -20784,
-        11968
+        -51056,
+        15488
       ]
     },
     {
       "parameters": {
         "jsCode": "const first = Array.isArray($input.all()) ? $input.first()?.json : $json;\nreturn [{ json: { wip_task_id: first?.id || first?.wip_task_id || null } }];"
       },
-      "id": "5a2b6996-dbd2-48d1-92af-bdee6c363ae0",
+      "id": "906fa9fc-45f1-49c6-adc6-540ed33c297c",
       "name": "Set WIP Task ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -18912,
-        12992
+        -48000,
+        16480
       ]
     },
     {
@@ -586,13 +586,13 @@
           ]
         }
       },
-      "id": "7561e24b-0ef3-4a02-a9b1-18c9c605cd1f",
+      "id": "bb310b60-ad30-4737-9ee4-680ce20b36c9",
       "name": "Create WIP Task",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -19200,
-        12992
+        -48288,
+        16672
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -607,13 +607,13 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"project_client\",\n    \"task\",\n    \"note\",\n    \"next_step\"\n  ],\n  \"properties\": {\n    \"project_client\": {\n      \"type\": \"string\"\n    },\n    \"task\": {\n      \"type\": \"string\",\n      \"maxLength\": 80\n    },\n    \"lead\": {\n      \"type\": [\n        \"string\",\n        \"null\"\n      ]\n    },\n    \"note\": {\n      \"type\": \"string\",\n      \"maxLength\": 300\n    },\n    \"next_step\": {\n      \"type\": \"string\",\n      \"maxLength\": 100\n    },\n    \"work_type\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"client_work\",\n        \"in_the_business\",\n        \"on_the_business\",\n        \"new_business\"\n      ]\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
-      "id": "e6d59eaf-a595-4038-a300-5cb9ec05f22e",
+      "id": "2f3c772f-b264-4a1e-ba13-8ee7cf837ee6",
       "name": "WIP Fields Output Schema",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -19488,
-        13216
+        -49312,
+        16704
       ],
       "retryOnFail": false
     },
@@ -629,13 +629,13 @@
           "temperature": 0
         }
       },
-      "id": "82ef7969-d797-41ec-a385-6f6a15b0c040",
+      "id": "b1e46968-92b8-4eb7-bf9a-0d4350d2ac33",
       "name": "OpenAI WIP Fields Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -19616,
-        13216
+        -49440,
+        16704
       ],
       "credentials": {
         "openAiApi": {
@@ -650,22 +650,161 @@
         "text": "=Subject: {{ $('Build Normalized Fields').item.json.subject }}\nSummary: {{ $('Classify Ticket').item.json.output.summary }}\nSender: {{ $('Build Normalized Fields').item.json.sender }}\nCategory: {{ $('Classify Ticket').item.json.output.category }}\nBody: {{ $('Build Normalized Fields').item.json.body_excerpt }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=You are a task generator for a creative agency.\nGiven a helpdesk ticket, generate a WIP task entry.\n\nRules:\n- project_client: infer from sender domain, subject, or body. If unclear, use \"Internal\".\n- task: imperative verb phrase, max 80 chars. E.g. \"Fix login redirect for staging environment\"\n- lead: who owns this task. The team_lead_map below is authoritative. Rules in order:\n  1. If the email body explicitly names an owner AND that name appears as a value in team_lead_map, return that exact name.\n  2. Else return team_lead_map[assigned_team].\n  3. If assigned_team is 'Unassigned' and no person mentioned, return null.\n  MUST return either null or an exact person name from team_lead_map. Never invent a person name.\n  team_lead_map: {{ JSON.stringify($('Merge System Config').item.json.team_lead_map || {}) }}\n  assigned_team: {{ $('Classify Ticket').item.json.output.assigned_team }}\n- note: 1-2 sentences of context from the ticket. Max 300 chars.\n- next_step: concrete next action, max 100 chars\n- work_type: see WORK TYPE section below. Always return one of: client_work, new_business, in_the_business, on_the_business. Never null.\n\nWORK TYPE:\nLuôn set work_type cho mọi task theo quy tắc sau:\n\n- client_work: task delivery cho client đã ký hợp đồng, đang trong giai đoạn thực thi. project_client là tên client thật (không phải \"Internal\"). KHÔNG tự set — system tự tính từ project_client.\n\n- new_business: task liên quan đến cơ hội kinh doanh chưa có hợp đồng — đề xuất (proposal), pitch, ý tưởng, nghiên cứu để tiếp cận prospect, follow-up cơ hội mới, prototype/demo để thuyết phục client chưa ký. project_client có thể là tên prospect HOẶC \"Internal\". Dấu hiệu nhận biết: ticket đề cập đến \"đề xuất\", \"proposal\", \"pitch\", \"ý tưởng mới\", \"tiếp cận\", \"cơ hội\", hoặc work chưa có client cam kết.\n\n- in_the_business: công việc vận hành nội bộ hàng ngày giữ agency hoạt động — admin, finance, support nội bộ, bảo trì tooling, delivery ops lặp lại. project_client = \"Internal\".\n\n- on_the_business: xây dựng agency — strategy, process mới, automation, sales & marketing của chính agency, tuyển dụng, R&D, internal product. project_client = \"Internal\".\n\nQuy tắc quyết định:\n1. project_client là tên client thật + không có dấu hiệu new_business → client_work (KHÔNG cần set, system tự tính)\n2. Nội dung ticket/body có dấu hiệu new_business (dù project_client là gì) → new_business\n3. project_client = \"Internal\", không có dấu hiệu new_business:\n   - Vận hành/ops/support → in_the_business\n   - Xây dựng năng lực/chiến lược → on_the_business\n   - Không chắc → in_the_business\n\nTrả về work_type cho MỌI task. Không bao giờ để null.",
+          "systemMessage": "=You are a task generator for a creative agency.\nGiven a helpdesk ticket, generate a WIP task entry.\n\nCLIENT_REFERENCE (canonical client/project names — use ONLY to normalize spelling/transcription variants from email content; never to invent a client):\n{{ JSON.stringify($('Merge Client Registry').item.json.client_registry || []) }}\n\nRules:\n- project_client: identify the client STRICTLY from the email subject + body + summary. Match the mentioned client to CLIENT_REFERENCE.canonical_name → return that row's project_client. If no client/project is mentioned in the content, return \"Internal\". NEVER infer the client from the sender's email address or domain — the sender is irrelevant to client identity (a Komosion staffer can email about Acme Co; a client can email about Internal ops). NEVER invent a project_client that is not in CLIENT_REFERENCE; if the mention is ambiguous or you are not confident in the mapping, return \"Internal\".\n- task: imperative verb phrase, max 80 chars. E.g. \"Fix login redirect for staging environment\"\n- lead: who owns this task. The team_lead_map below is authoritative. Rules in order:\n  1. If the email body explicitly names an owner AND that name appears as a value in team_lead_map, return that exact name.\n  2. Else return team_lead_map[assigned_team].\n  3. If assigned_team is 'Unassigned' and no person mentioned, return null.\n  MUST return either null or an exact person name from team_lead_map. Never invent a person name.\n  team_lead_map: {{ JSON.stringify($('Merge System Config').item.json.team_lead_map || {}) }}\n  assigned_team: {{ $('Classify Ticket').item.json.output.assigned_team }}\n- note: 1-2 sentences of context from the ticket. Max 300 chars.\n- next_step: concrete next action, max 100 chars\n- work_type: see WORK TYPE section below. Always return one of: client_work, new_business, in_the_business, on_the_business. Never null.\n\nWORK TYPE:\nLuôn set work_type cho mọi task theo quy tắc sau:\n\n- client_work: task delivery cho client đã ký hợp đồng, đang trong giai đoạn thực thi. project_client là tên client thật (không phải \"Internal\"). KHÔNG tự set — system tự tính từ project_client.\n\n- new_business: task liên quan đến cơ hội kinh doanh chưa có hợp đồng — đề xuất (proposal), pitch, ý tưởng, nghiên cứu để tiếp cận prospect, follow-up cơ hội mới, prototype/demo để thuyết phục client chưa ký. project_client có thể là tên prospect HOẶC \"Internal\". Dấu hiệu nhận biết: ticket đề cập đến \"đề xuất\", \"proposal\", \"pitch\", \"ý tưởng mới\", \"tiếp cận\", \"cơ hội\", hoặc work chưa có client cam kết.\n\n- in_the_business: công việc vận hành nội bộ hàng ngày giữ agency hoạt động — admin, finance, support nội bộ, bảo trì tooling, delivery ops lặp lại. project_client = \"Internal\".\n\n- on_the_business: xây dựng agency — strategy, process mới, automation, sales & marketing của chính agency, tuyển dụng, R&D, internal product. project_client = \"Internal\".\n\nQuy tắc quyết định:\n1. project_client là tên client thật + không có dấu hiệu new_business → client_work (KHÔNG cần set, system tự tính)\n2. Nội dung ticket/body có dấu hiệu new_business (dù project_client là gì) → new_business\n3. project_client = \"Internal\", không có dấu hiệu new_business:\n   - Vận hành/ops/support → in_the_business\n   - Xây dựng năng lực/chiến lược → on_the_business\n   - Không chắc → in_the_business\n\nTrả về work_type cho MỌI task. Không bao giờ để null.",
           "maxIterations": 3,
           "returnIntermediateSteps": false
         }
       },
-      "id": "75cff62e-bacc-45f7-8087-3b2783b77bc5",
+      "id": "b7381d83-a9cb-4dae-be01-1f565be932af",
       "name": "Generate WIP Fields",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -19616,
-        12992
+        -49440,
+        16480
       ],
       "retryOnFail": true,
       "waitBetweenTries": 2000,
       "maxTries": 2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Merge System Config').item.json.supabase_project_url }}/rest/v1/rpc/match_wip_task",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_project_client: ((raw => { let o = raw ?? {}; if (typeof o === 'string') { try { o = JSON.parse(o); } catch (e) { o = {}; } } return o; })($json.output ?? $json).project_client) || 'Internal', p_title: (((raw => { let o = raw ?? {}; if (typeof o === 'string') { try { o = JSON.parse(o); } catch (e) { o = {}; } } return o; })($json.output ?? $json).task) || '').slice(0, 80), p_body: [($('Build Normalized Fields').item.json.subject || ''), ($('Classify Ticket').item.json.output && $('Classify Ticket').item.json.output.summary || ''), ($('Build Normalized Fields').item.json.body_excerpt || '')].filter(Boolean).join(' \\n ').slice(0, 2000) }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "8e3dac1f-9893-4fd8-b4e6-a9fd776fe43c",
+      "name": "Match WIP Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -49024,
+        16480
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 1500,
+      "maxTries": 2,
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "band-1",
+              "name": "match_band",
+              "type": "string",
+              "value": "={{ (Array.isArray($json) && $json[0] && $json[0].band) || 'reject' }}"
+            },
+            {
+              "id": "band-2",
+              "name": "matched_wip_task_id",
+              "type": "string",
+              "value": "={{ (Array.isArray($json) && $json[0] && $json[0].wip_task_id) || '' }}"
+            },
+            {
+              "id": "band-3",
+              "name": "output",
+              "type": "object",
+              "value": "={{ $('Generate WIP Fields').item.json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "525cf6cb-935f-44d1-98f5-9529d8d2b361",
+      "name": "Evaluate WIP Match",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48736,
+        16480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "safe-cond",
+              "leftValue": "={{ $json.match_band }}",
+              "rightValue": "safe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8f2a6739-1ae5-41c9-9b2f-25c9151fb773",
+      "name": "Is Safe Match?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -48512,
+        16480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "use-1",
+              "name": "id",
+              "type": "string",
+              "value": "={{ $json.matched_wip_task_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e7cc906c-c38f-43f5-9ec0-726c4e4bf80e",
+      "name": "Use Matched WIP Task ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48288,
+        16256
+      ]
     },
     {
       "parameters": {
@@ -674,13 +813,13 @@
         "width": 900,
         "color": 6
       },
-      "id": "99e4f3eb-5271-44e0-8805-7f3a8f64025d",
+      "id": "081e2415-a107-4c34-85a4-7db2ac41f3ca",
       "name": "Stage G — WIP Task Creation",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -19616,
-        13392
+        -49888,
+        16912
       ]
     },
     {
@@ -690,13 +829,13 @@
         "width": 2416,
         "color": 5
       },
-      "id": "c8b4e30a-73e3-4851-a319-cb1cd9fd3261",
+      "id": "7ec5eecf-15c7-4143-9ad6-3cb74401597f",
       "name": "Stage B.5 — Triage",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -23232,
-        12016
+        -53280,
+        15504
       ]
     },
     {
@@ -704,13 +843,13 @@
         "operation": "markAsRead",
         "messageId": "={{ $json.email_id }}"
       },
-      "id": "e569a5c1-b865-45ba-8ffd-b0f1845b6740",
+      "id": "cc9e82ce-5a19-42bb-9547-c8257ff33813",
       "name": "Mark Filtered as Read",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -20416,
-        12800
+        -50240,
+        16288
       ],
       "webhookId": "9394d4d6-39bd-4f56-9fb5-f8c48329cc20",
       "credentials": {
@@ -947,13 +1086,13 @@
           "cellFormat": "RAW"
         }
       },
-      "id": "ae6a43ef-82e4-4794-82a7-f6c7d55d13db",
+      "id": "8f31947c-4275-4af9-883d-d0513af9ae40",
       "name": "Log Filtered Email to Sheet",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -20416,
-        12608
+        -50240,
+        16096
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -1004,13 +1143,13 @@
         "includeOtherFields": true,
         "options": {}
       },
-      "id": "e4d73b53-fbb3-4a47-9a74-c7b89b4cffdb",
+      "id": "a48247d4-2faf-4d46-bfbf-f79f436bf722",
       "name": "Mark LLM Not Ticket",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -20704,
-        12608
+        -50528,
+        16096
       ]
     },
     {
@@ -1025,13 +1164,13 @@
           "temperature": 0
         }
       },
-      "id": "f1c400b7-b5f6-4146-8307-e8e0908a4684",
+      "id": "0fa6c53e-31c7-4df9-a008-eaea6f27a642",
       "name": "OpenAI Triage Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -21056,
-        12864
+        -50880,
+        16448
       ],
       "credentials": {
         "openAiApi": {
@@ -1062,13 +1201,13 @@
           "enableAutoFixing": true
         }
       },
-      "id": "b1b80d81-071b-4eb4-b735-1a1f2151bfbf",
+      "id": "f1c9245f-c4df-49e6-b8b2-464d641cf4b6",
       "name": "LLM Triage Classifier",
       "type": "@n8n/n8n-nodes-langchain.textClassifier",
       "typeVersion": 1.1,
       "position": [
-        -21120,
-        12608
+        -50944,
+        16192
       ]
     },
     {
@@ -1095,13 +1234,13 @@
         },
         "options": {}
       },
-      "id": "b096b06f-44ea-4fdb-ac65-282b9057d695",
+      "id": "f6f1219f-af5c-4d9e-9555-277a73fc0565",
       "name": "Is Ticket (Rules)?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -21056,
-        13296
+        -50880,
+        16768
       ]
     },
     {
@@ -1128,26 +1267,26 @@
         },
         "options": {}
       },
-      "id": "a530919e-7e65-4d72-bf1b-14cef70e2865",
+      "id": "6dbdcf13-038f-4218-83bd-4e6b978ce2db",
       "name": "Needs LLM Triage?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -21344,
-        12784
+        -51168,
+        16400
       ]
     },
     {
       "parameters": {
         "jsCode": "const input = $('Build Normalized Fields').item.json;\nconst cfg = $('Triage Rules Config').item.json;\n\n// Convert comma-separated string OR array -> clean lowercase array\nfunction toList(value) {\n  if (Array.isArray(value)) {\n    return value\n      .map(v => String(v || '').trim().toLowerCase())\n      .filter(Boolean);\n  }\n\n  if (value == null || value === '') return [];\n\n  return String(value)\n    .split(',')\n    .map(v => v.trim().toLowerCase())\n    .filter(Boolean);\n}\n\n// Convert rules string JSON OR array -> array\nfunction toRules(value) {\n  if (Array.isArray(value)) return value;\n  if (value == null || value === '') return [];\n\n  try {\n    const parsed = JSON.parse(String(value));\n    return Array.isArray(parsed) ? parsed : [];\n  } catch (e) {\n    return [];\n  }\n}\n\n// Config fields can now all be String\nconst rules = toRules(cfg.rules);\nconst allowlist = toList(cfg.allowlist_domains);\nconst blocklistSenders = toList(cfg.blocklist_senders);\nconst blocklistDomains = toList(cfg.blocklist_domains);\nconst blocklistHeaderKeywords = toList(cfg.blocklist_header_keywords);\nconst minBodyChars = Number(cfg.min_body_chars || 10);\n\n// Normalize headers to lowercase keys\nconst rawHeaders = input.headers || {};\nconst headers = {};\n\nfor (const [key, value] of Object.entries(rawHeaders)) {\n  headers[String(key).toLowerCase()] = value;\n}\n\nconst sender = String(input.sender || '').toLowerCase().trim();\nconst senderDomain = sender.includes('@')\n  ? sender.split('@').pop().trim()\n  : '';\n\nconst signals = [];\nconst matchedRuleIds = [];\n\n// Blocklist sender check\nif (blocklistSenders.includes(sender)) {\n  return [{\n    json: {\n      ...input,\n      triage_decision: \"not_ticket\",\n      triage_reason: \"Sender in blocklist\",\n      triage_signals: [\"blocklist_sender\"],\n      triage_matched_rule_ids: [\"BLOCKLIST_SENDER\"],\n      triage_layer: \"rules\"\n    }\n  }];\n}\n\n// Blocklist domain check\nif (blocklistDomains.includes(senderDomain)) {\n  return [{\n    json: {\n      ...input,\n      triage_decision: \"not_ticket\",\n      triage_reason: \"Sender domain in blocklist\",\n      triage_signals: [\"blocklist_domain\"],\n      triage_matched_rule_ids: [\"BLOCKLIST_DOMAIN\"],\n      triage_layer: \"rules\"\n    }\n  }];\n}\n\n// Blocklist header keyword check\nconst headerSearchText = [\n  input.subject || '',\n  ...Object.values(headers).map(v => String(v || ''))\n].join(' ').toLowerCase();\n\nconst matchedHeaderKeyword = blocklistHeaderKeywords.find(keyword =>\n  headerSearchText.includes(keyword)\n);\n\nif (matchedHeaderKeyword) {\n  return [{\n    json: {\n      ...input,\n      triage_decision: \"not_ticket\",\n      triage_reason: `Header contains blocklisted keyword: ${matchedHeaderKeyword}`,\n      triage_signals: [\"blocklist_header_keyword\"],\n      triage_matched_rule_ids: [\"BLOCKLIST_HEADER_KEYWORD\"],\n      triage_layer: \"rules\"\n    }\n  }];\n}\n\n// Allowlist domain check\nif (allowlist.includes(senderDomain)) {\n  return [{\n    json: {\n      ...input,\n      triage_decision: \"ticket\",\n      triage_reason: \"Sender domain in allowlist\",\n      triage_signals: [\"allowlist_domain\"],\n      triage_matched_rule_ids: [\"ALLOWLIST_OVERRIDE\"],\n      triage_layer: \"rules\"\n    }\n  }];\n}\n\n// Rule evaluation\nlet decision = \"ambiguous\";\nlet reason = \"\";\n\nfunction evaluate(rule) {\n  if (!rule || rule.enabled === false) return false;\n\n  const ct = rule.check_type;\n  const field = String(rule.field || '').toLowerCase();\n  const pat = rule.pattern;\n\n  if (ct === \"header_exists\") {\n    return headers[field] != null && String(headers[field]).trim() !== '';\n  }\n\n  if (ct === \"header_in\") {\n    const headerValue = String(headers[field] || '').toLowerCase().trim();\n    const patterns = toList(pat);\n    return patterns.includes(headerValue);\n  }\n\n  if (ct === \"sender_regex\") {\n    try {\n      return new RegExp(String(pat || ''), 'i').test(input.sender || '');\n    } catch {\n      return false;\n    }\n  }\n\n  if (ct === \"subject_regex\") {\n    try {\n      return new RegExp(String(pat || ''), 'i').test(input.subject || '');\n    } catch {\n      return false;\n    }\n  }\n\n  if (ct === \"body_min_length\") {\n    return String(input.body_excerpt || '').trim().length < minBodyChars;\n  }\n\n  return false;\n}\n\n for (const rule of rules) {\n  if (evaluate(rule)) {\n    signals.push(rule.signal);\n    matchedRuleIds.push(rule.id);\n\n    if (decision === \"ambiguous\") {\n      decision = rule.decision;\n      reason = rule.reason;\n    }\n  }\n}\n\nreturn [{\n  json: {\n    ...input,\n    triage_decision: decision,\n    triage_reason: reason,\n    triage_signals: signals,\n    triage_matched_rule_ids: matchedRuleIds,\n    triage_layer: \"rules\"\n  }\n}];"
       },
-      "id": "4e038923-7762-4bbc-bb1b-f73aeaa14f75",
+      "id": "884100cf-e58e-4e3c-8489-0a0f0ce5da77",
       "name": "Apply Triage Rules",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -21568,
-        12784
+        -51392,
+        16400
       ]
     },
     {
@@ -1401,13 +1540,13 @@
         "includeOtherFields": true,
         "options": {}
       },
-      "id": "4d70f373-01e9-4dbd-8377-661def182685",
+      "id": "646d3c09-d845-42cc-be11-eae218619ee7",
       "name": "Triage Rules Config",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -22688,
-        12624
+        -52512,
+        16272
       ]
     },
     {
@@ -1562,13 +1701,13 @@
         },
         "options": {}
       },
-      "id": "987ca64e-0f2c-4f4d-afd9-692b151945a2",
+      "id": "ca4566d5-6085-4535-a3fd-88fee3a3e252",
       "name": "Config1",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -23360,
-        13920
+        -53632,
+        17104
       ]
     },
     {
@@ -1591,10 +1730,10 @@
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.3,
       "position": [
-        -23584,
-        12624
+        -53856,
+        16272
       ],
-      "id": "a96ef2f9-31d9-4767-938e-b6b5c969d3e6",
+      "id": "e64608fc-6261-48bb-8552-d72a118f2f9e",
       "name": "Poll support@ inbox",
       "credentials": {
         "gmailOAuth2": {
@@ -1608,13 +1747,13 @@
         "model": "={{ $('Merge System Config').item.json.embedding_model }}",
         "inputType": "={{ $('Config').item.json.voyageInputType }}"
       },
-      "id": "ae6c50ef-193b-4116-9d2e-52fb464ec973",
+      "id": "095dba6c-701f-4089-971c-ca604358c8ff",
       "name": "Generate Embedding1",
       "type": "@seed-ship/n8n-nodes-voyage-embeddings.embeddingsVoyageAi",
       "typeVersion": 1,
       "position": [
-        -18240,
-        13584
+        -47264,
+        16992
       ],
       "credentials": {
         "voyageaiApi": {
@@ -1910,13 +2049,13 @@
           "cellFormat": "RAW"
         }
       },
-      "id": "c9523e1b-a760-4a39-ae4b-5fbc1b3ba1e3",
+      "id": "12081969-deef-4014-8a22-55728d877c68",
       "name": "Log Error to Sheet",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -22688,
-        13920
+        -52960,
+        17104
       ],
       "retryOnFail": false,
       "credentials": {
@@ -2090,37 +2229,37 @@
         },
         "options": {}
       },
-      "id": "5f76cc5b-d27f-4dd9-81a3-aed3834b6ed7",
+      "id": "cbe0a926-1bf7-43b4-82c1-8f9304e57533",
       "name": "Build Error Row",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -22912,
-        13920
+        -53184,
+        17104
       ]
     },
     {
       "parameters": {
         "jsCode": "const prefix = $('Config1').item.json.ticketIdPrefix;\nconst d = new Date();\nconst vnDateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' });\nconst ymd = vnDateStr.replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8);\nconst vnIso = d.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00';\nreturn [{\n  json: {\n    ticket_id: `${prefix}-${ymd}-${rand}`,\n    last_updated: vnIso\n  }\n}];"
       },
-      "id": "505adf85-9045-461e-b30e-64d432877ddb",
+      "id": "1baaaddc-ba1a-4628-84c8-691c1a0a750d",
       "name": "Generate Error Ticket ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -23136,
-        13920
+        -53408,
+        17104
       ]
     },
     {
       "parameters": {},
-      "id": "013a39d2-ef56-4c77-9dc9-d34702d25bbe",
+      "id": "2ab38f07-959f-46bd-a5dc-161d57ae2e47",
       "name": "On Workflow Error",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        -23584,
-        13920
+        -53856,
+        17104
       ]
     },
     {
@@ -2128,13 +2267,13 @@
         "operation": "markAsRead",
         "messageId": "={{ $('Build Normalized Fields').item.json.email_id }}"
       },
-      "id": "3b7bb045-a97e-4d03-b08e-3ae08ae5e89a",
+      "id": "169627a5-88ff-4202-9fd8-9f9bc98b74da",
       "name": "Mark Message as Read",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -17664,
-        12608
+        -46912,
+        15920
       ],
       "webhookId": "48091256-6389-4ddf-b532-e503447fd479",
       "credentials": {
@@ -2171,13 +2310,13 @@
           }
         }
       },
-      "id": "2e5a7f2e-cd79-4b6b-95d3-efe6d0663407",
+      "id": "aec8c5a2-525d-4631-95b1-161d009cab2e",
       "name": "Embedding Document Loader",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        -18112,
-        13584
+        -47136,
+        16992
       ]
     },
     {
@@ -2191,13 +2330,13 @@
         "embeddingBatchSize": 1,
         "options": {}
       },
-      "id": "c935bce4-af09-4116-8428-9b7a3354458a",
+      "id": "4b2706ef-49ee-47b5-b335-50fc2bafa312",
       "name": "Store Embedding",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        -18240,
-        13360
+        -47264,
+        16768
       ],
       "credentials": {
         "supabaseApi": {
@@ -2331,13 +2470,13 @@
           ]
         }
       },
-      "id": "ea307c73-fc10-4201-aac3-425813748be9",
+      "id": "35f0a224-9992-4cd4-8568-197af01143b8",
       "name": "Log to Supabase",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -18176,
-        13072
+        -47200,
+        16256
       ],
       "credentials": {
         "supabaseApi": {
@@ -2529,26 +2668,26 @@
         },
         "options": {}
       },
-      "id": "ecf2f9c3-1e62-4629-ae75-9952072904c3",
+      "id": "36cd5cef-293b-4de8-8083-b0da9373ac86",
       "name": "Build Ticket Row",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -18464,
-        12992
+        -47488,
+        16480
       ]
     },
     {
       "parameters": {
         "jsCode": "const prefix = $('Config').item.json.ticketIdPrefix;\nconst d = new Date();\nconst vnDateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' });\nconst ymd = vnDateStr.replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8);\nconst vnIso = d.toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace(' ', 'T') + '+07:00';\nreturn [{\n  json: {\n    ticket_id: `${prefix}-${ymd}-${rand}`,\n    last_updated: vnIso\n  }\n}];"
       },
-      "id": "5729fe03-3bb6-482c-a008-db2515831d0a",
+      "id": "5b9d26c2-bd8f-4c4c-a15b-ac6fbc8e3ba0",
       "name": "Generate Ticket ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -18688,
-        12992
+        -47712,
+        16480
       ]
     },
     {
@@ -2556,13 +2695,13 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"summary\",\n    \"category\",\n    \"priority\",\n    \"assigned_team\",\n    \"next_action\",\n    \"ai_confidence\"\n  ],\n  \"properties\": {\n    \"summary\": {\n      \"type\": \"string\",\n      \"maxLength\": 200\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"UI_Change_Implementation\",\n        \"SEO\",\n        \"Marketing\",\n        \"UI_Design\",\n        \"Software\",\n        \"Billing_Invoice\",\n        \"Finance_Payroll\",\n        \"DevOps\",\n        \"AI_Model_Issue\",\n        \"Data_Pipeline\",\n        \"General_Support\",\n        \"Other\"\n      ]\n    },\n    \"priority\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"urgent\",\n        \"high\",\n        \"medium\",\n        \"low\"\n      ]\n    },\n    \"assigned_team\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"Tech\",\n        \"Finance\",\n        \"DevOps\",\n        \"Marketing\",\n        \"AI\",\n        \"Data\",\n        \"Design\",\n        \"Unassigned\"\n      ]\n    },\n    \"next_action\": {\n      \"type\": \"string\",\n      \"maxLength\": 150\n    },\n    \"ai_confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n    }\n  },\n  \"additionalProperties\": false\n}"
       },
-      "id": "a445dc88-4cfb-465d-a86a-bc2b2948c98f",
+      "id": "e46491af-1cda-4491-a5e1-96077df0978d",
       "name": "Ticket Output Schema",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -19840,
-        13216
+        -49664,
+        16704
       ],
       "retryOnFail": false
     },
@@ -2578,13 +2717,13 @@
           "temperature": 0
         }
       },
-      "id": "18ad5bc1-92dc-48fe-88ee-7a8bc4a69139",
+      "id": "bfa08057-b110-4c11-9232-4697b0b3539a",
       "name": "OpenAI Classifier Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -19968,
-        13216
+        -49792,
+        16704
       ],
       "credentials": {
         "openAiApi": {
@@ -2604,13 +2743,13 @@
           "returnIntermediateSteps": false
         }
       },
-      "id": "dd8b5583-189a-452b-9faf-bcd34627e7fb",
+      "id": "2e0e9fc1-7452-4e18-87c8-6cf104bf88a1",
       "name": "Classify Ticket",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -19968,
-        12992
+        -49792,
+        16480
       ],
       "retryOnFail": true,
       "waitBetweenTries": 2000,
@@ -2642,13 +2781,13 @@
         },
         "options": {}
       },
-      "id": "a2726922-206b-4a2b-b158-3834590ad102",
+      "id": "3d025b84-e071-4347-8dfd-391166238ba0",
       "name": "Compute Repeat Flags",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -20192,
-        12992
+        -50016,
+        16480
       ]
     },
     {
@@ -2657,13 +2796,13 @@
         "destinationFieldName": "matches",
         "options": {}
       },
-      "id": "2615ca8b-d7f2-44d5-99f7-604156d61e0e",
+      "id": "36a3a6c4-e30b-4632-acc8-6b56144f664f",
       "name": "Aggregate Similar Tickets",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -20416,
-        12992
+        -50240,
+        16480
       ],
       "alwaysOutputData": true
     },
@@ -2681,13 +2820,13 @@
           "queryName": "match_documents"
         }
       },
-      "id": "3b46b676-5dbc-4f65-ad3e-62802a56b8f9",
+      "id": "50cece1d-f652-4033-b76d-a914cae57956",
       "name": "Search Similar Tickets",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        -20736,
-        12896
+        -50592,
+        16480
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -2702,13 +2841,13 @@
         "model": "={{ $('Merge System Config').item.json.embedding_model }}",
         "inputType": "={{ $('Config').item.json.voyageInputType }}"
       },
-      "id": "9af97f9d-08a1-4fff-b069-de5479b1a27e",
+      "id": "7b0f3887-38e1-4de3-9172-2ad6b51ab3a5",
       "name": "Generate Embedding",
       "type": "@seed-ship/n8n-nodes-voyage-embeddings.embeddingsVoyageAi",
       "typeVersion": 1,
       "position": [
-        -20736,
-        13104
+        -50528,
+        16704
       ],
       "credentials": {
         "voyageaiApi": {
@@ -2742,13 +2881,13 @@
         },
         "options": {}
       },
-      "id": "f4963356-a24b-458c-aa35-d0466c15692c",
+      "id": "cd05607f-e0e7-4a99-8284-cdeacda24be5",
       "name": "Is Existing Thread",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -21792,
-        12624
+        -51616,
+        16272
       ]
     },
     {
@@ -2767,13 +2906,13 @@
           ]
         }
       },
-      "id": "b96b1c28-4cac-4ff2-a8a1-f0aee3cb87b0",
+      "id": "dffc3285-4ac2-4765-a5ed-3224e7f6ebb2",
       "name": "Lookup Existing Thread",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -22016,
-        12624
+        -51840,
+        16272
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -2851,39 +2990,83 @@
         },
         "options": {}
       },
-      "id": "bcddac31-6375-4287-8b96-e58ba8fd7717",
+      "id": "712ca593-0162-4fca-904b-13c29b8c4213",
       "name": "Build Normalized Fields",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -22240,
-        12624
+        -52064,
+        16272
       ]
     },
     {
       "parameters": {
         "emailText": "={{ $('Poll support@ inbox').item.json.textHtml || $('Poll support@ inbox').item.json.html || $('Poll support@ inbox').item.json.text || $('Poll support@ inbox').item.json.snippet || '' }}"
       },
-      "id": "a88a2d04-0c65-4787-acdd-88f5d6fabda2",
+      "id": "d9b100b3-7ca5-42d4-b00f-4bff31100438",
       "name": "Clean Email Body",
       "type": "n8n-nodes-clean-email.cleanEmailForLlm",
       "typeVersion": 1,
       "position": [
-        -22464,
-        12624
+        -52288,
+        16272
       ]
     },
     {
       "parameters": {
         "jsCode": "// Flatten array of {key, value} rows into a single object\nconst rows = $input.all().map(i => i.json);\nconst cfg = {};\nfor (const r of rows) {\n  cfg[r.key] = r.value; // value is already parsed JSONB\n}\nreturn [{ json: cfg }];"
       },
-      "id": "8645cc97-32f2-4de7-8079-37a4e6f97c14",
+      "id": "d3e78884-0077-432b-b44d-adee4a7208ea",
       "name": "Merge System Config",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -22912,
-        12624
+        -53184,
+        16272
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "client_registry",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "active",
+              "condition": "eq",
+              "keyValue": "true"
+            }
+          ]
+        }
+      },
+      "id": "3b28a0e5-77cb-4e55-8c44-98b23cbc3043",
+      "name": "Load Client Registry",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -52960,
+        16272
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "AOVJYpNDtqC5QXXf",
+          "name": "Komosion agent database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate registry rows into one item (avoids item multiplication downstream).\nconst sysCfg = $('Merge System Config').first().json;\nconst rows = ($input.all() || []).map(i => i.json).filter(r => r && (r.canonical_name || r.project_client));\nreturn [{ json: { ...sysCfg, client_registry: rows.map(r => ({ canonical_name: r.canonical_name, project_client: r.project_client, client_type: r.client_type })) } }];"
+      },
+      "id": "c874bd08-be27-4e7e-a9c1-673ee27140a5",
+      "name": "Merge Client Registry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -52736,
+        16272
       ]
     },
     {
@@ -2895,13 +3078,13 @@
           "conditions": []
         }
       },
-      "id": "87630f46-787e-4f65-90e1-f0e84d8eb0b1",
+      "id": "6bb9c1e1-9a18-4160-bee7-decdb241426c",
       "name": "Load System Config",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -23136,
-        12624
+        -53408,
+        16272
       ],
       "credentials": {
         "supabaseApi": {
@@ -2996,13 +3179,13 @@
         },
         "options": {}
       },
-      "id": "88f2bc88-e9b2-4394-9354-d1a474bcd31b",
+      "id": "7d1eac64-2099-4f24-9d3f-787203a4cfa1",
       "name": "Config",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -23360,
-        12624
+        -53632,
+        16272
       ]
     },
     {
@@ -3012,13 +3195,13 @@
         "width": 760,
         "color": 4
       },
-      "id": "a268d63e-fec3-4a42-99ef-d24437113d0b",
+      "id": "4709afda-3315-4e3f-afae-a268784cc3bf",
       "name": "Stage H Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -23584,
-        13696
+        -53856,
+        17216
       ]
     },
     {
@@ -3028,13 +3211,13 @@
         "width": 820,
         "color": 3
       },
-      "id": "b55332da-8b2c-4c52-8e6e-39523a31ab65",
+      "id": "df105509-2e5b-41d1-b5d0-7d1d5f626bad",
       "name": "Stage G Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -18464,
-        11936
+        -48736,
+        15456
       ]
     },
     {
@@ -3044,13 +3227,13 @@
         "width": 620,
         "color": 2
       },
-      "id": "51f261b1-6cfb-4765-86ed-8be8e44cf34a",
+      "id": "2af018b8-9318-41a4-9cdb-85f678c36612",
       "name": "Stage F Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -19168,
-        11936
+        -49440,
+        15456
       ]
     },
     {
@@ -3060,13 +3243,13 @@
         "width": 720,
         "color": 7
       },
-      "id": "4e59fabd-385a-4e67-998b-769113d4198f",
+      "id": "254a4a6c-5d4c-418e-a4cd-b70432b8b305",
       "name": "Stage E Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -20176,
-        12784
+        -51136,
+        17280
       ]
     },
     {
@@ -3076,13 +3259,13 @@
         "width": 720,
         "color": 6
       },
-      "id": "596f2788-565d-4cb9-ae0b-d517afda5755",
+      "id": "a14110f1-5558-4efb-946c-ad44598189fd",
       "name": "Stage D Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -20800,
-        13408
+        -51072,
+        16928
       ]
     },
     {
@@ -3092,13 +3275,13 @@
         "width": 720,
         "color": 5
       },
-      "id": "e9456395-947c-4ed5-a1b0-5f9beb56684d",
+      "id": "c6cfaffc-2f30-41f9-ad5b-a64c81c5a596",
       "name": "Stage C Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -22096,
-        12400
+        -52368,
+        15920
       ]
     },
     {
@@ -3108,13 +3291,13 @@
         "width": 640,
         "color": 4
       },
-      "id": "fa38da07-b2c3-4c34-bd89-6aa18306bd78",
+      "id": "a5067364-b4db-4839-b469-27c5e9893b0e",
       "name": "Stage B Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -22912,
-        12272
+        -53184,
+        15792
       ]
     },
     {
@@ -3124,13 +3307,13 @@
         "width": 612,
         "color": 3
       },
-      "id": "ba6c891c-40a2-403a-815c-39935d752f8b",
+      "id": "732383d1-f615-407f-9edd-9c0f3d2b1281",
       "name": "Stage A Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -23952,
-        12384
+        -54224,
+        15904
       ]
     }
   ],
@@ -3454,7 +3637,58 @@
       "main": [
         [
           {
+            "node": "Match WIP Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match WIP Task": {
+      "main": [
+        [
+          {
+            "node": "Evaluate WIP Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate WIP Match": {
+      "main": [
+        [
+          {
+            "node": "Is Safe Match?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Safe Match?": {
+      "main": [
+        [
+          {
+            "node": "Use Matched WIP Task ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Create WIP Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use Matched WIP Task ID": {
+      "main": [
+        [
+          {
+            "node": "Set WIP Task ID",
             "type": "main",
             "index": 0
           }
@@ -3823,6 +4057,28 @@
       "main": [
         [
           {
+            "node": "Load Client Registry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Client Registry": {
+      "main": [
+        [
+          {
+            "node": "Merge Client Registry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Client Registry": {
+      "main": [
+        [
+          {
             "node": "Triage Rules Config",
             "type": "main",
             "index": 0
@@ -3856,12 +4112,17 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Vientiane"
   },
-  "versionId": "d54ce09b-89ef-449e-a029-bc6bbce68965",
+  "versionId": "1b0d0bca-ba1a-41ea-82f9-fbe983682a0a",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "d255ac8dbc9698cc025b4836557a5f10650e4466ca76edffa27a27761bc6d416"
   },
-  "id": "IHvX1ZNVsWIHFKrC",
+  "id": "bOvp7UWGSl8iW42e",
   "tags": []
 }

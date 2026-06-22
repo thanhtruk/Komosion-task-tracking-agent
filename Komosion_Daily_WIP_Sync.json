@@ -1,5 +1,5 @@
 {
-  "name": "Komosion Daily WIP Sync — Phase 3.2",
+  "name": "Komosion Daily WIP Sync",
   "nodes": [
     {
       "parameters": {
@@ -8,13 +8,13 @@
         "width": 620,
         "color": 3
       },
-      "id": "6844a8c4-2d86-4fae-bcd4-e523ec196390",
+      "id": "97cdcf91-702d-4eca-9fbb-f2d3a48bed92",
       "name": "Stage A Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -39664,
-        14720
+        -33264,
+        11536
       ]
     },
     {
@@ -24,13 +24,13 @@
         "width": 820,
         "color": 4
       },
-      "id": "d3f1b86f-2389-4c28-82fd-9023e0a28b98",
+      "id": "126436bb-00ac-4ecb-9454-fbd3e7c5787e",
       "name": "Stage B Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -38528,
-        14688
+        -32128,
+        11504
       ]
     },
     {
@@ -40,13 +40,13 @@
         "width": 900,
         "color": 7
       },
-      "id": "07bc2d5e-af2a-4cab-9fb0-029b9a0724f9",
+      "id": "5f98b2e7-ad42-472a-94ab-2938fd48f841",
       "name": "Stage C Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -34848,
-        14288
+        -28448,
+        11104
       ]
     },
     {
@@ -56,13 +56,13 @@
         "width": 980,
         "color": 3
       },
-      "id": "71ea9aa9-c6ff-475a-aea9-ddf04a47fa5d",
+      "id": "009c11e0-3b9b-4ae4-8f69-565e15dd2bf4",
       "name": "Stage D Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -33856,
-        14112
+        -27456,
+        10928
       ]
     },
     {
@@ -72,13 +72,13 @@
         "width": 700,
         "color": 6
       },
-      "id": "228906c2-b407-475f-96ad-7d568aa20ea7",
+      "id": "06517a1e-38ce-4641-bfc9-e56955594596",
       "name": "Stage E Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -30784,
-        14304
+        -24384,
+        11120
       ]
     },
     {
@@ -88,13 +88,13 @@
         "width": 700,
         "color": 5
       },
-      "id": "958a67c5-985c-40ad-9854-28444bf5bb62",
+      "id": "ed01bd99-fe3c-4ce5-90d5-0c51fa01a115",
       "name": "Stage F Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -30288,
-        15072
+        -23888,
+        11888
       ]
     },
     {
@@ -178,18 +178,24 @@
               "name": "review_queue_url",
               "value": "",
               "type": "string"
+            },
+            {
+              "id": "assign-forceReprocess",
+              "name": "force_reprocess",
+              "value": false,
+              "type": "boolean"
             }
           ]
         },
         "options": {}
       },
-      "id": "dbbb9605-f218-4582-8315-e8ee50e4af32",
+      "id": "e43a934e-9da1-445e-942f-65cd12ed95f7",
       "name": "Config",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -39408,
-        15184
+        -33008,
+        12036
       ]
     },
     {
@@ -198,13 +204,13 @@
         "tableId": "system_config",
         "returnAll": true
       },
-      "id": "a1bdba0e-b212-4963-b9f4-bf289ff1c9cf",
+      "id": "8cc5ff24-87f2-4c1f-8b05-10b66e7d33a6",
       "name": "Load System Config",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -39184,
-        15184
+        -32784,
+        12036
       ],
       "credentials": {
         "supabaseApi": {
@@ -217,13 +223,13 @@
       "parameters": {
         "jsCode": "const acc = {};\nfor (const item of items) {\n  const row = item.json || {};\n  if (!row.key) continue;\n  acc[row.key] = row.value;\n}\nreturn [{ json: acc }];"
       },
-      "id": "42f19a9d-de81-4d80-acc0-ae012554721b",
+      "id": "352bbc4b-3abe-4369-9a5e-bb362ebec35a",
       "name": "Merge System Config",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -38960,
-        15184
+        -32560,
+        12036
       ]
     },
     {
@@ -242,13 +248,13 @@
           ]
         }
       },
-      "id": "086b8d88-9f61-47c1-8ec4-273841d9a72c",
+      "id": "91b38630-1b2a-4269-a17e-7641e944e80e",
       "name": "Load Client Registry",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -38736,
-        15184
+        -32336,
+        12036
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -263,13 +269,13 @@
       "parameters": {
         "jsCode": "const cfg = $('Config').first().json;\nconst body = {};\nconst tz = cfg.tz || 'Asia/Ho_Chi_Minh';\nconst rawDate = body.date || $now.setZone(tz).toISODate();\nconst dt = DateTime.fromISO(rawDate, { zone: tz });\nconst target = dt.isValid ? dt : $now.setZone(tz);\nreturn [{\n  json: {\n    ...cfg,\n    ...$json,\n    targetDate: target.toISODate(),\n    dayStart: target.startOf('day').toISO(),\n    dayEnd: target.endOf('day').toISO(),\n    errors: [],\n    tasks_created: 0,\n    tasks_updated: 0,\n    tasks_completed: 0,\n    tickets_auto_closed: 0,\n    doubleRunWarning: false\n  }\n}];"
       },
-      "id": "6ad0e643-ecd8-42a6-bd72-11e0ef2766dc",
+      "id": "dfc2ded8-8a33-488a-9f48-c65f0ac294af",
       "name": "Resolve Date",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -38512,
-        15184
+        -32112,
+        12036
       ]
     },
     {
@@ -287,13 +293,13 @@
           "orderBy": "startTime"
         }
       },
-      "id": "24495658-c647-4e71-9b41-896e8f424d7c",
+      "id": "8218d289-9acc-485d-866c-1538779b3314",
       "name": "Get Calendar Events",
       "type": "n8n-nodes-base.googleCalendar",
       "typeVersion": 1.3,
       "position": [
-        -38288,
-        15184
+        -31888,
+        12036
       ],
       "credentials": {
         "googleCalendarOAuth2Api": {
@@ -306,13 +312,13 @@
       "parameters": {
         "jsCode": "const cfg = $('Resolve Date').first().json;\n\nif (!items.length) {\n  return [{ json: { ...cfg, meetingFound: false, summaryStatus: 'no_meeting' } }];\n}\n\nreturn items.map((it, idx) => {\n  const event = it.json;\n  return {\n    json: {\n      ...cfg,\n      ...event,\n      event,\n      meetingFound: true,\n      calendar_event_id: event.id,\n      title: event.summary || event.title || 'Meeting',\n      start_time: event.start?.dateTime || event.start?.date || null,\n      end_time: event.end?.dateTime || event.end?.date || null,\n      attendees: event.attendees || []\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "198baffc-8473-4585-8fac-2b1130d0d029",
+      "id": "3f5931c3-af0e-44f4-8259-740220aaf146",
       "name": "Filter Daily WIP Meeting",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -38064,
-        15184
+        -31664,
+        12036
       ]
     },
     {
@@ -340,13 +346,13 @@
         },
         "options": {}
       },
-      "id": "2900b8e4-042a-46d1-8707-002b81f3d0af",
+      "id": "56aa8927-6f6b-409a-8fb1-db76a0231e5c",
       "name": "IF: meeting found?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -37840,
-        15184
+        -31440,
+        12036
       ]
     },
     {
@@ -359,13 +365,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "068b6538-ae21-4bbd-b5da-7086988323d1",
+      "id": "8bae95f2-2d54-4364-bf50-394cb9cbac1f",
       "name": "Gmail Send No standup today",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -37616,
-        15280
+        -31216,
+        12132
       ],
       "webhookId": "fc8ff919-7464-4265-8a26-2e56b303169c",
       "credentials": {
@@ -380,13 +386,13 @@
       "parameters": {
         "jsCode": "const sysCfg = $('Merge System Config').first().json;\nconst rawPattern = sysCfg.transcript_title_pattern || 'Transcript';\nlet titleMatcher;\ntry { titleMatcher = new RegExp(rawPattern, 'i'); }\ncatch (e) { titleMatcher = new RegExp(String(rawPattern).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'i'); }\n\nconst out = [];\nfor (const it of items) {\n  const base = it?.json;\n  const isPlainObject = base !== null && typeof base === 'object' && !Array.isArray(base) && !(base instanceof Error);\n  if (!isPlainObject) continue;\n  if (base.meetingFound === false) { out.push({ json: base }); continue; }\n  const event = base.event || base;\n  const attachments = event.attachments || [];\n  const candidates = attachments.filter(a =>\n    /application\\/vnd\\.google-apps\\.document/i.test(a.mimeType || '')\n    && titleMatcher.test(a.title || a.name || '')\n  );\n  if (!candidates.length) {\n    out.push({ json: { ...base, hasTranscriptDoc: false, summaryStatus: 'no_transcript', docId: null } });\n    continue;\n  }\n  for (const att of candidates) {\n    out.push({ json: {\n      ...base,\n      hasTranscriptDoc: true,\n      docId: att.fileId || att.id,\n      attachmentTitle: att.title || att.name || '',\n      fileUrl: att.fileUrl || att.webViewLink || null,\n      transcript_url: att.fileUrl || att.webViewLink || null,\n      transcript_attachment_id: att.fileId || att.id\n    } });\n  }\n}\nreturn out;"
       },
-      "id": "c9835ae2-4011-4985-ae70-81b1fee768cc",
+      "id": "783008ff-5fb4-4c1d-9863-6d3fa61019a5",
       "name": "Extract Candidate Attachments",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -37616,
-        15088
+        -31216,
+        11940
       ]
     },
     {
@@ -414,13 +420,13 @@
         },
         "options": {}
       },
-      "id": "f7855665-947c-4139-803e-147af2146d62",
+      "id": "420ed7a4-2393-460f-a3fc-9c2644f02157",
       "name": "IF: has any candidate?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -37392,
-        15088
+        -30992,
+        11940
       ]
     },
     {
@@ -433,13 +439,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "5cadb424-c42a-4937-afeb-b362988cbf48",
+      "id": "c78cdf3e-7b14-43fc-86f7-189900419f23",
       "name": "Gmail Send No transcript on meeting",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -37168,
-        15088
+        -30768,
+        11940
       ],
       "webhookId": "d125d7c4-e023-46dc-b843-7e71011860f7",
       "credentials": {
@@ -454,13 +460,13 @@
       "parameters": {
         "jsCode": "const out = [];\nfor (let i = 0; i < items.length; i++) {\n  const it = items[i];\n  let text = String(it.json.data || it.json.content || '');\n  let startIndex = text.lastIndexOf('📖 Transcript');\n  if (startIndex >= 0) text = text.slice(startIndex);\n  text = text\n    .replace(/^.*?📖 Transcript\\s*/s, '')\n    .replace(/Transcript may contain errors[\\s\\S]*$/i, '')\n    .replace(/This editable transcript was computer generated[\\s\\S]*$/i, '')\n    .replace(/\\b\\d{1,2}:\\d{2}(?::\\d{2})?\\b/g, '')\n    .replace(/^\\s*(Speaker \\d+|Unknown Speaker|[A-Z][A-Za-z .'-]{1,40})\\s*:\\s*/gm, '$1: ')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n  const ancestor = $('Extract Candidate Attachments').itemMatching(i).json;\n  out.push({ json: { ...ancestor, transcript: text } });\n}\nreturn out;"
       },
-      "id": "d997cba4-8a19-44ca-b06f-e6f3ede3735d",
+      "id": "27108caf-6001-4106-8fdb-4e18a74afe53",
       "name": "Clean Transcript",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -36944,
-        14896
+        -30544,
+        11748
       ]
     },
     {
@@ -484,13 +490,13 @@
           ]
         }
       },
-      "id": "68eed99c-68c3-4fbb-83c3-83c79019e14e",
+      "id": "a35e3367-80bb-4d35-9105-ef5073a4a45c",
       "name": "Load Active Projects",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -34480,
-        14448
+        -28080,
+        11280
       ],
       "credentials": {
         "supabaseApi": {
@@ -503,13 +509,13 @@
       "parameters": {
         "jsCode": "const base = $('Loop Per Meeting').first().json;\nconst cfg = $('Resolve Date').first().json;\nconst grouped = new Map();\nfor (const item of items) {\n  const r = item.json || {};\n  const pc = r.project_client || 'Internal';\n  if (!grouped.has(pc)) grouped.set(pc, []);\n  grouped.get(pc).push({\n    id: r.id, task: r.task, lead: r.lead, status: r.status,\n    latest_note: r.latest_note || r.note || '', next_step: r.next_step\n  });\n}\nconst projects = [...grouped.entries()].map(([project_client, tasks]) => ({ project_client, tasks }));\n\nlet clientReference = [];\ntry {\n  const rows = $('Load Client Registry').all().map(i => i.json || {});\n  clientReference = rows\n    .filter(r => r && (r.canonical_name || r.project_client))\n    .map(r => {\n      const o = {};\n      if (r.canonical_name) o.canonical_name = r.canonical_name;\n      if (r.project_client) o.project_client = r.project_client;\n      if (r.client_type) o.client_type = r.client_type;\n      return o;\n    });\n} catch (e) { clientReference = []; }\n\nconst dt = DateTime.fromISO(cfg.targetDate);\nconst todayTag = dt.toFormat('dd MMM');\n\nconst clientRefBlock = clientReference.length\n  ? `\\n\\nCLIENT_REFERENCE (canonical client/project names — use only to resolve spelling/transcription variants):\\n${JSON.stringify(clientReference, null, 2)}`\n  : '';\n\nconst userPrompt = `TARGET_DATE: ${cfg.targetDate}\nNOTE_TAG: [${todayTag}]\n\nTRANSCRIPT:\n${base.transcript}\n\nACTIVE PROJECTS AND THEIR CURRENT TASKS:\n${JSON.stringify(projects, null, 2)}${clientRefBlock}\n\nOUTPUT FORMAT (strict JSON):\n{\n  \"mentioned_projects\": [\n    {\n      \"project_client\": \"Exact project_client string from list above\",\n      \"actions\": [\n        {\n          \"action\": \"update\",\n          \"existing_task_id\": \"uuid-from-tasks-list\",\n          \"task\": \"exact task title from list\",\n          \"status\": \"in_progress\",\n          \"latest_note\": \"[${todayTag}] discussed progress on...\",\n          \"next_step\": \"deploy to staging by Friday\",\n          \"lead\": \"Truc\"\n        },\n        {\n          \"action\": \"create\",\n          \"task\": \"Set up monitoring for new API endpoint\",\n          \"status\": \"to_do\",\n          \"latest_note\": \"[${todayTag}] mentioned need for monitoring\",\n          \"next_step\": \"configure Datadog alerts\",\n          \"lead\": \"Sang\"\n        },\n        {\n          \"action\": \"complete\",\n          \"existing_task_id\": \"uuid-from-tasks-list\",\n          \"task\": \"exact task title from list\"\n        }\n      ]\n    }\n  ]\n}\n\nIf no active projects are mentioned, return: {\"mentioned_projects\": []}\nOmit fields not explicitly changed in the transcript.`;\n\nreturn [{ json: {\n  ...base, projects,\n  project_client_list: projects.map(p => p.project_client),\n  targetDate: cfg.targetDate, todayTag,\n  llmUserPrompt: userPrompt\n} }];"
       },
-      "id": "a6d38d70-2fe0-4f1d-a885-4fb14f4331e8",
+      "id": "40a6374e-d879-4562-900c-d5170410db6e",
       "name": "Build Project Index",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -34256,
-        14448
+        -27856,
+        11280
       ]
     },
     {
@@ -520,19 +526,19 @@
         "messages": {
           "messageValues": [
             {
-              "message": "You are a meeting analyst converting a Daily WIP standup transcript into structured update candidates against an existing list of open WIP tasks.\n\nYour job is to identify:\n\n1. existing WIP tasks that should be updated,\n2. existing WIP tasks that should be completed,\n3. genuinely new WIP tasks that should be created,\n4. uncertain candidates that should require human review instead of being written directly.\n\nDEFINITIONS\n\nA WIP task is a tracked unit of work that can receive multiple updates across multiple meetings. It is not a single small admin action.\n\nUse only the supplied ACTIVE PROJECTS, open task data, and approved client/project reference data. Do not invent project_client values, UUIDs, facts, dates, names, or decisions.\n\nIf CLIENT_REFERENCE or CLIENT_GROUND_TRUTH is supplied, use it only to resolve likely client/project names and spelling variants. A client name match alone is not enough to update a task.\n\nCORE PRINCIPLES\n\nYour goal is high recall for meaningful WIP changes, with safe write behavior.\n\nDo not silently drop substantive meeting information.\n\nIf a transcript point contains meaningful progress, status, blocker, decision, completion signal, assignment, or next step, it should produce one of:\n\n* a high-confidence update/create/complete action,\n* a medium-confidence review_required candidate,\n* or a low-confidence ignore candidate if the schema supports ignored candidates.\n\nAccuracy is more important than auto-applying every possible update.\n\nIt is better to send an uncertain candidate to human review than to either:\n\n* write it to the wrong task, or\n* drop a meaningful WIP change entirely.\n\nPrefer UPDATE over CREATE only when the existing task clearly covers the same client/project, same deliverable, and same workstream.\n\nIf the transcript introduces a new client-specific deliverable, new workstream, new campaign, new website/app/system work, or explicitly says a new WIP/task is needed, evaluate CREATE before UPDATE.\n\nDo not force a CREATE just because there is a next step. But do not block CREATE merely because details are incomplete, as long as the client/project and deliverable are clear enough to track.\n\nDo not update a task simply because a keyword, person name, client name, broad topic, or tool/platform appears.\n\nFor updates and completions, preserve the existing task identity:\n\n* existing_task_id\n* project_client\n* task title\n\nDo not rename, remap, or reassign a task based only on uncertain transcript wording.\n\nMATCHING RULES\n\nWhen comparing transcript content to existing open tasks, use the full task record, not just the task title.\n\nConsider all available fields, including:\n\n* project_client\n* task title\n* lead\n* status\n* latest_note\n* next_step\n* source\n* description\n* previous updates\n* dates\n* any other provided context\n\nA valid task match must answer both questions:\n\n1. Why does this transcript information belong to this exact task?\n2. What new meeting-specific information changes, advances, blocks, completes, or clarifies this task?\n\nIf you cannot answer both clearly, do not auto-update the task.\n\nStrong signals include:\n\n* same confirmed client, brand, project, or product\n* same deliverable, workflow, report, campaign, document, website, app, dashboard, system, or contract\n* same person reporting progress on the same work\n* same blocker, decision, review, approval, test, handover, or next step\n* transcript content clearly continues the existing latest_note or next_step\n* explicit status change or completion signal for the same tracked work\n\nWeak signals alone are not enough.\n\nDo not update only because:\n\n* a person’s name appears\n* a client/project is mentioned without new task-specific information\n* the wording vaguely resembles a task title\n* the transcript gives historical background only\n* the task appears in an agenda but was not actually discussed\n* the same tool or platform is mentioned across unrelated projects\n* the team uses a system during the meeting, unless the system itself was changed or discussed as the task\n\nCLIENT / PROJECT NAME RESOLUTION\n\nUse supplied client/project reference data to normalize likely spelling, transcription, pronunciation, or naming variants.\n\nYou may map a transcript mention to a canonical client/project only when:\n\n* similarity is high enough to be plausible,\n* surrounding context supports the same client/project,\n* there is no competing client/project with similar wording.\n\nApproximate client/project matching can help identify candidates, but it must not be the only reason for an update.\n\nIf the mapping is plausible but not certain, mark the candidate as medium confidence and require review.\n\nIf the mention could reasonably refer to multiple clients/projects, do not auto-update.\n\nIf project_client cannot be determined safely, mark as review_required instead of auto-writing.\n\nCONFIDENCE AND WRITE RULES\n\nAssign every proposed action a confidence score and label:\n\n* high: 0.70–1.00\n* medium: 0.50–0.69\n* low: below 0.50\n\nMap confidence to write_mode:\n\n* high → auto_apply\n* medium → review_required\n* low → ignore\n\nHigh confidence requires:\n\n* clear task-specific evidence from the transcript,\n* a strong match to one existing task or a genuinely new trackable task,\n* no conflict between client/contact/task identity,\n* a concrete update, decision, blocker, status change, completion, or next step.\n\nMedium confidence applies when:\n\n* the update is likely but one important signal is missing,\n* the client/project name was resolved by fuzzy matching only,\n* the transcript wording is ambiguous,\n* generated notes suggest the update but detailed evidence is weak,\n* multiple tasks could match and one is stronger but not certain,\n* the update is useful but could affect the wrong task if applied automatically.\n\nLow confidence applies when:\n\n* the transcript only contains a vague mention,\n* the task appears only as an agenda item,\n* the update depends on broad keyword overlap,\n* client/contact/task identity conflicts,\n* the information is historical and does not change current WIP state,\n* the only evidence is a generic next step without enough task context.\n\nOnly high-confidence actions should be applied directly to WIP tasks.\n\nMedium-confidence actions should be stored as review candidates.\n\nLow-confidence actions should not update WIP tasks unless the downstream schema explicitly stores ignored candidates for audit/debugging.\n\nDECISION PROCESS\n\nStep 1 — Identify meeting-specific information\n\nIdentify real meeting-specific information, including:\n\n* progress\n* status changes\n* blockers\n* decisions\n* feedback\n* approvals\n* reviews\n* testing\n* handovers\n* assignments\n* next steps\n* completion signals\n* meaningful “no progress / still waiting” updates\n\nIgnore filler, greetings, repeated agenda text, and vague references that do not add task-specific information.\n\nStep 2 — Match information to existing tasks\n\nFor each real meeting-specific point, find the strongest matching existing open task.\n\nDo not start by forcing every open task to receive an update.\n\nHowever, any substantive mention of an open task should produce at least a candidate, even if the update is brief.\n\nA task should receive an update candidate when the transcript provides useful new information about that exact tracked task, including:\n\n* progress\n* no progress\n* still waiting\n* review pending\n* waiting for feedback\n* shared with someone\n* ready for testing\n* completed a sub-step\n* next meeting scheduled\n* new blocker identified\n* scope clarified\n* owner changed\n* priority changed\n* decision made\n* approval received\n* handover started or completed\n\nIf the match is strong and the update is concrete, use high confidence.\n\nIf the task likely matches but one important signal is missing, use medium confidence and write_mode=\"review_required\".\n\nDo not drop the candidate unless the evidence is low confidence, vague, agenda-only, historical only, or based mainly on keyword overlap.\n\nDo not update if the transcript only mentions the client/project/task without any useful status, progress, blocker, decision, or next step.\n\nStep 3 — Handle action items and next steps\n\nFor each action item or next step, first decide whether it belongs under an existing open task.\n\nIf it continues, supports, or follows from an existing task, fold it into an UPDATE on that task.\n\nDo not also create a separate task for the same follow-up.\n\nIf multiple existing tasks could match, choose the one with the strongest contextual evidence from latest_note, next_step, task title, project_client, lead, and surrounding transcript detail.\n\nIf all matches are weak or ambiguous, mark as review_required or ignore if low confidence.\n\nStep 4 — Decide whether to create\n\nCreate a new task when the transcript introduces meaningful work that is not reasonably covered by any existing open task.\n\nEvaluate CREATE before UPDATE when the transcript mentions:\n\n* a new client-specific deliverable,\n* a new campaign,\n* a new website/app/system change,\n* a new report, audit, deck, document, or workflow,\n* a new project/workstream,\n* or an explicit signal that a new WIP/task is needed.\n\nCreate a high-confidence task if all of these are true:\n\n* the work is genuinely new,\n* no existing open task reasonably covers it,\n* the client/project can be selected from ACTIVE PROJECTS or approved reference data,\n* the deliverable or workstream is clear enough to track,\n* it is not merely a trivial one-off admin action.\n\nMissing details do not block CREATE if the client/project and deliverable are clear. Put missing information in next_step.\n\nIf the transcript clearly introduces new meaningful work, but the client/project mapping is plausible rather than certain, create a medium-confidence candidate with write_mode=\"review_required\" instead of ignoring it.\n\nIf the transcript mentions a client/project that is not in ACTIVE PROJECTS but is present in approved client/project reference data, use the canonical reference value if the schema allows it.\n\nIf no valid project_client can be selected but the work is clearly important, output a review_required candidate if the schema supports it. Do not silently drop it.\n\nDo not create a new task for:\n\n* a follow-up email only,\n* a calendar invite only,\n* a small document edit only,\n* a single status check only,\n* a reminder only,\n* an action that is simply the next step of an existing task.\n\nImportant: a follow-up action can still justify CREATE if it is attached to a new client-specific deliverable or new workstream that is not covered by any existing open task.\n\nStep 5 — Decide whether to complete\n\nUse action=\"complete\" only when the transcript clearly says the tracked WIP task itself is finished.\n\nDo not complete a task just because a small subtask, email, document edit, review, or meeting was completed.\n\nIf a sub-step is done but the overall task continues, use action=\"update\".\n\nMERGING RULES\n\nEmit at most one action per existing_task_id.\n\nIf several transcript points relate to the same existing task, merge them into one update candidate.\n\nFor the merged update:\n\n* latest_note should summarize the new meeting-specific progress/status.\n* next_step should be included only if the transcript gives a new or changed next step.\n* Do not repeat unchanged old next_step unless the schema requires it.\n* Do not overwrite task identity fields unless explicitly required by the schema.\n* If confidence differs across merged points, use the lowest confidence that affects whether the action is safe to auto-apply.\n* Keep only the most useful WIP reminders.\n\nOUTPUT QUALITY\n\nlatest_note is a short WIP memory hook, not meeting minutes.\n\nlatest_note must start with NOTE_TAG, for example:\n\n[15 Jun]\n\nAfter NOTE_TAG, use bullet points:\n\n* default: 1 bullet\n* max: 3 bullets\n* each bullet: max 25 words\n* use more than 1 bullet only for distinct important updates\n\nEach bullet should capture one useful WIP reminder:\n\n* progress\n* current status\n* blocker\n* decision\n* dependency\n\nDo not include background, reasoning, transcript detail, or future opportunity context in latest_note.\n\nPut supporting detail in evidence_summary, match_reason, or confidence_reason if available.\n\nFormat latest_note exactly like this, with one blank line between bullets:\n\n[NOTE_TAG]\n- First short progress/status bullet.\n\n- Second short blocker/decision/dependency bullet.\n\n- Third short update only if necessary.\n\nDo not use paragraphs for latest_note.\n\nnext_step should be short, concrete, and action-oriented.\n\nUse one short sentence by default:\n\nOne concrete next action.\n\nUse bullets only when the transcript gives separate concrete actions, with one blank line between bullets:\n\n- First concrete next action.\n\n- Second concrete next action.\n\nUse only existing UUIDs from the supplied open tasks for update/complete actions.\n\nFor create actions, existing_task_id must be null.\n\nOmit fields that are not explicitly changed or required by the schema.\n\nIf the response schema supports confidence fields, include:\n\n* confidence_score\n* confidence_label\n* confidence_reason\n* write_mode\n\nIf the response schema does not support confidence/write_mode fields, still apply the confidence rules internally:\n\n* output only high-confidence auto_apply actions\n* exclude medium-confidence and low-confidence actions from direct task updates\n* rely on the surrounding workflow to capture review candidates if available\n\nOUTPUT FORMAT\n\nOutput strictly the JSON object defined by the response schema.\n\nNo prose.\n\nNo markdown.\n\nNo comments.\n\nNo explanation outside the JSON.\n\nPER-ACTION OUTPUT FIELDS\n\n- work_type: one of \"client_work\" | \"new_business\" | \"in_the_business\" | \"on_the_business\" | null (see WORK TYPE).\n\nWORK TYPE:\nSet work_type cho mọi action theo quy tắc:\n\n- client_work: delivery cho client đã ký hợp đồng, đang thực thi. KHÔNG tự set — system tự tính nếu project_client không phải Internal.\n\n- new_business: công việc liên quan đến cơ hội chưa có hợp đồng — đề xuất (proposal), pitch, ý tưởng tiếp cận prospect mới, nghiên cứu cho cơ hội chưa ký, prototype/demo để thuyết phục client chưa commit. project_client có thể là tên prospect HOẶC \"Internal\". Dấu hiệu nhận biết từ transcript: \"đề xuất\", \"proposal\", \"pitch\", \"ý tưởng\", \"tiếp cận\", \"cơ hội mới\", \"chưa ký\", \"chưa confirm\", \"đang xem xét\", work cho prospect chưa engaged.\n\n- in_the_business: vận hành nội bộ hàng ngày — admin, finance, support, bảo trì tooling, delivery ops lặp lại. project_client = \"Internal\".\n\n- on_the_business: xây dựng agency — strategy, process mới, automation, sales & marketing của agency, tuyển dụng, R&D. project_client = \"Internal\".\n\nQuy tắc quyết định:\n1. Transcript có dấu hiệu new_business rõ ràng → new_business (kể cả khi project_client là tên prospect thật)\n2. project_client là client thật, không có dấu hiệu new_business → client_work (KHÔNG cần set, system tự fill)\n3. project_client = \"Internal\", không có dấu hiệu new_business:\n   - Vận hành/ops/support → in_the_business\n   - Xây dựng năng lực/chiến lược → on_the_business\n   - Không chắc → in_the_business\n\nTrả về work_type cho mọi action. Với client thật không phải new_business: null (system tự tính client_work)."
+              "message": "You are a meeting analyst converting a Daily WIP standup transcript into structured update candidates against an existing list of open WIP tasks.\n\nYour job is to identify:\n\n1. existing WIP tasks that should be updated,\n2. existing WIP tasks that should be completed,\n3. genuinely new WIP tasks that should be created,\n4. uncertain candidates that should require human review instead of being written directly.\n\nDEFINITIONS\n\nA WIP task is a tracked unit of work that can receive multiple updates across multiple meetings. It is not a single small admin action.\n\nUse only the supplied ACTIVE PROJECTS, open task data, and approved client/project reference data. Do not invent project_client values, UUIDs, facts, dates, names, or decisions.\n\nIf CLIENT_REFERENCE or CLIENT_GROUND_TRUTH is supplied, use it only to resolve likely client/project names and spelling variants. A client name match alone is not enough to update a task.\n\nCORE PRINCIPLES\n\nYour goal is high recall for meaningful WIP changes, with safe write behavior.\n\nDo not silently drop substantive meeting information.\n\nIf a transcript point contains meaningful progress, status, blocker, decision, completion signal, assignment, or next step, it should produce one of:\n\n* a high-confidence update/create/complete action,\n* a medium-confidence review_required candidate,\n* or a low-confidence ignore candidate if the schema supports ignored candidates.\n\nAccuracy is more important than auto-applying every possible update.\n\nIt is better to send an uncertain candidate to human review than to either:\n\n* write it to the wrong task, or\n* drop a meaningful WIP change entirely.\n\nPrefer UPDATE over CREATE only when the existing task clearly covers the same client/project, same deliverable, and same workstream.\n\nIf the transcript introduces a new client-specific deliverable, new workstream, new campaign, new website/app/system work, or explicitly says a new WIP/task is needed, evaluate CREATE before UPDATE.\n\nDo not force a CREATE just because there is a next step. But do not block CREATE merely because details are incomplete, as long as the client/project and deliverable are clear enough to track.\n\nDo not update a task simply because a keyword, person name, client name, broad topic, or tool/platform appears.\n\nFor updates and completions, preserve the existing task identity:\n\n* existing_task_id\n* project_client\n* task title\n\nDo not rename, remap, or reassign a task based only on uncertain transcript wording.\n\nMATCHING RULES\n\nWhen comparing transcript content to existing open tasks, use the full task record, not just the task title.\n\nConsider all available fields, including:\n\n* project_client\n* task title\n* lead\n* status\n* latest_note\n* next_step\n* source\n* description\n* previous updates\n* dates\n* any other provided context\n\nA valid task match must answer both questions:\n\n1. Why does this transcript information belong to this exact task?\n2. What new meeting-specific information changes, advances, blocks, completes, or clarifies this task?\n\nIf you cannot answer both clearly, do not auto-update the task.\n\nStrong signals include:\n\n* same confirmed client, brand, project, or product\n* same deliverable, workflow, report, campaign, document, website, app, dashboard, system, or contract\n* same person reporting progress on the same work\n* same blocker, decision, review, approval, test, handover, or next step\n* transcript content clearly continues the existing latest_note or next_step\n* explicit status change or completion signal for the same tracked work\n\nWeak signals alone are not enough.\n\nDo not update only because:\n\n* a person’s name appears\n* a client/project is mentioned without new task-specific information\n* the wording vaguely resembles a task title\n* the transcript gives historical background only\n* the task appears in an agenda but was not actually discussed\n* the same tool or platform is mentioned across unrelated projects\n* the team uses a system during the meeting, unless the system itself was changed or discussed as the task\n\nCLIENT / PROJECT NAME RESOLUTION\n\nResolve project_client strictly from transcript content (what was actually said about the work). Use supplied client/project reference data only to normalize spelling, transcription, pronunciation, or naming variants.\n\nHARD RULE — content-first, identity-blind:\n* If no client/project is mentioned in the transcript content, project_client = \"Internal\". Do NOT infer the client from who is speaking, attendee email domains, the calendar invite, or the meeting host. Speaker/attendee identity is NEVER a signal for client identity (a Komosion staffer can discuss Acme Co; a client guest can discuss internal ops).\n* Never invent a project_client that is not in CLIENT_REFERENCE or ACTIVE PROJECTS. If the mention is ambiguous, mark review_required or use \"Internal\".\n\nYou may map a transcript mention to a canonical client/project only when:\n\n* similarity is high enough to be plausible,\n* surrounding context supports the same client/project,\n* there is no competing client/project with similar wording.\n\nApproximate client/project matching can help identify candidates, but it must not be the only reason for an update.\n\nIf the mapping is plausible but not certain, mark the candidate as medium confidence and require review.\n\nIf the mention could reasonably refer to multiple clients/projects, do not auto-update.\n\nIf project_client cannot be determined safely, mark as review_required instead of auto-writing.\n\nCONFIDENCE AND WRITE RULES\n\nAssign every proposed action a confidence score and label:\n\n* high: 0.70–1.00\n* medium: 0.50–0.69\n* low: below 0.50\n\nMap confidence to write_mode:\n\n* high → auto_apply\n* medium → review_required\n* low → ignore\n\nHigh confidence requires:\n\n* clear task-specific evidence from the transcript,\n* a strong match to one existing task or a genuinely new trackable task,\n* no conflict between client/contact/task identity,\n* a concrete update, decision, blocker, status change, completion, or next step.\n\nMedium confidence applies when:\n\n* the update is likely but one important signal is missing,\n* the client/project name was resolved by fuzzy matching only,\n* the transcript wording is ambiguous,\n* generated notes suggest the update but detailed evidence is weak,\n* multiple tasks could match and one is stronger but not certain,\n* the update is useful but could affect the wrong task if applied automatically.\n\nLow confidence applies when:\n\n* the transcript only contains a vague mention,\n* the task appears only as an agenda item,\n* the update depends on broad keyword overlap,\n* client/contact/task identity conflicts,\n* the information is historical and does not change current WIP state,\n* the only evidence is a generic next step without enough task context.\n\nOnly high-confidence actions should be applied directly to WIP tasks.\n\nMedium-confidence actions should be stored as review candidates.\n\nLow-confidence actions should not update WIP tasks unless the downstream schema explicitly stores ignored candidates for audit/debugging.\n\nDECISION PROCESS\n\nStep 1 — Identify meeting-specific information\n\nIdentify real meeting-specific information, including:\n\n* progress\n* status changes\n* blockers\n* decisions\n* feedback\n* approvals\n* reviews\n* testing\n* handovers\n* assignments\n* next steps\n* completion signals\n* meaningful “no progress / still waiting” updates\n\nIgnore filler, greetings, repeated agenda text, and vague references that do not add task-specific information.\n\nStep 2 — Match information to existing tasks\n\nFor each real meeting-specific point, find the strongest matching existing open task.\n\nDo not start by forcing every open task to receive an update.\n\nHowever, any substantive mention of an open task should produce at least a candidate, even if the update is brief.\n\nA task should receive an update candidate when the transcript provides useful new information about that exact tracked task, including:\n\n* progress\n* no progress\n* still waiting\n* review pending\n* waiting for feedback\n* shared with someone\n* ready for testing\n* completed a sub-step\n* next meeting scheduled\n* new blocker identified\n* scope clarified\n* owner changed\n* priority changed\n* decision made\n* approval received\n* handover started or completed\n\nIf the match is strong and the update is concrete, use high confidence.\n\nIf the task likely matches but one important signal is missing, use medium confidence and write_mode=\"review_required\".\n\nDo not drop the candidate unless the evidence is low confidence, vague, agenda-only, historical only, or based mainly on keyword overlap.\n\nDo not update if the transcript only mentions the client/project/task without any useful status, progress, blocker, decision, or next step.\n\nStep 3 — Handle action items and next steps\n\nFor each action item or next step, first decide whether it belongs under an existing open task.\n\nIf it continues, supports, or follows from an existing task, fold it into an UPDATE on that task.\n\nDo not also create a separate task for the same follow-up.\n\nIf multiple existing tasks could match, choose the one with the strongest contextual evidence from latest_note, next_step, task title, project_client, lead, and surrounding transcript detail.\n\nIf all matches are weak or ambiguous, mark as review_required or ignore if low confidence.\n\nStep 4 — Decide whether to create\n\nCreate a new task when the transcript introduces meaningful work that is not reasonably covered by any existing open task.\n\nEvaluate CREATE before UPDATE when the transcript mentions:\n\n* a new client-specific deliverable,\n* a new campaign,\n* a new website/app/system change,\n* a new report, audit, deck, document, or workflow,\n* a new project/workstream,\n* or an explicit signal that a new WIP/task is needed.\n\nCreate a high-confidence task if all of these are true:\n\n* the work is genuinely new,\n* no existing open task reasonably covers it,\n* the client/project can be selected from ACTIVE PROJECTS or approved reference data,\n* the deliverable or workstream is clear enough to track,\n* it is not merely a trivial one-off admin action.\n\nMissing details do not block CREATE if the client/project and deliverable are clear. Put missing information in next_step.\n\nIf the transcript clearly introduces new meaningful work, but the client/project mapping is plausible rather than certain, create a medium-confidence candidate with write_mode=\"review_required\" instead of ignoring it.\n\nIf the transcript mentions a client/project that is not in ACTIVE PROJECTS but is present in approved client/project reference data, use the canonical reference value if the schema allows it.\n\nIf no valid project_client can be selected but the work is clearly important, output a review_required candidate if the schema supports it. Do not silently drop it.\n\nDo not create a new task for:\n\n* a follow-up email only,\n* a calendar invite only,\n* a small document edit only,\n* a single status check only,\n* a reminder only,\n* an action that is simply the next step of an existing task.\n\nImportant: a follow-up action can still justify CREATE if it is attached to a new client-specific deliverable or new workstream that is not covered by any existing open task.\n\nStep 5 — Decide whether to complete\n\nUse action=\"complete\" only when the transcript clearly says the tracked WIP task itself is finished.\n\nDo not complete a task just because a small subtask, email, document edit, review, or meeting was completed.\n\nIf a sub-step is done but the overall task continues, use action=\"update\".\n\nMERGING RULES\n\nEmit at most one action per existing_task_id.\n\nIf several transcript points relate to the same existing task, merge them into one update candidate.\n\nFor the merged update:\n\n* latest_note should summarize the new meeting-specific progress/status.\n* next_step should be included only if the transcript gives a new or changed next step.\n* Do not repeat unchanged old next_step unless the schema requires it.\n* Do not overwrite task identity fields unless explicitly required by the schema.\n* If confidence differs across merged points, use the lowest confidence that affects whether the action is safe to auto-apply.\n* Keep only the most useful WIP reminders.\n\nOUTPUT QUALITY\n\nlatest_note is a short WIP memory hook, not meeting minutes.\n\nlatest_note must start with NOTE_TAG, for example:\n\n[15 Jun]\n\nAfter NOTE_TAG, use bullet points:\n\n* default: 1 bullet\n* max: 3 bullets\n* each bullet: max 25 words\n* use more than 1 bullet only for distinct important updates\n\nEach bullet should capture one useful WIP reminder:\n\n* progress\n* current status\n* blocker\n* decision\n* dependency\n\nDo not include background, reasoning, transcript detail, or future opportunity context in latest_note.\n\nPut supporting detail in evidence_summary, match_reason, or confidence_reason if available.\n\nFormat latest_note exactly like this, with one blank line between bullets:\n\n[NOTE_TAG]\n- First short progress/status bullet.\n\n- Second short blocker/decision/dependency bullet.\n\n- Third short update only if necessary.\n\nDo not use paragraphs for latest_note.\n\nnext_step should be short, concrete, and action-oriented.\n\nUse one short sentence by default:\n\nOne concrete next action.\n\nUse bullets only when the transcript gives separate concrete actions, with one blank line between bullets:\n\n- First concrete next action.\n\n- Second concrete next action.\n\nUse only existing UUIDs from the supplied open tasks for update/complete actions.\n\nFor create actions, existing_task_id must be null.\n\nOmit fields that are not explicitly changed or required by the schema.\n\nIf the response schema supports confidence fields, include:\n\n* confidence_score\n* confidence_label\n* confidence_reason\n* write_mode\n\nIf the response schema does not support confidence/write_mode fields, still apply the confidence rules internally:\n\n* output only high-confidence auto_apply actions\n* exclude medium-confidence and low-confidence actions from direct task updates\n* rely on the surrounding workflow to capture review candidates if available\n\nOUTPUT FORMAT\n\nOutput strictly the JSON object defined by the response schema.\n\nNo prose.\n\nNo markdown.\n\nNo comments.\n\nNo explanation outside the JSON.\n\nPER-ACTION OUTPUT FIELDS\n\n- work_type: one of \"client_work\" | \"new_business\" | \"in_the_business\" | \"on_the_business\" | null (see WORK TYPE).\n\nWORK TYPE:\nSet work_type cho mọi action theo quy tắc:\n\n- client_work: delivery cho client đã ký hợp đồng, đang thực thi. KHÔNG tự set — system tự tính nếu project_client không phải Internal.\n\n- new_business: công việc liên quan đến cơ hội chưa có hợp đồng — đề xuất (proposal), pitch, ý tưởng tiếp cận prospect mới, nghiên cứu cho cơ hội chưa ký, prototype/demo để thuyết phục client chưa commit. project_client có thể là tên prospect HOẶC \"Internal\". Dấu hiệu nhận biết từ transcript: \"đề xuất\", \"proposal\", \"pitch\", \"ý tưởng\", \"tiếp cận\", \"cơ hội mới\", \"chưa ký\", \"chưa confirm\", \"đang xem xét\", work cho prospect chưa engaged.\n\n- in_the_business: vận hành nội bộ hàng ngày — admin, finance, support, bảo trì tooling, delivery ops lặp lại. project_client = \"Internal\".\n\n- on_the_business: xây dựng agency — strategy, process mới, automation, sales & marketing của agency, tuyển dụng, R&D. project_client = \"Internal\".\n\nQuy tắc quyết định:\n1. Transcript có dấu hiệu new_business rõ ràng → new_business (kể cả khi project_client là tên prospect thật)\n2. project_client là client thật, không có dấu hiệu new_business → client_work (KHÔNG cần set, system tự fill)\n3. project_client = \"Internal\", không có dấu hiệu new_business:\n   - Vận hành/ops/support → in_the_business\n   - Xây dựng năng lực/chiến lược → on_the_business\n   - Không chắc → in_the_business\n\nTrả về work_type cho mọi action. Với client thật không phải new_business: null (system tự tính client_work)."
             }
           ]
         },
         "batching": {}
       },
-      "id": "3005f343-6c84-457e-beff-678d0c1fdce8",
+      "id": "a8f08831-78dc-421f-8ef2-8b50178c7abb",
       "name": "LLM Chain: Classify & Extract Actions",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        -34032,
-        14448
+        -27632,
+        11280
       ]
     },
     {
@@ -548,13 +554,13 @@
           "temperature": 0.2
         }
       },
-      "id": "9b82eae5-bc08-4b9f-8b31-aef7fbcf59eb",
+      "id": "be99a70a-439f-4ec3-893a-37f0b0177205",
       "name": "LLM Model: Classify Extract",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -34032,
-        14672
+        -27624,
+        11504
       ],
       "credentials": {
         "openAiApi": {
@@ -568,26 +574,26 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"required\": [\"mentioned_projects\"],\n  \"properties\": {\n    \"mentioned_projects\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"additionalProperties\": false,\n        \"required\": [\"project_client\", \"actions\"],\n        \"properties\": {\n          \"project_client\": { \"type\": \"string\" },\n          \"actions\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"additionalProperties\": false,\n              \"required\": [\"action\"],\n              \"properties\": {\n                \"action\": { \"type\": \"string\", \"enum\": [\"create\", \"update\", \"complete\"] },\n                \"existing_task_id\": { \"type\": [\"string\", \"null\"] },\n                \"task\": { \"type\": \"string\" },\n                \"status\": { \"type\": [\"string\", \"null\"] },\n                \"latest_note\": { \"type\": [\"string\", \"null\"] },\n                \"next_step\": { \"type\": [\"string\", \"null\"] },\n                \"lead\": { \"type\": [\"string\", \"null\"] },\n                \"confidence_score\": { \"type\": [\"number\", \"null\"] },\n                \"confidence_label\": { \"type\": [\"string\", \"null\"], \"enum\": [\"high\", \"medium\", \"low\", null] },\n                \"confidence_reason\": { \"type\": [\"string\", \"null\"] },\n                \"write_mode\": { \"type\": [\"string\", \"null\"], \"enum\": [\"auto_apply\", \"review_required\", \"ignore\", null] },\n                \"evidence_summary\": { \"type\": [\"string\", \"null\"] },\n                \"match_reason\": { \"type\": [\"string\", \"null\"] },\n                \"work_type\": { \"type\": [\"string\", \"null\"], \"enum\": [\"in_the_business\", \"on_the_business\", \"new_business\", \"client_work\", null] }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}"
       },
-      "id": "22baebe6-aeaf-419f-9a0b-7aebbf443425",
+      "id": "e06775c9-1b0f-44da-a822-5b909679a39d",
       "name": "Output Parser: Mentioned Projects",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -33904,
-        14672
+        -27496,
+        11504
       ]
     },
     {
       "parameters": {
         "jsCode": "const base = $('Build Project Index').itemMatching(0).json;\nconst out = $json.output || $json;\nconst mentioned = Array.isArray(out.mentioned_projects) ? out.mentioned_projects : [];\nif (!mentioned.length) {\n  return [{ json: { ...base, hasMentions: false, noActions: true } }];\n}\nconst allActions = [];\nfor (const m of mentioned) {\n  const actions = Array.isArray(m.actions) ? m.actions : [];\n  for (const a of actions) {\n    allActions.push({\n      json: {\n        ...base,\n        hasMentions: true,\n        project_client: m.project_client,\n        work_type: (() => { const pc = (m.project_client || 'Internal').trim(); const llmType = a.work_type || null; if (llmType === 'new_business') return 'new_business'; if (pc !== '' && pc !== 'Internal') return 'client_work'; return llmType || 'in_the_business'; })(),\n        action: a.action || 'update',\n        existing_task_id: a.existing_task_id || null,\n        task: a.task || '',\n        status: a.status || null,\n        latest_note: a.latest_note || '',\n        next_step: a.next_step || '',\n        lead: a.lead || '',\n        confidence_score: (typeof a.confidence_score === 'number') ? a.confidence_score : null,\n        confidence_label: a.confidence_label || null,\n        confidence_reason: a.confidence_reason || null,\n        write_mode: a.write_mode || null,\n        evidence_summary: a.evidence_summary || null,\n        match_reason: a.match_reason || null,\n        meeting_id: null,\n        calendar_event_id: base.calendar_event_id,\n        errors: []\n      }\n    });\n  }\n}\nif (!allActions.length) {\n  return [{ json: { ...base, hasMentions: true, noActions: true } }];\n}\nreturn allActions;"
       },
-      "id": "79ffc8f5-49b5-4128-8859-7d25ee43ca45",
+      "id": "bbb728e7-6469-426b-be23-2a4fb1d19fe2",
       "name": "Parse Classified Actions",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -33680,
-        14448
+        -27280,
+        11280
       ]
     },
     {
@@ -614,13 +620,13 @@
         },
         "options": {}
       },
-      "id": "1852d4d9-e1a9-426f-8cba-344e24c90e75",
+      "id": "1e8ec140-4224-4cd1-ae43-ca3723289221",
       "name": "IF: has actions?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -33456,
-        14448
+        -27056,
+        11280
       ]
     },
     {
@@ -633,13 +639,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "287b16d5-ab58-4fef-b438-94af5f5dd27c",
+      "id": "d717645c-ef33-4e8f-a28a-465f02972485",
       "name": "Gmail Send No actionable items",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -33232,
-        14752
+        -26832,
+        11556
       ],
       "webhookId": "c59cb272-f1b2-4b62-8614-ec4d3ce802ed",
       "credentials": {
@@ -652,29 +658,57 @@
     },
     {
       "parameters": {
+        "sendTo": "={{ $('Merge System Config').item.json.summary_email_to }}",
+        "subject": "={{ '[Daily WIP Sync] ' + $('Resolve Date').first().json.targetDate + ' — ' + ($json.title || 'Meeting') + ' — Already processed (skipped)' }}",
+        "emailType": "text",
+        "message": "={{ 'This meeting has already been processed in a prior run. Persist (WIP writes, meeting_tasks inserts, cascade close, summary) was skipped for this iteration.\\n\\nMeeting: ' + ($json.title || 'Meeting') + '\\nMeeting ID: ' + ($json.meeting_id || '') + '\\nDate: ' + $('Resolve Date').first().json.targetDate + '\\n\\nTo force a re-run for this meeting, set force_reprocess=true on the Config node and re-trigger the workflow.' }}",
+        "options": {
+          "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
+        }
+      },
+      "id": "15229a4d-8f22-4bd2-8af0-83590c850e83",
+      "name": "Gmail Send Already Processed",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -28080,
+        11652
+      ],
+      "webhookId": "a5d6c8f9-1234-4ab1-8e2f-7c8d9e1f2a3b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bNXKWDG0BBmbCj5C",
+          "name": "Komosion Real - Gmail account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
         "mode": "expression",
+        "numberOutputs": 3,
         "output": "={{ $json.action === 'create' ? 0 : ($json.action === 'complete' ? 2 : 1) }}"
       },
-      "id": "60801790-7c1e-4199-99d8-ca46532eb600",
+      "id": "1e8efb22-a72a-4a4d-b2e7-70d3e9350b0b",
       "name": "Switch Action",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        -32784,
-        14464
+        -26384,
+        11280
       ]
     },
     {
       "parameters": {
         "jsCode": "const cfg = $('Config').first().json || {};\nconst gateEnabled = cfg.ENABLE_CONFIDENCE_GATE !== false;\n\nconst rank = { ignore: 0, review_required: 1, auto_apply: 2 };\nconst mostCautious = (...tiers) => {\n  const present = tiers.filter(t => t === 'ignore' || t === 'review_required' || t === 'auto_apply');\n  if (!present.length) return null;\n  return present.reduce((a, b) => rank[a] <= rank[b] ? a : b);\n};\n\nconst labelToTier = (lbl) => {\n  if (lbl === 'high') return 'auto_apply';\n  if (lbl === 'medium') return 'review_required';\n  if (lbl === 'low') return 'ignore';\n  return null;\n};\n\nconst scoreToTier = (s) => {\n  if (typeof s !== 'number' || !isFinite(s)) return null;\n  if (s >= 0.70) return 'auto_apply';\n  if (s >= 0.50) return 'review_required';\n  return 'ignore';\n};\n\nreturn items.map((item, idx) => {\n  const j = item.json || {};\n  if (!gateEnabled) {\n    return { json: { ...j, effective_tier: 'auto_apply', gate_bypassed: true }, pairedItem: { item: idx } };\n  }\n  const signals = [\n    (j.write_mode === 'auto_apply' || j.write_mode === 'review_required' || j.write_mode === 'ignore') ? j.write_mode : null,\n    labelToTier(j.confidence_label),\n    scoreToTier(j.confidence_score)\n  ].filter(Boolean);\n  let tier;\n  if (signals.length === 0) {\n    tier = 'review_required';\n  } else {\n    tier = mostCautious(...signals);\n  }\n  return { json: { ...j, effective_tier: tier, gate_bypassed: false }, pairedItem: { item: idx } };\n});"
       },
-      "id": "a28ccd9f-63bc-4957-a069-a4da6667a625",
+      "id": "ae641e59-c7da-40a8-ac94-48efeda4ccbf",
       "name": "Resolve Confidence Tier",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -33232,
-        14384
+        -26832,
+        11192
       ]
     },
     {
@@ -683,13 +717,13 @@
         "numberOutputs": 3,
         "output": "={{ $json.effective_tier === 'auto_apply' ? 0 : ($json.effective_tier === 'review_required' ? 1 : 2) }}"
       },
-      "id": "2caa3fb0-8e01-487e-a16d-2829b45f983d",
+      "id": "43aa15b6-734a-4ed0-a1de-43f9fbaa8ac6",
       "name": "Switch Confidence Tier",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        -33008,
-        14368
+        -26608,
+        11176
       ]
     },
     {
@@ -776,13 +810,13 @@
           ]
         }
       },
-      "id": "45f1c2ff-f355-426a-9754-0598bcfccb1a",
+      "id": "c675abe6-88c5-4b2f-86e6-034a6955c980",
       "name": "Supabase Insert Review Candidate",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -32784,
-        14272
+        -26384,
+        11088
       ],
       "credentials": {
         "supabaseApi": {
@@ -818,13 +852,13 @@
           ]
         }
       },
-      "id": "2fd5cff1-5081-4c94-bd51-b7bbc75da6c9",
+      "id": "9b6ca843-2ff4-4309-a95c-552c6a8632a6",
       "name": "WIP Match Layer A (Lookup Candidates)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -32560,
-        14512
+        -26160,
+        11316
       ],
       "credentials": {
         "supabaseApi": {
@@ -838,13 +872,13 @@
       "parameters": {
         "jsCode": "return items.map((item, idx) => {\n  const action = item.json || {};\n  const candidates = (Array.isArray(action.candidates) ? action.candidates : []).map(c => ({\n    id: c.id,\n    task: c.task,\n    lead: c.lead,\n    status: c.status,\n    latest_note: c.latest_note || c.note,\n    next_step: c.next_step\n  }));\n  const userPrompt = `You decide whether a newly proposed WIP task already exists in the current open task list for the same project_client. If yes, output decision=match with the existing task id and a confidence 0..1. Otherwise output decision=new.\\n\\nPROJECT_CLIENT: ${action.project_client}\\n\\nNEW TASK PROPOSAL:\\n${JSON.stringify({ task: action.task, lead: action.lead, status: action.status, latest_note: action.latest_note, next_step: action.next_step }, null, 2)}\\n\\nEXISTING OPEN TASKS FOR THIS PROJECT:\\n${JSON.stringify(candidates, null, 2)}\\n\\nReturn strict JSON: { \"decision\": \"match\" | \"new\", \"match_id\": \"<uuid or null>\", \"confidence\": <0..1>, \"reason\": \"<short>\" }`;\n  return { json: { ...action, candidates, matcherUserPrompt: userPrompt }, pairedItem: { item: idx } };\n});"
       },
-      "id": "92ac5565-665d-4fc7-b539-6d0528f63d0a",
+      "id": "b5f1d148-916a-43ff-aa8b-9176c01472d5",
       "name": "Build WIP Match Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -32112,
-        14512
+        -25712,
+        11316
       ]
     },
     {
@@ -861,13 +895,13 @@
         },
         "batching": {}
       },
-      "id": "8152e6b4-c661-4fe3-97c3-f314921e5a21",
+      "id": "fa3bf0d9-30f0-4164-99e8-de52f0975304",
       "name": "LLM Chain: WIP Matcher",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        -31888,
-        14512
+        -25488,
+        11316
       ]
     },
     {
@@ -883,13 +917,13 @@
           "temperature": 0.1
         }
       },
-      "id": "d17eb05b-d8f9-4417-918c-0f363b58c837",
+      "id": "1b627c79-62bd-469b-961a-0e4673668bbe",
       "name": "LLM Model: WIP Matcher",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -31888,
-        14736
+        -25480,
+        11540
       ],
       "credentials": {
         "openAiApi": {
@@ -903,26 +937,26 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"required\": [\"decision\", \"match_id\", \"confidence\"],\n  \"properties\": {\n    \"decision\": { \"type\": \"string\", \"enum\": [\"match\", \"new\"] },\n    \"match_id\": { \"type\": [\"string\", \"null\"] },\n    \"confidence\": { \"type\": \"number\", \"minimum\": 0, \"maximum\": 1 },\n    \"reason\": { \"type\": [\"string\", \"null\"] }\n  }\n}"
       },
-      "id": "de5bbaf8-e89a-4a26-bc65-c7ac224809a9",
+      "id": "8b154591-e703-475d-924d-e4da8eef92fb",
       "name": "Output Parser: WIP Match",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -31760,
-        14736
+        -25352,
+        11540
       ]
     },
     {
       "parameters": {
         "jsCode": "const threshold = Number($('Merge System Config').first().json.wipConfidenceThreshold ?? 0.82);\nreturn items.map((item, idx) => {\n  let action = {};\n  try { action = $('Build WIP Match Prompt').itemMatching(idx).json || {}; } catch (e) { action = {}; }\n  const m = (item.json && item.json.output) || item.json || {};\n  const matched = m.decision === 'match' && m.match_id && Number(m.confidence || 0) >= threshold;\n  return {\n    json: {\n      ...action,\n      matcher: m,\n      action: matched ? 'update' : 'create',\n      existing_task_id: matched ? m.match_id : action.existing_task_id,\n      matcherMatched: matched\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "a1e86937-76e9-4c9b-9654-820be74c00f9",
+      "id": "3632feab-2f6f-4bf9-aebc-40b340006622",
       "name": "Apply Match Decision",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -31536,
-        14512
+        -25136,
+        11316
       ]
     },
     {
@@ -950,13 +984,13 @@
         },
         "options": {}
       },
-      "id": "57eaed71-4166-49d5-a8d7-0caaf4df86bc",
+      "id": "d4839d06-ed2e-4d3b-b3bc-b1c1033378d9",
       "name": "IF: matcher chose update?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -31312,
-        14512
+        -24912,
+        11316
       ]
     },
     {
@@ -999,13 +1033,13 @@
           ]
         }
       },
-      "id": "689a56f9-b78c-46b5-861c-712cc949ddc7",
+      "id": "717aa2cb-97f3-440c-8a67-d02ef3725324",
       "name": "Supabase Create WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -31088,
-        14560
+        -24688,
+        11364
       ],
       "credentials": {
         "supabaseApi": {
@@ -1050,13 +1084,13 @@
           ]
         }
       },
-      "id": "63785017-9ffc-459f-9a6d-aae96ab1ab0a",
+      "id": "3681ead8-4642-4858-8a48-480f1ed9806f",
       "name": "Supabase Update WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -31088,
-        14288
+        -24688,
+        11096
       ],
       "credentials": {
         "supabaseApi": {
@@ -1093,13 +1127,13 @@
           ]
         }
       },
-      "id": "ff2570e5-82e3-454a-a916-9793cf331f9f",
+      "id": "dbbc3b73-25eb-46e4-b259-2723e4868ab1",
       "name": "Supabase Complete WIP",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -31088,
-        14800
+        -24688,
+        11584
       ],
       "credentials": {
         "supabaseApi": {
@@ -1113,13 +1147,13 @@
       "parameters": {
         "jsCode": "return items.map((item, idx) => {\n  const s = item.json || {};\n  return {\n    json: {\n      action_applied: s.action_applied || null,\n      task: s.task || '',\n      project_client: s.project_client || '',\n      lead: s.lead || '',\n      latest_note: s.latest_note || '',\n      next_step: s.next_step || '',\n      status: s.status || '',\n      existing_task_id: s.existing_task_id || null,\n      wip_task_id: s.wip_task_id || null,\n      errors: Array.isArray(s.errors) ? s.errors : []\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "2e067759-46b0-4710-afba-1080ccf8d368",
+      "id": "a235caa6-49f2-4d91-a30c-6abe92824462",
       "name": "Normalize WIP Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -30416,
-        14528
+        -24016,
+        11316
       ]
     },
     {
@@ -1138,13 +1172,13 @@
           ]
         }
       },
-      "id": "d2682353-1fea-44a8-a1d7-c816390a7431",
+      "id": "036f017d-ff0d-4e6b-b654-52a8a2ab3780",
       "name": "Lookup Existing Meeting (Pre-Loop)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -36720,
-        14896
+        -30320,
+        11748
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -1159,13 +1193,13 @@
       "parameters": {
         "jsCode": "const existingRows = $('Lookup Existing Meeting (Pre-Loop)').all().map(i => i.json || {});\nconst rowsByEvent = new Map();\nfor (const row of existingRows) {\n  if (row.calendar_event_id && row.id && !rowsByEvent.has(row.calendar_event_id)) {\n    rowsByEvent.set(row.calendar_event_id, row);\n  }\n}\nreturn $('Clean Transcript').all().map(item => {\n  const clean = item.json || {};\n  return { json: { ...clean, existing_meeting_row: rowsByEvent.get(clean.calendar_event_id) || null } };\n});"
       },
-      "id": "c8c326e5-571e-4274-9ce8-42499ad82b7b",
+      "id": "5aafbe93-ad73-4125-8cef-43fd57e92fc6",
       "name": "Rejoin Meetings By Event",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -36496,
-        14896
+        -30096,
+        11748
       ]
     },
     {
@@ -1184,13 +1218,13 @@
           ]
         }
       },
-      "id": "5a80bc7d-4bc9-425d-8d2d-641b2a592a62",
+      "id": "c7fb615d-0098-47e2-bc7c-f7a324daed7c",
       "name": "Lookup Existing Meeting Tasks",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -35376,
-        14896
+        -28976,
+        11748
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -1203,15 +1237,15 @@
     },
     {
       "parameters": {
-        "jsCode": "const meetings = $('Attach Meeting To Context').all().map(i => i.json);\nconst taskRows = items.map(i => i.json || {});\nconst targetDate = $('Resolve Date').first().json.targetDate;\nreturn meetings.map(context => {\n  const meetingId = context.meeting_id;\n  const meeting = context.existing_meeting && context.existing_meeting.id ? context.existing_meeting : (meetingId ? { id: meetingId } : null);\n  const existingTasksForThisMeeting = taskRows.filter(r => r && r.meeting_id === meetingId && r.wip_task_id);\n  const createdToday = meeting && meeting.created_at ? String(meeting.created_at).slice(0,10) === targetDate : false;\n  return { json: { ...context, existing_meeting: meeting, meeting_exists: !!meeting, doubleRunWarning: !!meeting && createdToday && existingTasksForThisMeeting.length > 0 } };\n});"
+        "jsCode": "const meetings = $('Attach Meeting To Context').all().map(i => i.json);\nconst taskRows = items.map(i => i.json || {});\nconst cfg = $('Config').first().json || {};\nconst forceReprocess = cfg.force_reprocess === true;\nreturn meetings.map(context => {\n  const meetingId = context.meeting_id;\n  const meeting = context.existing_meeting && context.existing_meeting.id ? context.existing_meeting : (meetingId ? { id: meetingId } : null);\n  const existingTasksForThisMeeting = taskRows.filter(r => r && r.meeting_id === meetingId && r.wip_task_id);\n  const alreadyProcessed = !!meeting && existingTasksForThisMeeting.length > 0;\n  const skipPersist = alreadyProcessed && !forceReprocess;\n  return { json: { ...context, existing_meeting: meeting, meeting_exists: !!meeting, alreadyProcessed, forceReprocess, skipPersist, doubleRunWarning: alreadyProcessed } };\n});"
       },
-      "id": "063d65fc-550f-46d4-a962-4aff850bb995",
+      "id": "1ce32f86-059a-40c6-9e66-1b269260b233",
       "name": "Check Double Run Guard",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -35152,
-        14896
+        -28752,
+        11748
       ]
     },
     {
@@ -1239,13 +1273,13 @@
         },
         "options": {}
       },
-      "id": "45ad7eff-362e-4096-a7b5-ac4e84e07550",
+      "id": "464a4ba3-1bd4-435e-8cf5-91270d5327cb",
       "name": "IF: meeting exists (Pre-Loop)",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -36272,
-        14896
+        -29872,
+        11748
       ]
     },
     {
@@ -1282,13 +1316,13 @@
           ]
         }
       },
-      "id": "e4c33158-9c8f-47ee-8475-98b348b636bd",
+      "id": "0079c1b6-ed7f-4a28-8deb-5ac7e2ae2568",
       "name": "Update Meeting Row (Pre-Loop)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -36048,
-        14704
+        -29648,
+        11556
       ],
       "credentials": {
         "supabaseApi": {
@@ -1334,13 +1368,13 @@
           ]
         }
       },
-      "id": "e97091d2-4ce2-4fe9-a936-10ef3b6dbfa8",
+      "id": "f94bf679-e702-4b81-9263-f71a317f276f",
       "name": "Create Meeting Row (Pre-Loop)",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -36048,
-        14896
+        -29648,
+        11748
       ],
       "credentials": {
         "supabaseApi": {
@@ -1354,13 +1388,13 @@
       "parameters": {
         "jsCode": "const out = [];\nfor (let i = 0; i < items.length; i++) {\n  const row = items[i].json || {};\n  const upstream = $('Rejoin Meetings By Event').itemMatching(i).json;\n  const { existing_meeting_row, ...clean } = upstream;\n  const existing_meeting = existing_meeting_row || row;\n  const meeting_id = existing_meeting.id || row.id || clean.meeting_id || null;\n  out.push({ json: { ...clean, meeting_id, existing_meeting } });\n}\nreturn out;"
       },
-      "id": "e104d39a-93fd-4ca7-9185-57c03ed9ca52",
+      "id": "a8be108c-e203-4a7d-97a0-c068ec078a1c",
       "name": "Attach Meeting To Context",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -35600,
-        14896
+        -29200,
+        11748
       ]
     },
     {
@@ -1375,7 +1409,7 @@
           "conditions": [
             {
               "id": "already-processed",
-              "leftValue": "={{ $json.doubleRunWarning }}",
+              "leftValue": "={{ $json.skipPersist }}",
               "rightValue": true,
               "operator": {
                 "type": "boolean",
@@ -1388,26 +1422,26 @@
         },
         "options": {}
       },
-      "id": "1f42fe33-6932-462c-9e48-80c459969fc1",
+      "id": "308baec4-0e65-4082-adbd-ce59754aa728",
       "name": "IF: already processed?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -34704,
-        14448
+        -28304,
+        11356
       ]
     },
     {
       "parameters": {
         "jsCode": "const action = $json;\nconst guard = $('Loop Per Meeting').first().json;\nconst meeting_id = guard.meeting_id;\nreturn [{ json: { ...action, meeting_id, missing_meeting_id: !meeting_id, existing_meeting: guard.existing_meeting || null, meeting_exists: !!guard.meeting_exists, doubleRunWarning: !!guard.doubleRunWarning } }];"
       },
-      "id": "c9de3cbc-e725-46b0-8d0d-b2778a914627",
+      "id": "4f137781-a212-4f16-b38e-b09830a6e863",
       "name": "Attach Meeting ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -30192,
-        14528
+        -23792,
+        11316
       ]
     },
     {
@@ -1429,44 +1463,62 @@
                 "operation": "notEmpty",
                 "singleValue": true
               }
+            },
+            {
+              "id": "wip-task-id-present",
+              "leftValue": "={{ $json.wip_task_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
         },
         "options": {}
       },
-      "id": "ad80579f-f11b-4ba4-b47d-dd38b07492c1",
+      "id": "871ace61-62a4-4d99-bc36-82fa75a5b62d",
       "name": "IF: meeting_id present",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -29968,
-        14528
+        -23568,
+        11316
       ]
     },
     {
       "parameters": {
-        "tableId": "={{ $('Config').first().json.meetingTasksTable }}",
-        "fieldsUi": {
-          "fieldValues": [
+        "method": "POST",
+        "url": "={{ $('Config').first().json.supabaseUrl }}/rest/v1/rpc/upsert_meeting_task",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
             {
-              "fieldId": "meeting_id",
-              "fieldValue": "={{ $json.meeting_id }}"
+              "name": "Content-Type",
+              "value": "application/json"
             },
             {
-              "fieldId": "wip_task_id",
-              "fieldValue": "={{ $json.wip_task_id }}"
+              "name": "Prefer",
+              "value": "return=minimal"
             }
           ]
-        }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_meeting_id: $json.meeting_id, p_wip_task_id: $json.wip_task_id }) }}",
+        "options": {}
       },
-      "id": "b3a411e3-005b-4dd9-8aad-cef74dd0b88f",
+      "id": "2d8e7c96-5fce-4e4f-8d71-819e00267d85",
       "name": "Insert meeting_tasks junction",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
-        -29744,
-        14528
+        -23344,
+        11316
       ],
       "credentials": {
         "supabaseApi": {
@@ -1480,26 +1532,26 @@
       "parameters": {
         "jsCode": "const base = $('Attach Meeting ID').itemMatching(0).json;\nconst shouldCascade = base.action_applied === 'complete' && !!base.wip_task_id;\nreturn [{ json: { ...base, shouldCascade, close_wip_task_id: shouldCascade ? base.wip_task_id : null } }];"
       },
-      "id": "65c376b7-eda1-41e4-8b21-fc6976d30315",
+      "id": "cc39a7c7-b07f-4009-955b-1d186e8d8a7c",
       "name": "Collect Completed for Cascade",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -29520,
-        14528
+        -23120,
+        11316
       ]
     },
     {
       "parameters": {
         "jsCode": "const applied = $('Normalize WIP Result').all().map(i => i.json);\nlet reviewCandidatesIn = [];\ntry { reviewCandidatesIn = $('Switch Confidence Tier').all(1).map(i => i.json || {}); } catch (e) { reviewCandidatesIn = []; }\nlet reviewInserts = [];\ntry { reviewInserts = $('Supabase Insert Review Candidate').all().map(i => i.json || {}); } catch (e) { reviewInserts = []; }\nlet ignoredIn = [];\ntry { ignoredIn = $('Switch Confidence Tier').all(2).map(i => i.json || {}); } catch (e) { ignoredIn = []; }\n\nconst counts = { tasks_created: 0, tasks_updated: 0, tasks_completed: 0, tickets_auto_closed: 0, pending_review: 0, ignored: 0, errors: [], doubleRunWarning: false, created: [], updated: [], completed: [], pending_review_items: [] };\nconst truncate = (value, max = 140) => {\n  const text = String(value || '').replace(/\\s+/g, ' ').trim();\n  return text.length > max ? text.slice(0, max - 1) + '…' : text;\n};\nconst itemize = (a) => {\n  const entry = {\n    title: String(a.task || a.title || a.name || 'Untitled task'),\n    status: String(a.status || a.action_applied || ''),\n    note: truncate(a.latest_note || a.note || a.description || '')\n  };\n  const project = a.project_client || a.project;\n  if (project) entry.project = String(project);\n  return entry;\n};\nconst itemizeReview = (a) => ({\n  title: String(a.task || a.task_title || 'Untitled task'),\n  project: String(a.project_client || ''),\n  confidence_label: String(a.confidence_label || ''),\n  reason: truncate(a.confidence_reason || a.match_reason || a.evidence_summary || '')\n});\nfor (const a of applied) {\n  if (a.action_applied === 'create') { counts.tasks_created += 1; counts.created.push(itemize(a)); }\n  if (a.action_applied === 'update') { counts.tasks_updated += 1; counts.updated.push(itemize(a)); }\n  if (a.action_applied === 'complete') { counts.tasks_completed += 1; counts.completed.push(itemize(a)); }\n  if (a.doubleRunWarning) counts.doubleRunWarning = true;\n  if (Array.isArray(a.errors)) counts.errors.push(...a.errors);\n}\ncounts.tickets_auto_closed = applied.filter(a => a && a.action_applied === 'complete' && a.wip_task_id).length;\ncounts.pending_review = reviewCandidatesIn.length;\ncounts.pending_review_items = reviewCandidatesIn.map(itemizeReview);\nfor (const r of reviewInserts) if (r && r.error) counts.errors.push(r.error.message || JSON.stringify(r.error));\ncounts.ignored = ignoredIn.length;\nconst meeting = $('Loop Per Meeting').first().json;  // current iteration meeting context\nconst cfg = $('Config').first().json || {};\nreturn [{ json: { ...$('Resolve Date').first().json, ...counts, review_queue_url: cfg.review_queue_url || '', meeting_title: meeting.title || 'Meeting', meeting_id: meeting.meeting_id } }];"
       },
-      "id": "97d01c9b-f8cc-4db7-a3ee-ebb9b9a8a171",
+      "id": "7328b3bd-3672-43c9-85f4-4e2b510d43c6",
       "name": "Aggregate Summary Counts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -28624,
-        14528
+        -22672,
+        11316
       ]
     },
     {
@@ -1511,13 +1563,13 @@
           "ccList": "={{ $('Merge System Config').item.json.summary_email_cc || '' }}"
         }
       },
-      "id": "7eb1a4e2-c37a-4944-9eb9-7ee007566047",
+      "id": "151da2ee-5c04-4e80-a20d-aa92eb5d5071",
       "name": "Gmail Send Summary",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        -28400,
-        14752
+        -22448,
+        11604
       ],
       "webhookId": "8379d25e-ccc5-4383-aade-27d4aea0d088",
       "credentials": {
@@ -1546,10 +1598,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -39632,
-        15184
+        -33232,
+        12036
       ],
-      "id": "0fb3af25-2fa9-4eec-9148-b9005edf5a0b",
+      "id": "bf4dbbdd-80d4-4871-b1df-f98ce95e4758",
       "name": "Schedule Trigger"
     },
     {
@@ -1559,10 +1611,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -34928,
-        14896
+        -28528,
+        11748
       ],
-      "id": "b3553121-6724-417f-8e6c-d7c6cf8abf92",
+      "id": "0dfa4624-4f43-45f1-8dde-09fa28fc6dea",
       "name": "Loop Per Meeting"
     },
     {
@@ -1572,10 +1624,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -30640,
-        14512
+        -24240,
+        11300
       ],
-      "id": "891c1209-1cca-4020-93d0-e98b5d9b7804",
+      "id": "d602cdf6-596e-4235-9ba7-b6f4e1e22cf0",
       "name": "Merge Action Branches"
     },
     {
@@ -1583,10 +1635,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -28848,
-        14528
+        -22896,
+        11316
       ],
-      "id": "88d79829-71e2-463f-bfe4-151e76bad474",
+      "id": "cd31d761-cc09-4aa2-b3c2-7ed850863803",
       "name": "Merge Before Summary"
     },
     {
@@ -1594,62 +1646,62 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -35824,
-        14896
+        -29424,
+        11748
       ],
-      "id": "f5cf5363-f5f9-4b1e-aa0b-6ab5465e8414",
+      "id": "eb15b600-eb58-4dd6-b0b7-c8a8ee16dcfe",
       "name": "Merge Pre-Loop Branches"
     },
     {
       "parameters": {
         "jsCode": "const createProposals = $('Switch Action').all(0).map(i => i.json);\nconst allOpenTasks = $('Load Active Projects').all().map(i => i.json);\nreturn createProposals.map((proposal, idx) => {\n  const candidates = allOpenTasks\n    .filter(t =>\n      t && t.project_client === proposal.project_client &&\n      t.status !== 'complete' &&\n      t.status !== 'closed')\n    .map(t => ({\n      id: t.id,\n      task: t.task,\n      lead: t.lead,\n      status: t.status,\n      latest_note: t.latest_note || t.note || '',\n      next_step: t.next_step || ''\n    }));\n  return {\n    json: { ...proposal, candidates },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "62be483d-2c70-48f0-bd9c-dfb8a7f73369",
+      "id": "ebe5ffde-7a40-4cd2-a272-8e8e59e3d8eb",
       "name": "Group Candidates Per Proposal",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -32336,
-        14512
+        -25936,
+        11316
       ]
     },
     {
       "parameters": {
         "jsCode": "return items.map((item, idx) => {\n  let proposal = {};\n  try { proposal = $('Apply Match Decision').itemMatching(idx).json || {}; } catch (e) { proposal = {}; }\n  let dbRow = {};\n  try { dbRow = $('Supabase Create WIP').itemMatching(idx).json || {}; } catch (e) { dbRow = item.json || {}; }\n  const err = dbRow && dbRow.error ? [dbRow.error.message || JSON.stringify(dbRow.error)] : [];\n  return {\n    json: {\n      action_applied: 'create',\n      task: proposal.task || '',\n      project_client: proposal.project_client || '',\n      lead: proposal.lead || '',\n      latest_note: proposal.latest_note || proposal.note || '',\n      next_step: proposal.next_step || '',\n      status: dbRow.status || proposal.status || '',\n      existing_task_id: proposal.existing_task_id || null,\n      wip_task_id: dbRow.id || null,\n      errors: err\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "fdcb91a3-f3e7-4df7-b9b2-713f982765a2",
+      "id": "3050bef6-6b09-4dbf-ab1b-30cd71cc94bb",
       "name": "Tag Create Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -30864,
-        14560
+        -24464,
+        11364
       ]
     },
     {
       "parameters": {
         "jsCode": "return items.map((item, idx) => {\n  let proposal = null;\n  try { const p = $('Apply Match Decision').itemMatching(idx); if (p && p.json && p.json.task) proposal = p.json; } catch (e) {}\n  if (!proposal) { try { const p = $('Switch Action').itemMatching(idx); if (p && p.json && p.json.task) proposal = p.json; } catch (e) {} }\n  proposal = proposal || {};\n  let dbRow = {};\n  try { dbRow = $('Supabase Update WIP').itemMatching(idx).json || {}; } catch (e) { dbRow = item.json || {}; }\n  const err = dbRow && dbRow.error ? [dbRow.error.message || JSON.stringify(dbRow.error)] : [];\n  return {\n    json: {\n      action_applied: 'update',\n      task: proposal.task || '',\n      project_client: proposal.project_client || '',\n      lead: proposal.lead || '',\n      latest_note: proposal.latest_note || proposal.note || '',\n      next_step: proposal.next_step || '',\n      status: dbRow.status || proposal.status || 'in_progress',\n      existing_task_id: proposal.existing_task_id || (dbRow.id || null),\n      wip_task_id: dbRow.id || proposal.existing_task_id || null,\n      errors: err\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "ea668da5-1922-432e-89b5-07628201556d",
+      "id": "48f07abf-4a2f-472f-984d-4255d1cd48b6",
       "name": "Tag Update Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -30864,
-        14288
+        -24464,
+        11096
       ]
     },
     {
       "parameters": {
         "jsCode": "return items.map((item, idx) => {\n  let proposal = {};\n  try { proposal = $('Switch Action').itemMatching(idx).json || {}; } catch (e) { proposal = {}; }\n  let dbRow = {};\n  try { dbRow = $('Supabase Complete WIP').itemMatching(idx).json || {}; } catch (e) { dbRow = item.json || {}; }\n  const err = dbRow && dbRow.error ? [dbRow.error.message || JSON.stringify(dbRow.error)] : [];\n  return {\n    json: {\n      action_applied: 'complete',\n      task: proposal.task || '',\n      project_client: proposal.project_client || '',\n      lead: proposal.lead || '',\n      latest_note: proposal.latest_note || proposal.note || '',\n      next_step: proposal.next_step || '',\n      status: 'complete',\n      existing_task_id: proposal.existing_task_id || (dbRow.id || null),\n      wip_task_id: dbRow.id || proposal.existing_task_id || null,\n      errors: err\n    },\n    pairedItem: { item: idx }\n  };\n});"
       },
-      "id": "48c674ff-6ec7-4089-8d1e-7d12fc1f27d1",
+      "id": "5305a33d-5170-4bb6-a1b4-c125a2c240eb",
       "name": "Tag Complete Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -30864,
-        14800
+        -24464,
+        11584
       ]
     },
     {
@@ -1662,10 +1714,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -37168,
-        14896
+        -30768,
+        11748
       ],
-      "id": "6bb96d0f-149f-450e-a0c5-943f873bd0c2",
+      "id": "d1ddc9ce-22a8-4276-823e-94b97416fd1d",
       "name": "Get Meeting Notes Doc",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -2332,7 +2384,7 @@
       "main": [
         [
           {
-            "node": "Loop Per Meeting",
+            "node": "Gmail Send Already Processed",
             "type": "main",
             "index": 0
           }
@@ -2340,6 +2392,17 @@
         [
           {
             "node": "Load Active Projects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Send Already Processed": {
+      "main": [
+        [
+          {
+            "node": "Loop Per Meeting",
             "type": "main",
             "index": 0
           }
@@ -2380,20 +2443,15 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": true,
-    "timeSavedMode": "fixed",
-    "callerPolicy": "workflowsFromSameOwner",
-    "timezone": "Asia/Ho_Chi_Minh"
+    "binaryMode": "separate"
   },
-  "versionId": "dd3814b8-4847-461a-ab2b-2b6e2185711f",
+  "versionId": "04a8d510-6d64-4568-8602-0a0274cf6c97",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "d255ac8dbc9698cc025b4836557a5f10650e4466ca76edffa27a27761bc6d416"
   },
-  "id": "bOvp7UWGSl8iW42e",
+  "id": "IHvX1ZNVsWIHFKrC",
   "tags": []
 }

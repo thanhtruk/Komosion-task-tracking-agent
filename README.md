@@ -6,7 +6,7 @@ Automated helpdesk intake and WIP tracking for Komosion, built on n8n.
 
 ## Workflows
 
-### Komosion Helpdesk Intake — Phase 1 - Ver2
+### Komosion Helpdesk Intake
 
 **File:** `Komosion_Helpdesk_Intake.json`
 
@@ -44,13 +44,13 @@ Tunables are set in the **Config** / **Config1** nodes (or overridden via Supaba
 
 ---
 
-### Komosion Daily WIP Sync — Phase 3.2 _(in progress / testing)_
+### Komosion Daily WIP Sync
 
 **File:** `Komosion_Daily_WIP_Sync.json`
 
 Daily standup transcript → structured WIP task updates in Supabase. Replaces the legacy Google Apps Script (`main.js`) with an n8n workflow backed by Supabase instead of Google Sheets.
 
-> **Status:** active — Schedule Trigger fires at 10:00 and 17:00 Asia/Ho_Chi_Minh. Monthly rollover is out of scope and deferred to Phase 3.3.
+> **Status:** active — Schedule Trigger fires at 10:00 and 17:00 Asia/Ho_Chi_Minh.
 
 #### What it does
 
@@ -82,10 +82,11 @@ Additional tunables set in the **Config** node (can be overridden in `system_con
 | `wipCandidatesTable` | `wip_update_candidates` | Supabase table for medium-confidence review candidates |
 | `ENABLE_CONFIDENCE_GATE` | `true` | Set to `false` to bypass confidence routing and auto-apply all actions |
 | `review_queue_url` | *(empty)* | Optional URL included in review-candidate notifications |
+| `force_reprocess` | `false` | Set to `true` to skip the double-run guard and force re-processing an already-processed meeting |
 
 #### Parity with AppScript
 
-Key intentional drifts from the original AppScript: storage is Supabase not Sheets; `merges` action dropped (was dead code); sort/highlight (UI concern) dropped; monthly rollover deferred to Phase 3.3. Analysis docs (`main_js_analysis.md`, `parity_report_3_2.md`) are in `infor/` (not committed to repo).
+Key intentional drifts from the original AppScript: storage is Supabase not Sheets; `merges` action dropped (was dead code); sort/highlight (UI concern) dropped; monthly rollover deferred. Analysis docs (`main_js_analysis.md`, `parity_report_3_2.md`) are in `infor/` (not committed to repo).
 
 ---
 
@@ -123,12 +124,24 @@ Configure these credential types in your n8n instance (no secrets stored in this
 
 ---
 
+## Database migrations
+
+SQL migrations live in `db/`. Run them in order against the Supabase project. The canonical schema snapshot (source of truth) is always the most-recent file in `infor/schema_snapshot_<date>.sql`.
+
+| File | What it does |
+|---|---|
+| `db/p6_meeting_tasks_idempotent.sql` | Adds `public.upsert_meeting_task(uuid, uuid)` RPC — idempotent insert into `meeting_tasks` using `ON CONFLICT … DO NOTHING`. Does **not** change table structure or PK. |
+
+Latest snapshot: `infor/schema_snapshot_2026-06-20.sql`
+
+---
+
 ## Setup
 
 1. Import the workflow JSON into n8n via **Workflows → Import from file**.
 2. Attach the credentials above to each node that requires them.
 3. In the **Config** node, set `helpdeskSheetId` to your Google Sheets document ID.
-4. Ensure the Supabase project has the required tables and the `trg_sync_latest_note` DB trigger (see `infor/` SQL migration files — not committed).
+4. Apply DB migrations in order (see `db/` above) against the Supabase project.
 5. Activate the workflow.
 
 ---
@@ -142,6 +155,14 @@ Configure these credential types in your n8n instance (no secrets stored in this
 ---
 
 ## Changelog
+
+### 2026-06-22
+- **Both workflows renamed** — phase/version suffixes dropped from internal workflow names: "Komosion Daily WIP Sync — Phase 3.2" → "Komosion Daily WIP Sync"; "Komosion Helpdesk Intake — Phase 1 - Ver2" → "Komosion Helpdesk Intake"; filenames unchanged
+- **Daily WIP Sync: `force_reprocess` config var added** — new boolean in Config node (default `false`); when `true` skips the double-run guard so an already-processed meeting can be re-run without changing code
+- **Daily WIP Sync: `Gmail Send Already Processed` node added** — when the double-run guard fires and `force_reprocess` is `false`, sends an email explaining the skip and how to force a re-run
+- **Daily WIP Sync: LLM prompt — content-first identity-blind rule** — new HARD RULE in `CLIENT / PROJECT NAME RESOLUTION`: `project_client` must be resolved from transcript content only; speaker identity, attendee email domains, calendar invite host are explicitly excluded as signals; falls back to `"Internal"` when ambiguous
+- **Helpdesk Intake: WIP matcher reworked** — new explicit nodes `Match WIP Task`, `Evaluate WIP Match`, `Is Safe Match?`, `Use Matched WIP Task ID` replace previous LLM-only matcher; `Load Client Registry` + `Merge Client Registry` nodes added to inject canonical client names before matching
+- **`db/p6_meeting_tasks_idempotent.sql` committed** — SQL migration adding `public.upsert_meeting_task(uuid, uuid)` RPC (idempotent `meeting_tasks` insert) now tracked in repo
 
 ### 2026-06-20
 - **Daily WIP Sync: `new_business` work_type added** — `work_type` extended from 2 Internal-only values (`in_the_business | on_the_business`) to 4 values (`client_work | new_business | in_the_business | on_the_business`); LLM system prompt, output parser schema, and `Parse Classified Actions` JS updated so the LLM can flag uncontracted-opportunity work as `new_business` regardless of `project_client`; client tasks where the LLM returns `new_business` now correctly keep that label instead of being overwritten to `client_work`
