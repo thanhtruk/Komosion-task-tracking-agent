@@ -156,6 +156,12 @@ Latest snapshot: `infor/schema_snapshot_2026-06-20.sql`
 
 ## Changelog
 
+### 2026-06-23
+- **Helpdesk Intake: inline LLM WIP matching** — `Match WIP Task` (HTTP Request → Supabase RPC `match_wip_task`) replaced with `Resolve LLM Match` (Code node); matching logic moved fully inline into `Generate WIP Fields` LLM prompt: OPEN_TASKS list injected as context, output schema extended with `match_idx`, `match_decision`, `match_reason`, `confidence`; code node cross-references idx → real `wip_task_id` from `Build Open Task Index`; `Get WIP Task Candidates` now returns all active candidates (was `limit: 1`); `Set WIP Match` now propagates `match_confidence` + `match_reason` downstream
+- **Helpdesk Intake: WIP fields model upgraded** — `Generate WIP Fields` agent switched from `llm_model_fast` to `llm_model` for higher-accuracy matching
+- **Helpdesk Intake: sender-aware reply analysis** — `Analyze Reply` system prompt reworked: sender is no longer assumed to be the client; `sender_name` passed separately from `sender` (email); LLM refers to sender by first name in `summary`; word "Client" only used when email body explicitly confirms it; status guidelines made sender-agnostic
+- **Helpdesk Intake: `Update Ticket Status` writes `latest_note` + `latest_note_at`** — both fields now included in the Supabase update payload so the ticket record reflects the most recent note without a separate query
+
 ### 2026-06-22
 - **Both workflows renamed** — phase/version suffixes dropped from internal workflow names: "Komosion Daily WIP Sync — Phase 3.2" → "Komosion Daily WIP Sync"; "Komosion Helpdesk Intake — Phase 1 - Ver2" → "Komosion Helpdesk Intake"; filenames unchanged
 - **Daily WIP Sync: `force_reprocess` config var added** — new boolean in Config node (default `false`); when `true` skips the double-run guard so an already-processed meeting can be re-run without changing code
